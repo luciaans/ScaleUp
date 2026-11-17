@@ -74,6 +74,7 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
     double tempQty = entry.log.quantity;
     await showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       useSafeArea: true,
       builder: (sheetCtx) {
         return StatefulBuilder(
@@ -303,102 +304,113 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
               ),
               const SizedBox(height: AppSpacing.md),
 
-              // Ring kalori besar + bar makro
-              AppCard(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: _CalorieSideStat(
-                            label: 'Terpakai',
-                            kcal: summary.consumedCalories.round(),
-                            alignEnd: false,
-                          ),
-                        ),
-                        ProgressRing(
-                          progress: summary.calorieProgress,
-                          size: 148,
-                          strokeWidth: AppSpacing.ringStrokeLg,
-                          color: ringColor,
-                          semanticLabel:
-                              'Kalori terpakai ${summary.consumedCalories.round()} dari target ${summary.targetCalories} kilokalori',
-                          center: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                AnimatedCount(
-                                  value: summary.remainingCalories
-                                      .abs()
-                                      .toDouble(),
-                                  formatter: (v) => AppFormatters.integer(v),
-                                  style: AppTextStyles.heroNumber(
-                                    context,
-                                    fontSize: AppSpacing.heroNumberMd,
-                                    color: ringColor,
-                                  ),
-                                ),
-                                Text(
-                                  summary.isOverTarget
-                                      ? 'kkal lebih'
-                                      : 'kkal tersisa',
-                                  style: textTheme.labelSmall?.copyWith(
-                                    color: semantic.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: _CalorieSideStat(
-                            label: 'Target',
-                            kcal: summary.targetCalories,
-                            alignEnd: true,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    const Divider(),
-                    const SizedBox(height: AppSpacing.md),
+              // Ring kalori besar + bar makro (responsif terhadap layar 360dp)
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final isCompact = constraints.maxWidth < 350;
+                  final ringSize = isCompact ? 124.0 : 148.0;
+                  final cardPad = isCompact ? AppSpacing.md : AppSpacing.lg;
 
-                    // Bar Makro: Protein, Karbohidrat, Lemak
-                    Row(
+                  return AppCard(
+                    padding: EdgeInsets.all(cardPad),
+                    child: Column(
                       children: [
-                        Expanded(
-                          child: _MacroProgressBar(
-                            label: 'Protein',
-                            consumedGrams: summary.consumedProteinGrams,
-                            targetGrams: summary.targetProteinGrams,
-                            color: semantic.proteinColor,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: _CalorieSideStat(
+                                label: 'Terpakai',
+                                kcal: summary.consumedCalories.round(),
+                                alignEnd: false,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.xs),
+                            ProgressRing(
+                              progress: summary.calorieProgress,
+                              size: ringSize,
+                              strokeWidth: AppSpacing.ringStrokeLg,
+                              color: ringColor,
+                              semanticLabel:
+                                  'Kalori terpakai ${summary.consumedCalories.round()} dari target ${summary.targetCalories} kilokalori',
+                              center: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    AnimatedCount(
+                                      value: summary.remainingCalories
+                                          .abs()
+                                          .toDouble(),
+                                      formatter: (v) =>
+                                          AppFormatters.integer(v),
+                                      style: AppTextStyles.heroNumber(
+                                        context,
+                                        fontSize: AppSpacing.heroNumberMd,
+                                        color: ringColor,
+                                      ),
+                                    ),
+                                    Text(
+                                      summary.isOverTarget
+                                          ? 'kkal lebih'
+                                          : 'kkal tersisa',
+                                      style: textTheme.labelSmall?.copyWith(
+                                        color: semantic.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.xs),
+                            Expanded(
+                              child: _CalorieSideStat(
+                                label: 'Target',
+                                kcal: summary.targetCalories,
+                                alignEnd: true,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: _MacroProgressBar(
-                            label: 'Karbo',
-                            consumedGrams: summary.consumedCarbsGrams,
-                            targetGrams: summary.targetCarbsGrams,
-                            color: semantic.carbsColor,
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: _MacroProgressBar(
-                            label: 'Lemak',
-                            consumedGrams: summary.consumedFatGrams,
-                            targetGrams: summary.targetFatGrams,
-                            color: semantic.fatColor,
-                          ),
+                        const SizedBox(height: AppSpacing.lg),
+                        const Divider(),
+                        const SizedBox(height: AppSpacing.md),
+
+                        // Bar Makro: Protein, Karbohidrat, Lemak
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _MacroProgressBar(
+                                label: 'Protein',
+                                consumedGrams: summary.consumedProteinGrams,
+                                targetGrams: summary.targetProteinGrams,
+                                color: semantic.proteinColor,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.md),
+                            Expanded(
+                              child: _MacroProgressBar(
+                                label: 'Karbo',
+                                consumedGrams: summary.consumedCarbsGrams,
+                                targetGrams: summary.targetCarbsGrams,
+                                color: semantic.carbsColor,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.md),
+                            Expanded(
+                              child: _MacroProgressBar(
+                                label: 'Lemak',
+                                consumedGrams: summary.consumedFatGrams,
+                                targetGrams: summary.targetFatGrams,
+                                color: semantic.fatColor,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
               const SizedBox(height: AppSpacing.md),
 
@@ -423,65 +435,71 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                       children: [
                         Row(
                           children: [
-                            InkWell(
-                              borderRadius:
-                                  BorderRadius.circular(AppSpacing.radiusMd),
-                              onTap: () {
-                                MotionUtils.selectionClick();
-                                setState(() {
-                                  if (isCollapsed) {
-                                    _collapsedMeals.remove(meal);
-                                  } else {
-                                    _collapsedMeals.add(meal);
-                                  }
-                                });
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: AppSpacing.xs,
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      mealIcon,
-                                      color: scheme.tertiary,
-                                      size: AppSpacing.iconMd,
-                                    ),
-                                    const SizedBox(width: AppSpacing.sm),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          meal.label,
-                                          style: textTheme.titleMedium,
-                                        ),
-                                        Text(
-                                          '${items.length} item • ${AppFormatters.calories(mealKcal)}',
-                                          style: textTheme.bodySmall?.copyWith(
-                                            color: semantic.textSecondary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(width: AppSpacing.xs),
-                                    AnimatedRotation(
-                                      turns: isCollapsed ? -0.25 : 0.0,
-                                      duration: MotionUtils.duration(
-                                        context,
-                                        AppSpacing.animFast,
+                            Expanded(
+                              child: InkWell(
+                                borderRadius:
+                                    BorderRadius.circular(AppSpacing.radiusMd),
+                                onTap: () {
+                                  MotionUtils.selectionClick();
+                                  setState(() {
+                                    if (isCollapsed) {
+                                      _collapsedMeals.remove(meal);
+                                    } else {
+                                      _collapsedMeals.add(meal);
+                                    }
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: AppSpacing.xs,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        mealIcon,
+                                        color: scheme.tertiary,
+                                        size: AppSpacing.iconMd,
                                       ),
-                                      child: Icon(
-                                        Icons.expand_more_rounded,
-                                        color: semantic.textSecondary,
+                                      const SizedBox(width: AppSpacing.sm),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              meal.label,
+                                              style: textTheme.titleMedium,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            Text(
+                                              '${items.length} item • ${AppFormatters.calories(mealKcal)}',
+                                              style: textTheme.bodySmall
+                                                  ?.copyWith(
+                                                    color:
+                                                        semantic.textSecondary,
+                                                  ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      AnimatedRotation(
+                                        turns: isCollapsed ? -0.25 : 0.0,
+                                        duration: MotionUtils.duration(
+                                          context,
+                                          AppSpacing.animFast,
+                                        ),
+                                        child: Icon(
+                                          Icons.expand_more_rounded,
+                                          color: semantic.textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                            const Spacer(),
+                            const SizedBox(width: AppSpacing.xs),
                             TextButton.icon(
                               key: Key('add_meal_${meal.storageKey}_button'),
                               onPressed: () =>

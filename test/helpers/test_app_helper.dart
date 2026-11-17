@@ -9,6 +9,7 @@ import 'package:scale_up/data/database/app_database.dart';
 
 /// Menyiapkan konfigurasi test global (locale Indonesia & matikan HTTP GoogleFonts).
 Future<void> initTestEnvironment() async {
+  driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   GoogleFonts.config.allowRuntimeFetching = false;
   await initializeDateFormatting(AppConstants.localeId);
 }

@@ -27,6 +27,7 @@ class EditProfileSheet extends ConsumerStatefulWidget {
   static Future<bool?> show(BuildContext context, UserProfile profile) {
     return showModalBottomSheet<bool>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => EditProfileSheet(profile: profile),

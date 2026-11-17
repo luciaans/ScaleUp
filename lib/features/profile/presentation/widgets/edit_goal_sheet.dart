@@ -32,6 +32,7 @@ class EditGoalSheet extends ConsumerStatefulWidget {
   }) {
     return showModalBottomSheet<bool>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => EditGoalSheet(activePlan: activePlan, unit: unit),

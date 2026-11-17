@@ -17,6 +17,7 @@ class CustomFoodSheet extends ConsumerStatefulWidget {
   static Future<int?> show(BuildContext context, {String? initialName}) {
     return showModalBottomSheet<int>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => CustomFoodSheet(initialName: initialName),

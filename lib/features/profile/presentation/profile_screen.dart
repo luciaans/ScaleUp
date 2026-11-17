@@ -208,11 +208,16 @@ class ProfileScreen extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        const Spacer(),
-                        Text(
-                          'Mulai ${AppFormatters.mediumDate(plan.goal.startDate)}',
-                          style: textTheme.bodySmall?.copyWith(
-                            color: semantic.textSecondary,
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: Text(
+                            'Mulai ${AppFormatters.mediumDate(plan.goal.startDate)}',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: semantic.textSecondary,
+                            ),
+                            textAlign: TextAlign.end,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],

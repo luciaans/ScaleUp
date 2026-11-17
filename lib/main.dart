@@ -9,6 +9,7 @@ import 'package:material_ui/material_ui.dart';
 import 'core/constants/app_constants.dart';
 import 'core/constants/app_strings.dart';
 import 'core/router/app_router.dart';
+import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
 import 'features/settings/data/settings_repository.dart';
 
@@ -46,6 +47,32 @@ class ScaleUpApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      builder: (context, child) {
+        final mq = MediaQuery.of(context);
+        final clampedScaler = mq.textScaler.clamp(
+          minScaleFactor: 0.85,
+          maxScaleFactor: 1.35,
+        );
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final overlayStyle = (isDark
+                ? SystemUiOverlayStyle.light
+                : SystemUiOverlayStyle.dark)
+            .copyWith(
+          statusBarColor: AppColors.lightBackground.withValues(alpha: 0),
+          systemNavigationBarColor:
+              isDark ? AppColors.darkSurface : AppColors.lightSurface,
+          systemNavigationBarIconBrightness:
+              isDark ? Brightness.light : Brightness.dark,
+        );
+
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: overlayStyle,
+          child: MediaQuery(
+            data: mq.copyWith(textScaler: clampedScaler),
+            child: child ?? const SizedBox.shrink(),
+          ),
+        );
+      },
       routerConfig: router,
     );
   }

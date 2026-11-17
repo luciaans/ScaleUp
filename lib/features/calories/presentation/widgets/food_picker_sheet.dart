@@ -47,6 +47,7 @@ class FoodPickerSheet extends ConsumerStatefulWidget {
 
     return showModalBottomSheet<bool>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => FractionallySizedBox(
@@ -510,27 +511,34 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
           AppCard(
             backgroundColor: semantic.surfaceMuted,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _NutrientColumn(
-                  label: 'Kalori',
-                  value: AppFormatters.calories(totalKcal),
-                  color: scheme.tertiary,
+                Expanded(
+                  child: _NutrientColumn(
+                    label: 'Kalori',
+                    value: AppFormatters.calories(totalKcal),
+                    color: scheme.tertiary,
+                  ),
                 ),
-                _NutrientColumn(
-                  label: 'Protein',
-                  value: '${AppFormatters.compactDecimal(totalP)}g',
-                  color: semantic.proteinColor,
+                Expanded(
+                  child: _NutrientColumn(
+                    label: 'Protein',
+                    value: '${AppFormatters.compactDecimal(totalP)}g',
+                    color: semantic.proteinColor,
+                  ),
                 ),
-                _NutrientColumn(
-                  label: 'Karbo',
-                  value: '${AppFormatters.compactDecimal(totalC)}g',
-                  color: semantic.carbsColor,
+                Expanded(
+                  child: _NutrientColumn(
+                    label: 'Karbo',
+                    value: '${AppFormatters.compactDecimal(totalC)}g',
+                    color: semantic.carbsColor,
+                  ),
                 ),
-                _NutrientColumn(
-                  label: 'Lemak',
-                  value: '${AppFormatters.compactDecimal(totalF)}g',
-                  color: semantic.fatColor,
+                Expanded(
+                  child: _NutrientColumn(
+                    label: 'Lemak',
+                    value: '${AppFormatters.compactDecimal(totalF)}g',
+                    color: semantic.fatColor,
+                  ),
                 ),
               ],
             ),

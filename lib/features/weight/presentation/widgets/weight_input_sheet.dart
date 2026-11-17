@@ -39,6 +39,7 @@ class WeightInputSheet extends ConsumerStatefulWidget {
   }) {
     return showModalBottomSheet<bool>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => WeightInputSheet(
@@ -131,7 +132,7 @@ class _WeightInputSheetState extends ConsumerState<WeightInputSheet> {
       if (!mounted) return;
       if (!MotionUtils.shouldReduceMotion(context)) {
         setState(() => _showSuccessCheck = true);
-        await Future<void>.delayed(AppSpacing.animNormal);
+        await Future<void>.delayed(AppSpacing.animFast);
       }
 
       if (!mounted) return;
@@ -341,16 +342,22 @@ class _WeightInputSheetState extends ConsumerState<WeightInputSheet> {
                             horizontal: AppSpacing.md,
                           ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 AppFormatters.weight(minSliderKg, unit: unit),
                                 style: textTheme.labelSmall,
                               ),
-                              Text(
-                                'Geser untuk menyesuaikan',
-                                style: textTheme.labelSmall,
+                              const SizedBox(width: AppSpacing.xs),
+                              Expanded(
+                                child: Text(
+                                  'Geser untuk menyesuaikan',
+                                  style: textTheme.labelSmall,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
+                              const SizedBox(width: AppSpacing.xs),
                               Text(
                                 AppFormatters.weight(maxSliderKg, unit: unit),
                                 style: textTheme.labelSmall,

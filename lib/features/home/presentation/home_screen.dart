@@ -543,40 +543,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 if (streak.last7DaysLogged.isNotEmpty) ...[
                                   const SizedBox(height: AppSpacing.md),
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
                                     children: streak.last7DaysLogged.map((d) {
-                                      return Column(
-                                        children: [
-                                          Container(
-                                            width: 28,
-                                            height: 28,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: d.isLogged
-                                                  ? scheme.tertiary
-                                                  : semantic.surfaceMuted,
+                                      return Expanded(
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              width: 28,
+                                              height: 28,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: d.isLogged
+                                                    ? scheme.tertiary
+                                                    : semantic.surfaceMuted,
+                                              ),
+                                              child: Icon(
+                                                d.isLogged
+                                                    ? Icons.check_rounded
+                                                    : Icons.remove_rounded,
+                                                size: 16,
+                                                color: d.isLogged
+                                                    ? scheme.onTertiary
+                                                    : semantic.textSecondary,
+                                              ),
                                             ),
-                                            child: Icon(
-                                              d.isLogged
-                                                  ? Icons.check_rounded
-                                                  : Icons.remove_rounded,
-                                              size: 16,
-                                              color: d.isLogged
-                                                  ? scheme.onTertiary
-                                                  : semantic.textSecondary,
+                                            const SizedBox(
+                                              height: AppSpacing.xxs,
                                             ),
-                                          ),
-                                          const SizedBox(
-                                            height: AppSpacing.xxs,
-                                          ),
-                                          Text(
-                                            AppFormatters.shortChartDate(
-                                              d.date,
+                                            FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              child: Text(
+                                                AppFormatters.shortChartDate(
+                                                  d.date,
+                                                ),
+                                                style: textTheme.labelSmall,
+                                              ),
                                             ),
-                                            style: textTheme.labelSmall,
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       );
                                     }).toList(),
                                   ),

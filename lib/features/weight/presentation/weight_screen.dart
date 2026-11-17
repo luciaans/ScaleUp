@@ -345,13 +345,25 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
 
               const SizedBox(height: AppSpacing.lg),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Riwayat Harian', style: textTheme.titleMedium),
-                  Text(
-                    'Geser kiri untuk hapus',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: semantic.textSecondary,
+                  Expanded(
+                    child: Text(
+                      'Riwayat Harian',
+                      style: textTheme.titleMedium,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Flexible(
+                    child: Text(
+                      'Geser kiri untuk hapus',
+                      style: textTheme.bodySmall?.copyWith(
+                        color: semantic.textSecondary,
+                      ),
+                      textAlign: TextAlign.end,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

@@ -20,6 +20,7 @@ class QuickAddSheet extends StatelessWidget {
   static Future<QuickAddChoice?> show(BuildContext context) {
     return showModalBottomSheet<QuickAddChoice>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => const QuickAddSheet(),

@@ -84,6 +84,7 @@ class _SettingsCardsState extends ConsumerState<SettingsCards> {
   Future<void> _confirmClearAllData() async {
     final confirmed = await showModalBottomSheet<bool>(
       context: context,
+      useRootNavigator: true,
       useSafeArea: true,
       builder: (sheetCtx) {
         final textTheme = Theme.of(sheetCtx).textTheme;

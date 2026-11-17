@@ -371,17 +371,26 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(
-          child: Container(
-            width: 96,
-            height: 96,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: scheme.primaryContainer,
-            ),
-            child: Icon(
-              Icons.trending_up_rounded,
-              size: AppSpacing.iconHero,
-              color: scheme.primary,
+          child: Semantics(
+            label: 'Logo ScaleUp',
+            image: true,
+            child: Image.asset(
+              'assets/branding/scaleup_logo.png',
+              width: 96,
+              height: 96,
+              errorBuilder: (_, _, _) => Container(
+                width: 96,
+                height: 96,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: scheme.primaryContainer,
+                ),
+                child: Icon(
+                  Icons.trending_up_rounded,
+                  size: AppSpacing.iconHero,
+                  color: scheme.primary,
+                ),
+              ),
             ),
           ),
         ),
@@ -942,26 +951,30 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   style: textTheme.titleMedium,
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text(
-                      AppFormatters.integer(plan.targetCalories),
-                      style: AppTextStyles.heroNumber(
-                        context,
-                        fontSize: AppSpacing.heroNumberMd,
-                        color: scheme.primary,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Text(
+                        AppFormatters.integer(plan.targetCalories),
+                        style: AppTextStyles.heroNumber(
+                          context,
+                          fontSize: AppSpacing.heroNumberMd,
+                          color: scheme.primary,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: AppSpacing.xs),
-                    Text(
-                      '${AppStrings.unitKcal} / hari',
-                      style: textTheme.titleSmall?.copyWith(
-                        color: semantic.textSecondary,
+                      const SizedBox(width: AppSpacing.xs),
+                      Text(
+                        '${AppStrings.unitKcal} / hari',
+                        style: textTheme.titleSmall?.copyWith(
+                          color: semantic.textSecondary,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Wrap(
