@@ -1,19 +1,22 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/calories/presentation/calories_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
+import '../../features/settings/data/settings_repository.dart';
 import '../../features/weight/presentation/weight_screen.dart';
 import '../constants/app_spacing.dart';
 import '../utils/reduce_motion.dart';
+import '../widgets/skeleton_box.dart';
 import 'app_shell_scaffold.dart';
 
 part 'app_router.g.dart';
 
 abstract final class AppRoutes {
+  static const String boot = '/boot';
   static const String home = '/';
   static const String weight = '/weight';
   static const String calories = '/calories';
@@ -53,11 +56,71 @@ CustomTransitionPage<T> buildScaleUpTransitionPage<T>({
   );
 }
 
+class _RouterRefreshNotifier extends ChangeNotifier {
+  void trigger() => notifyListeners();
+}
+
+class _BootLoadingScreen extends StatelessWidget {
+  const _BootLoadingScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              SizedBox(height: AppSpacing.lg),
+              SkeletonBox(width: 180, height: 28),
+              SizedBox(height: AppSpacing.lg),
+              SkeletonBox(height: 160),
+              SizedBox(height: AppSpacing.md),
+              SkeletonBox(height: 130),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
+  final refreshNotifier = _RouterRefreshNotifier();
+  ref.onDispose(refreshNotifier.dispose);
+
+  ref.listen<AsyncValue<bool>>(onboardingCompletedProvider, (_, _) {
+    refreshNotifier.trigger();
+  });
+
   return GoRouter(
-    initialLocation: AppRoutes.home,
+    initialLocation: AppRoutes.boot,
+    refreshListenable: refreshNotifier,
+    redirect: (context, state) {
+      final onboardingState = ref.read(onboardingCompletedProvider);
+      final loc = state.matchedLocation;
+
+      if (onboardingState.isLoading) {
+        return loc == AppRoutes.boot ? null : AppRoutes.boot;
+      }
+
+      final isComplete = onboardingState.value ?? false;
+      if (!isComplete) {
+        return loc == AppRoutes.onboarding ? null : AppRoutes.onboarding;
+      }
+
+      if (loc == AppRoutes.boot || loc == AppRoutes.onboarding) {
+        return AppRoutes.home;
+      }
+      return null;
+    },
     routes: [
+      GoRoute(
+        path: AppRoutes.boot,
+        builder: (context, state) => const _BootLoadingScreen(),
+      ),
       GoRoute(
         path: AppRoutes.onboarding,
         pageBuilder: (context, state) => buildScaleUpTransitionPage(

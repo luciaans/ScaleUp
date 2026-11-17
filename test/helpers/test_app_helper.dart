@@ -23,6 +23,47 @@ AppDatabase createTestDatabase() {
   );
 }
 
+/// Menyemai profil contoh + tujuan aktif + tanda onboarding selesai untuk test layar utama.
+Future<void> seedCompletedOnboarding(AppDatabase db) async {
+  await db.into(db.userProfiles).insert(
+        UserProfilesCompanion.insert(
+          name: 'Andi',
+          gender: 'male',
+          birthDate: DateTime(1996, 4, 12),
+          heightCm: 172,
+          activityLevel: 'moderate',
+        ),
+      );
+  await db.into(db.goals).insert(
+        GoalsCompanion.insert(
+          type: 'lose',
+          startWeight: 74.0,
+          targetWeight: 68.0,
+          weeklyRate: 0.5,
+          startDate: DateTime(2026, 11, 1),
+          isActive: const Value(true),
+        ),
+      );
+  await db.into(db.weightEntries).insert(
+        WeightEntriesCompanion.insert(
+          date: DateTime(2026, 11, 1),
+          weightKg: 74.0,
+        ),
+      );
+  await db.into(db.settings).insertOnConflictUpdate(
+        SettingsCompanion.insert(
+          key: AppConstants.settingOnboardingComplete,
+          value: 'true',
+        ),
+      );
+  await db.into(db.settings).insertOnConflictUpdate(
+        SettingsCompanion.insert(
+          key: AppConstants.settingCalorieBaselineWeight,
+          value: '74.00',
+        ),
+      );
+}
+
 /// Menutup [AppDatabase] dengan aman pada akhir [testWidgets].
 Future<void> disposeWidgetTestDatabase(
   WidgetTester tester,

@@ -12,8 +12,7 @@ void main() {
     await initTestEnvironment();
   });
 
-  testWidgets(
-      'Shell navigasi menampilkan 4 tab dan FAB Catat Cepat membuka bottom sheet',
+  testWidgets('Pengguna baru diarahkan otomatis ke layar Onboarding langkah 1',
       (WidgetTester tester) async {
     final testDb = createTestDatabase();
 
@@ -27,35 +26,42 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Pastikan NavigationBar dengan 4 tab utama tampil
+    expect(find.text('Langkah 1 dari 4'), findsOneWidget);
+    expect(find.text(AppStrings.healthDisclaimerTitle), findsOneWidget);
+
+    await disposeWidgetTestDatabase(tester, testDb);
+  });
+
+  testWidgets(
+      'Shell navigasi menampilkan 4 tab, Profil aktif, dan FAB Catat Cepat',
+      (WidgetTester tester) async {
+    final testDb = createTestDatabase();
+    await seedCompletedOnboarding(testDb);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          appDatabaseProvider.overrideWithValue(testDb),
+        ],
+        child: const ScaleUpApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
     expect(find.byType(NavigationBar), findsOneWidget);
-    expect(find.text(AppStrings.navHome), findsWidgets);
-    expect(find.text(AppStrings.navWeight), findsOneWidget);
-    expect(find.text(AppStrings.navCalories), findsOneWidget);
     expect(find.text(AppStrings.navProfile), findsOneWidget);
 
-    // Pindah antar tab
-    await tester.tap(find.text(AppStrings.navWeight));
-    await tester.pumpAndSettle();
-    expect(find.text(AppStrings.weightPlaceholderTitle), findsOneWidget);
-
-    await tester.tap(find.text(AppStrings.navCalories));
-    await tester.pumpAndSettle();
-    expect(find.text(AppStrings.caloriesPlaceholderTitle), findsOneWidget);
-
+    // Pindah ke tab Profil untuk memastikan kartu profil & tujuan tampil
     await tester.tap(find.text(AppStrings.navProfile));
     await tester.pumpAndSettle();
-    expect(find.text(AppStrings.profilePlaceholderTitle), findsOneWidget);
+    expect(find.text('Andi'), findsOneWidget);
+    expect(find.text('Tujuan Aktif'), findsOneWidget);
 
     // Tekan FAB Catat Cepat untuk membuka bottom sheet
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
-
     expect(find.text(AppStrings.quickAddTitle), findsOneWidget);
-    expect(find.text(AppStrings.quickAddWeightTitle), findsOneWidget);
-    expect(find.text(AppStrings.quickAddFoodTitle), findsOneWidget);
 
-    // Tutup bottom sheet sebelum teardown
     Navigator.of(tester.element(find.text(AppStrings.quickAddTitle))).pop();
     await tester.pumpAndSettle();
 
