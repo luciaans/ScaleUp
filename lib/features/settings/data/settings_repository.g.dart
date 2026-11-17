@@ -162,3 +162,85 @@ final class OnboardingCompletedProvider
 
 String _$onboardingCompletedHash() =>
     r'21a803f0b2e545730e0307c7e85940e0348a5c23';
+
+@ProviderFor(reminderPreferences)
+final reminderPreferencesProvider = ReminderPreferencesProvider._();
+
+final class ReminderPreferencesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<ReminderPreferences>,
+          ReminderPreferences,
+          Stream<ReminderPreferences>
+        >
+    with
+        $FutureModifier<ReminderPreferences>,
+        $StreamProvider<ReminderPreferences> {
+  ReminderPreferencesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'reminderPreferencesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$reminderPreferencesHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<ReminderPreferences> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<ReminderPreferences> create(Ref ref) {
+    return reminderPreferences(ref);
+  }
+}
+
+String _$reminderPreferencesHash() =>
+    r'21aa360c90eeef468511c77cd857c282ab06f0f6';
+
+@ProviderFor(celebratedMilestones)
+final celebratedMilestonesProvider = CelebratedMilestonesProvider._();
+
+final class CelebratedMilestonesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Set<String>>,
+          Set<String>,
+          Stream<Set<String>>
+        >
+    with $FutureModifier<Set<String>>, $StreamProvider<Set<String>> {
+  CelebratedMilestonesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'celebratedMilestonesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$celebratedMilestonesHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<Set<String>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<Set<String>> create(Ref ref) {
+    return celebratedMilestones(ref);
+  }
+}
+
+String _$celebratedMilestonesHash() =>
+    r'8c60d7dc2a2b9a58f1f04c642d04ec1aa983d6d2';

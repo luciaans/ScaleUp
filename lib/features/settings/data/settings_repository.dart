@@ -7,6 +7,39 @@ import '../../../data/database/app_database.dart';
 
 part 'settings_repository.g.dart';
 
+/// Konfigurasi pengingat harian (timbang berat & catat makanan).
+class ReminderPreferences {
+  const ReminderPreferences({
+    required this.weightEnabled,
+    required this.weightTime,
+    required this.mealEnabled,
+    required this.mealTime,
+  });
+
+  final bool weightEnabled;
+  final TimeOfDay weightTime;
+  final bool mealEnabled;
+  final TimeOfDay mealTime;
+
+  static String formatTime(TimeOfDay time) {
+    final h = time.hour.toString().padLeft(2, '0');
+    final m = time.minute.toString().padLeft(2, '0');
+    return '$h:$m';
+  }
+
+  static TimeOfDay parseTime(String? raw, TimeOfDay fallback) {
+    if (raw == null) return fallback;
+    final parts = raw.split(':');
+    if (parts.length != 2) return fallback;
+    final h = int.tryParse(parts[0]);
+    final m = int.tryParse(parts[1]);
+    if (h == null || m == null || h < 0 || h > 23 || m < 0 || m > 59) {
+      return fallback;
+    }
+    return TimeOfDay(hour: h, minute: m);
+  }
+}
+
 /// Repository penyimpanan pasangan key-value preferensi aplikasi di tabel Settings.
 class SettingsRepository {
   const SettingsRepository(this._db);
@@ -64,6 +97,76 @@ class SettingsRepository {
     await setValue(AppConstants.settingWeightUnit, unit.storageKey);
   }
 
+  Stream<ReminderPreferences> watchReminders() {
+    return _db.select(_db.settings).watch().map((rows) {
+      final map = {for (final r in rows) r.key: r.value};
+      return ReminderPreferences(
+        weightEnabled:
+            map[AppConstants.settingWeightReminderEnabled] == 'true',
+        weightTime: ReminderPreferences.parseTime(
+          map[AppConstants.settingWeightReminderTime],
+          const TimeOfDay(hour: 7, minute: 0),
+        ),
+        mealEnabled: map[AppConstants.settingMealReminderEnabled] == 'true',
+        mealTime: ReminderPreferences.parseTime(
+          map[AppConstants.settingMealReminderTime],
+          const TimeOfDay(hour: 12, minute: 30),
+        ),
+      );
+    });
+  }
+
+  Future<void> setWeightReminder({
+    required bool enabled,
+    required TimeOfDay time,
+  }) async {
+    await setValue(
+      AppConstants.settingWeightReminderEnabled,
+      enabled ? 'true' : 'false',
+    );
+    await setValue(
+      AppConstants.settingWeightReminderTime,
+      ReminderPreferences.formatTime(time),
+    );
+  }
+
+  Future<void> setMealReminder({
+    required bool enabled,
+    required TimeOfDay time,
+  }) async {
+    await setValue(
+      AppConstants.settingMealReminderEnabled,
+      enabled ? 'true' : 'false',
+    );
+    await setValue(
+      AppConstants.settingMealReminderTime,
+      ReminderPreferences.formatTime(time),
+    );
+  }
+
+  Stream<Set<String>> watchCelebratedMilestones() {
+    return watchValue(AppConstants.settingCelebratedMilestones).map((raw) {
+      if (raw == null || raw.trim().isEmpty) return <String>{};
+      return raw
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toSet();
+    });
+  }
+
+  Future<void> markMilestoneCelebrated(String key) async {
+    final currentRaw =
+        await getValue(AppConstants.settingCelebratedMilestones) ?? '';
+    final set = currentRaw
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toSet()
+      ..add(key);
+    await setValue(AppConstants.settingCelebratedMilestones, set.join(','));
+  }
+
   static ThemeMode _parseThemeMode(String? raw) {
     return switch (raw) {
       'light' => ThemeMode.light,
@@ -91,4 +194,14 @@ Stream<WeightUnit> appWeightUnit(Ref ref) {
 @riverpod
 Stream<bool> onboardingCompleted(Ref ref) {
   return ref.watch(settingsRepositoryProvider).watchOnboardingComplete();
+}
+
+@riverpod
+Stream<ReminderPreferences> reminderPreferences(Ref ref) {
+  return ref.watch(settingsRepositoryProvider).watchReminders();
+}
+
+@riverpod
+Stream<Set<String>> celebratedMilestones(Ref ref) {
+  return ref.watch(settingsRepositoryProvider).watchCelebratedMilestones();
 }

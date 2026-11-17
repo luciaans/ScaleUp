@@ -11,6 +11,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../../../core/widgets/skeleton_box.dart';
 import '../../onboarding/domain/user_enums.dart';
 import '../../settings/data/settings_repository.dart';
+import '../../settings/presentation/widgets/settings_cards.dart';
 import '../data/goal_repository.dart';
 import '../domain/active_nutrition_plan.dart';
 import 'widgets/edit_goal_sheet.dart';
@@ -272,6 +273,9 @@ class ProfileScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+
+              const SizedBox(height: AppSpacing.lg),
+              const SettingsCards(),
 
               if (pastGoals.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.lg),
