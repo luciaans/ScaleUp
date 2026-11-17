@@ -1,6 +1,7 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
+import '../../features/weight/presentation/widgets/weight_input_sheet.dart';
 import '../constants/app_spacing.dart';
 import '../constants/app_strings.dart';
 import '../utils/reduce_motion.dart';
@@ -87,12 +88,18 @@ class _AppShellScaffoldState extends State<AppShellScaffold>
       if (widget.onQuickAddWeight != null) {
         widget.onQuickAddWeight!();
       } else {
-        widget.navigationShell.goBranch(1);
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            const SnackBar(content: Text(AppStrings.quickAddWeightTitle)),
-          );
+        final recalculated = await WeightInputSheet.show(context);
+        if (recalculated == true && mounted) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Berat tersimpan! Target kalori harian telah disesuaikan.',
+                ),
+              ),
+            );
+        }
       }
     } else if (choice == QuickAddChoice.food) {
       if (widget.onQuickAddFood != null) {
