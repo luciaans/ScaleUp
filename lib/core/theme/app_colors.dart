@@ -1,8 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
-/// Palet warna resmi tema "Fresh Health" ScaleUp (Light & Dark).
-/// Seluruh warna didefinisikan di file ini dan diakses melalui [ColorScheme]
-/// atau [AppSemanticColors] extension pada [ThemeData].
+/// Palet warna modern gaya Nixtio ("AI Nutrition & Health Tracking"):
+/// Menggabungkan kanvas organik bersih, Hero Obsidian Bento Card kontras tinggi,
+/// dan aksen segar Emerald-Lime, Electric Sky, serta Warm Coral.
 abstract final class AppColors {
   // ================= LIGHT PALETTE =================
   static const Color lightPrimary = Color(0xFF16A34A);
@@ -20,14 +20,14 @@ abstract final class AppColors {
   static const Color lightTertiaryContainer = Color(0xFFFFEDD5);
   static const Color lightOnTertiaryContainer = Color(0xFF431407);
 
-  static const Color lightBackground = Color(0xFFF8FAFC);
+  // Kanvas organik lembut agar kartu putih & kartu obsidian menonjol tajam
+  static const Color lightBackground = Color(0xFFF2F5F3);
   static const Color lightSurface = Color(0xFFFFFFFF);
-  static const Color lightSurfaceVariant = Color(0xFFF1F5F9);
+  static const Color lightSurfaceVariant = Color(0xFFE7ECE9);
   static const Color lightTextPrimary = Color(0xFF0F172A);
-  static const Color lightTextSecondary = Color(0xFF475569); // Kontras WCAG AA >= 4.5:1 di atas putih & #F8FAFC
   static const Color lightTextMuted = Color(0xFF64748B);
-  static const Color lightOutline = Color(0xFFE2E8F0);
-  static const Color lightOutlineStrong = Color(0xFFCBD5E1);
+  static const Color lightOutline = Color(0xFFE2E8E4);
+  static const Color lightOutlineStrong = Color(0xFFCBD5CE);
 
   static const Color lightError = Color(0xFFEF4444);
   static const Color lightOnError = Color(0xFFFFFFFF);
@@ -36,38 +36,46 @@ abstract final class AppColors {
   static const Color lightSuccess = Color(0xFF22C55E);
 
   // ================= DARK PALETTE =================
-  static const Color darkPrimary = Color(0xFF4ADE80);
-  static const Color darkOnPrimary = Color(0xFF052E16);
-  static const Color darkPrimaryContainer = Color(0xFF14532D);
-  static const Color darkOnPrimaryContainer = Color(0xFFDCFCE7);
+  static const Color darkPrimary = Color(0xFF84CC16); // Vibrant Lime-Green khas Nixtio dark mode
+  static const Color darkOnPrimary = Color(0xFF0B1404);
+  static const Color darkPrimaryContainer = Color(0xFF1E3512);
+  static const Color darkOnPrimaryContainer = Color(0xFFECFCCB);
 
   static const Color darkSecondary = Color(0xFF38BDF8);
   static const Color darkOnSecondary = Color(0xFF082F49);
-  static const Color darkSecondaryContainer = Color(0xFF0C4A6E);
+  static const Color darkSecondaryContainer = Color(0xFF0F2D44);
   static const Color darkOnSecondaryContainer = Color(0xFFE0F2FE);
 
   static const Color darkTertiary = Color(0xFFFB923C);
   static const Color darkOnTertiary = Color(0xFF431407);
-  static const Color darkTertiaryContainer = Color(0xFF7C2D12);
+  static const Color darkTertiaryContainer = Color(0xFF3B1D0E);
   static const Color darkOnTertiaryContainer = Color(0xFFFFEDD5);
 
-  static const Color darkBackground = Color(0xFF0B1220);
-  static const Color darkSurface = Color(0xFF131C2E);
-  static const Color darkSurfaceVariant = Color(0xFF1B2740);
-  static const Color darkTextPrimary = Color(0xFFF1F5F9);
+  static const Color darkBackground = Color(0xFF090D12);
+  static const Color darkSurface = Color(0xFF131922);
+  static const Color darkSurfaceVariant = Color(0xFF1C2430);
+  static const Color darkTextPrimary = Color(0xFFF8FAFC);
   static const Color darkTextSecondary = Color(0xFF94A3B8);
-  static const Color darkOutline = Color(0xFF263554);
+  static const Color darkOutline = Color(0xFF222D3D);
   static const Color darkOutlineStrong = Color(0xFF334155);
 
   static const Color darkError = Color(0xFFF87171);
   static const Color darkOnError = Color(0xFF450A0A);
-  static const Color darkErrorContainer = Color(0xFF7F1D1D);
+  static const Color darkErrorContainer = Color(0xFF451212);
   static const Color darkOnErrorContainer = Color(0xFFFEE2E2);
-  static const Color darkSuccess = Color(0xFF4ADE80);
+  static const Color darkSuccess = Color(0xFF84CC16);
 
-  static const Color shadowLight = Color(0x0D0F172A);
-  static const Color shadowDark = Color(0x33000000);
-  static const Color scrim = Color(0x660F172A);
+  // ================= HERO OBSIDIAN & LIME ACCENTS =================
+  static const Color obsidianCard = Color(0xFF111714);
+  static const Color obsidianCardElevated = Color(0xFF1B2420);
+  static const Color obsidianCardDarkTheme = Color(0xFF161F1B);
+  static const Color electricLime = Color(0xFFA3E635);
+  static const Color electricMint = Color(0xFF4ADE80);
+  static const Color softViolet = Color(0xFFA78BFA);
+
+  static const Color shadowLight = Color(0x0C0F172A);
+  static const Color shadowDark = Color(0x40000000);
+  static const Color scrim = Color(0x73090D12);
 
   static ColorScheme get lightColorScheme => const ColorScheme(
         brightness: Brightness.light,
@@ -126,7 +134,7 @@ abstract final class AppColors {
       );
 }
 
-/// Warna semantik tambahan agar widget tidak pernah melakukan hardcode warna.
+/// Warna semantik Bento & Hero agar seluruh widget bebas hardcode warna.
 @immutable
 class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   const AppSemanticColors({
@@ -147,6 +155,16 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     required this.fatColor,
     required this.shimmerBase,
     required this.shimmerHighlight,
+    required this.heroCardBg,
+    required this.heroCardSurface,
+    required this.heroCardFg,
+    required this.heroCardMuted,
+    required this.heroAccent,
+    required this.dockBg,
+    required this.dockBorder,
+    required this.dockActivePill,
+    required this.dockActiveFg,
+    required this.dockInactiveFg,
   });
 
   final Color background;
@@ -156,7 +174,6 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   final Color success;
   final Color successContainer;
 
-  /// Warna aksen kartu tujuan: Turun = biru, Naik = oranye, Jaga = hijau.
   final Color goalLose;
   final Color goalLoseContainer;
   final Color goalGain;
@@ -164,14 +181,26 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   final Color goalMaintain;
   final Color goalMaintainContainer;
 
-  /// Warna makro nutrisi
   final Color proteinColor;
   final Color carbsColor;
   final Color fatColor;
 
-  /// Warna skeleton shimmer
   final Color shimmerBase;
   final Color shimmerHighlight;
+
+  /// Kartu Hero kontras tinggi khas Nixtio (Obsidian + Electric Lime)
+  final Color heroCardBg;
+  final Color heroCardSurface;
+  final Color heroCardFg;
+  final Color heroCardMuted;
+  final Color heroAccent;
+
+  /// Floating Pill Dock Navigation Bar
+  final Color dockBg;
+  final Color dockBorder;
+  final Color dockActivePill;
+  final Color dockActiveFg;
+  final Color dockInactiveFg;
 
   static const AppSemanticColors light = AppSemanticColors(
     background: AppColors.lightBackground,
@@ -186,11 +215,21 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     goalGainContainer: AppColors.lightTertiaryContainer,
     goalMaintain: AppColors.lightPrimary,
     goalMaintainContainer: AppColors.lightPrimaryContainer,
-    proteinColor: AppColors.lightSecondary,
-    carbsColor: AppColors.lightPrimary,
-    fatColor: AppColors.lightTertiary,
-    shimmerBase: Color(0xFFE2E8F0),
-    shimmerHighlight: Color(0xFFF8FAFC),
+    proteinColor: Color(0xFF0EA5E9),
+    carbsColor: Color(0xFF65A30D),
+    fatColor: Color(0xFFF97316),
+    shimmerBase: Color(0xFFE2E8E4),
+    shimmerHighlight: Color(0xFFF8FAF9),
+    heroCardBg: AppColors.obsidianCard,
+    heroCardSurface: AppColors.obsidianCardElevated,
+    heroCardFg: Color(0xFFF8FAFC),
+    heroCardMuted: Color(0xFF94A39B),
+    heroAccent: AppColors.electricLime,
+    dockBg: Color(0xF0111714),
+    dockBorder: Color(0xFF26312B),
+    dockActivePill: Color(0xFF233029),
+    dockActiveFg: AppColors.electricLime,
+    dockInactiveFg: Color(0xFF94A39B),
   );
 
   static const AppSemanticColors dark = AppSemanticColors(
@@ -206,11 +245,21 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     goalGainContainer: AppColors.darkTertiaryContainer,
     goalMaintain: AppColors.darkPrimary,
     goalMaintainContainer: AppColors.darkPrimaryContainer,
-    proteinColor: AppColors.darkSecondary,
-    carbsColor: AppColors.darkPrimary,
-    fatColor: AppColors.darkTertiary,
-    shimmerBase: Color(0xFF1B2740),
-    shimmerHighlight: Color(0xFF263554),
+    proteinColor: Color(0xFF38BDF8),
+    carbsColor: AppColors.electricLime,
+    fatColor: Color(0xFFFB923C),
+    shimmerBase: Color(0xFF1B2430),
+    shimmerHighlight: Color(0xFF263344),
+    heroCardBg: AppColors.obsidianCardDarkTheme,
+    heroCardSurface: Color(0xFF212D27),
+    heroCardFg: Color(0xFFF8FAFC),
+    heroCardMuted: Color(0xFF9CA3AF),
+    heroAccent: AppColors.electricLime,
+    dockBg: Color(0xF2151C26),
+    dockBorder: Color(0xFF273446),
+    dockActivePill: Color(0xFF233029),
+    dockActiveFg: AppColors.electricLime,
+    dockInactiveFg: Color(0xFF94A3B8),
   );
 
   @override
@@ -232,6 +281,16 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     Color? fatColor,
     Color? shimmerBase,
     Color? shimmerHighlight,
+    Color? heroCardBg,
+    Color? heroCardSurface,
+    Color? heroCardFg,
+    Color? heroCardMuted,
+    Color? heroAccent,
+    Color? dockBg,
+    Color? dockBorder,
+    Color? dockActivePill,
+    Color? dockActiveFg,
+    Color? dockInactiveFg,
   }) {
     return AppSemanticColors(
       background: background ?? this.background,
@@ -252,6 +311,16 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
       fatColor: fatColor ?? this.fatColor,
       shimmerBase: shimmerBase ?? this.shimmerBase,
       shimmerHighlight: shimmerHighlight ?? this.shimmerHighlight,
+      heroCardBg: heroCardBg ?? this.heroCardBg,
+      heroCardSurface: heroCardSurface ?? this.heroCardSurface,
+      heroCardFg: heroCardFg ?? this.heroCardFg,
+      heroCardMuted: heroCardMuted ?? this.heroCardMuted,
+      heroAccent: heroAccent ?? this.heroAccent,
+      dockBg: dockBg ?? this.dockBg,
+      dockBorder: dockBorder ?? this.dockBorder,
+      dockActivePill: dockActivePill ?? this.dockActivePill,
+      dockActiveFg: dockActiveFg ?? this.dockActiveFg,
+      dockInactiveFg: dockInactiveFg ?? this.dockInactiveFg,
     );
   }
 
@@ -281,6 +350,16 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
       shimmerBase: Color.lerp(shimmerBase, other.shimmerBase, t)!,
       shimmerHighlight:
           Color.lerp(shimmerHighlight, other.shimmerHighlight, t)!,
+      heroCardBg: Color.lerp(heroCardBg, other.heroCardBg, t)!,
+      heroCardSurface: Color.lerp(heroCardSurface, other.heroCardSurface, t)!,
+      heroCardFg: Color.lerp(heroCardFg, other.heroCardFg, t)!,
+      heroCardMuted: Color.lerp(heroCardMuted, other.heroCardMuted, t)!,
+      heroAccent: Color.lerp(heroAccent, other.heroAccent, t)!,
+      dockBg: Color.lerp(dockBg, other.dockBg, t)!,
+      dockBorder: Color.lerp(dockBorder, other.dockBorder, t)!,
+      dockActivePill: Color.lerp(dockActivePill, other.dockActivePill, t)!,
+      dockActiveFg: Color.lerp(dockActiveFg, other.dockActiveFg, t)!,
+      dockInactiveFg: Color.lerp(dockInactiveFg, other.dockInactiveFg, t)!,
     );
   }
 }

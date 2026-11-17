@@ -358,14 +358,13 @@ class _SegmentedOptionRow<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final semantic = context.semanticColors;
-    final scheme = context.colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.xs),
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: semantic.surfaceMuted,
-        borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
+        borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
       ),
       child: Row(
         children: options.map((opt) {
@@ -383,9 +382,9 @@ class _SegmentedOptionRow<T> extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? semantic.cardSurface
+                      ? semantic.heroCardBg
                       : semantic.surfaceMuted.withValues(alpha: 0),
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                  borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
                 ),
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
@@ -393,7 +392,7 @@ class _SegmentedOptionRow<T> extends StatelessWidget {
                     opt.label,
                     style: textTheme.labelLarge?.copyWith(
                       color: isSelected
-                          ? scheme.primary
+                          ? semantic.heroAccent
                           : semantic.textSecondary,
                     ),
                   ),

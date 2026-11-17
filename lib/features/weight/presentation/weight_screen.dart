@@ -20,7 +20,10 @@ import '../domain/weight_analytics.dart';
 import 'widgets/weight_chart_card.dart';
 import 'widgets/weight_input_sheet.dart';
 
-/// Layar lengkap Pencatatan Berat Harian, Grafik Tren 7 Hari, Statistik & Riwayat.
+/// Layar Berat & Biometrik bergaya Health Tracking App UI (Nixtio):
+/// - Hero Obsidian Biometric Card + Visual BMI Spectrum Range Bar
+/// - Grafik fl_chart kurva halus + tren 7 hari + segmented pill switcher
+/// - Bento Grid Statistik 2x3 & Riwayat Harian swipe-to-delete
 class WeightScreen extends ConsumerStatefulWidget {
   const WeightScreen({super.key});
 
@@ -90,12 +93,21 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
         title: const Text(AppStrings.navWeight),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.sm),
-            child: TextButton.icon(
+            padding: const EdgeInsets.only(right: AppSpacing.md),
+            child: FilledButton.tonalIcon(
+              style: FilledButton.styleFrom(
+                backgroundColor: semantic.heroCardBg,
+                foregroundColor: semantic.heroAccent,
+                shape: const StadiumBorder(),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.xs,
+                ),
+              ),
               onPressed: () => _openWeightSheet(
                 fallbackKg: planAsync.value?.currentWeightKg,
               ),
-              icon: const Icon(Icons.add_rounded, size: AppSpacing.iconMd),
+              icon: const Icon(Icons.add_rounded, size: 18),
               label: const Text('Catat'),
             ),
           ),
@@ -110,9 +122,9 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
             AppSpacing.bottomNavClearance,
           ),
           children: const [
-            SkeletonBox(height: 280),
+            SkeletonBox(height: 180),
             SizedBox(height: AppSpacing.md),
-            SkeletonBox(height: 110),
+            SkeletonBox(height: 280),
             SizedBox(height: AppSpacing.md),
             SkeletonBox(height: 110),
           ],
@@ -169,70 +181,86 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
           return ListView(
             padding: const EdgeInsets.fromLTRB(
               AppSpacing.md,
-              AppSpacing.sm,
+              AppSpacing.xs,
               AppSpacing.md,
               AppSpacing.bottomNavClearance,
             ),
             children: [
-              // Ringkasan berat terkini dengan animasi count-up
-              AppCard(
+              // HERO OBSIDIAN WEIGHT & BIOMARKER SPECTRUM CARD
+              HeroBentoCard(
+                accentGlowColor: scheme.secondary,
                 onTap: () => _openWeightSheet(
                   fallbackKg: summary.currentWeightKg,
                 ),
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
                             'Berat Terkini',
-                            style: textTheme.labelMedium,
-                          ),
-                          const SizedBox(height: AppSpacing.xs),
-                          AnimatedCount(
-                            value: AppFormatters.kgToDisplay(
-                              summary.currentWeightKg,
-                              unit,
-                            ),
-                            formatter: (v) =>
-                                '${AppFormatters.decimal1(v)} ${unit.label}',
-                            style: AppTextStyles.heroNumber(
-                              context,
-                              fontSize: AppSpacing.heroNumberMd,
-                              color: scheme.secondary,
+                            style: textTheme.labelMedium?.copyWith(
+                              color: semantic.heroCardMuted,
                             ),
                           ),
-                        ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm + 4,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: semantic.heroCardSurface,
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.pillRadius,
+                            ),
+                          ),
+                          child: Text(
+                            AppFormatters.weight(
+                              summary.totalChangeKg,
+                              unit: unit,
+                              signed: true,
+                            ),
+                            style: textTheme.labelMedium?.copyWith(
+                              color: semantic.heroAccent,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: AnimatedCount(
+                        value: AppFormatters.kgToDisplay(
+                          summary.currentWeightKg,
+                          unit,
+                        ),
+                        formatter: (v) =>
+                            '${AppFormatters.decimal1(v)} ${unit.label}',
+                        style: AppTextStyles.heroNumber(
+                          context,
+                          fontSize: AppSpacing.heroNumberLg,
+                          color: semantic.heroCardFg,
+                        ),
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.sm,
-                      ),
-                      decoration: BoxDecoration(
-                        color: scheme.secondaryContainer,
-                        borderRadius:
-                            BorderRadius.circular(AppSpacing.pillRadius),
-                      ),
-                      child: Text(
-                        AppFormatters.weight(
-                          summary.totalChangeKg,
-                          unit: unit,
-                          signed: true,
-                        ),
-                        style: textTheme.labelLarge?.copyWith(
-                          color: scheme.onSecondaryContainer,
-                        ),
-                      ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Biomarker BMI Range Bar (Gaya Health Tracking App Nixtio)
+                    _BmiSpectrumBar(
+                      bmi: summary.bmi,
+                      categoryLabel: summary.bmiCategory.label,
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
 
-              // Grafik fl_chart + segmented filter + moving average 7 hari + garis target
+              // Grafik fl_chart + segmented pill filter + tren 7 hari
               WeightChartCard(
                 points: chartPoints,
                 selectedFilter: _selectedFilter,
@@ -242,32 +270,40 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
               ),
               const SizedBox(height: AppSpacing.md),
 
-              // Pesan motivasi kontekstual yang suportif
+              // Pesan motivasi kontekstual bergaya Insight Card
               AppCard(
-                backgroundColor: scheme.primaryContainer.withValues(alpha: 0.45),
-                borderColor: scheme.primary.withValues(alpha: 0.3),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.auto_awesome_rounded,
-                      color: scheme.primary,
-                      size: AppSpacing.iconMd,
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: scheme.primaryContainer,
+                      ),
+                      child: Icon(
+                        Icons.auto_awesome_rounded,
+                        color: scheme.primary,
+                        size: 20,
+                      ),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
+                    const SizedBox(width: AppSpacing.sm + 4),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             summary.motivationTitle,
-                            style: textTheme.titleSmall,
+                            style: textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                           const SizedBox(height: AppSpacing.xxs),
                           Text(
                             summary.motivationBody,
                             style: textTheme.bodySmall?.copyWith(
-                              color: scheme.onSurface,
+                              color: semantic.textSecondary,
                             ),
                           ),
                         ],
@@ -278,8 +314,8 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
               ),
               const SizedBox(height: AppSpacing.lg),
 
-              // Grid Statistik 2 Kolom (responsif bebas overflow)
-              Text('Statistik Progres', style: textTheme.titleMedium),
+              // Bento Grid Statistik 2 Kolom
+              Text('Metrik Progres', style: textTheme.titleMedium),
               const SizedBox(height: AppSpacing.sm),
               _TwoColumnStatsRow(
                 left: StatTile(
@@ -301,7 +337,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                   accentColor: scheme.secondary,
                 ),
               ),
-              const SizedBox(height: AppSpacing.sm),
+              const SizedBox(height: AppSpacing.sm + 2),
               _TwoColumnStatsRow(
                 left: StatTile(
                   label: 'Perubahan Total',
@@ -321,7 +357,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                   accentColor: scheme.primary,
                 ),
               ),
-              const SizedBox(height: AppSpacing.sm),
+              const SizedBox(height: AppSpacing.sm + 2),
               _TwoColumnStatsRow(
                 left: StatTile(
                   label: 'Sisa ke Target',
@@ -370,7 +406,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
               ),
               const SizedBox(height: AppSpacing.sm),
 
-              // Riwayat dengan edit & swipe-to-delete + Undo
+              // Riwayat Harian bergaya kapsul modern
               ...List<Widget>.generate(descEntries.length, (index) {
                 final entry = descEntries[index];
                 final olderEntry = index + 1 < descEntries.length
@@ -381,7 +417,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                     : null;
 
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm + 2),
                   child: Dismissible(
                     key: ValueKey<int>(entry.id),
                     direction: DismissDirection.endToStart,
@@ -406,17 +442,33 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                       padding: const EdgeInsets.all(AppSpacing.md),
                       child: Row(
                         children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: scheme.secondary.withValues(alpha: 0.12),
+                            ),
+                            child: Icon(
+                              Icons.calendar_today_rounded,
+                              size: 17,
+                              color: scheme.secondary,
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm + 4),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   AppFormatters.relativeDate(entry.date),
-                                  style: textTheme.titleSmall,
+                                  style: textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                                 if (entry.note != null &&
                                     entry.note!.isNotEmpty) ...[
-                                  const SizedBox(height: AppSpacing.xxs),
+                                  const SizedBox(height: 2),
                                   Text(
                                     entry.note!,
                                     style: textTheme.bodySmall?.copyWith(
@@ -428,14 +480,27 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                             ),
                           ),
                           if (deltaFromPrev != null) ...[
-                            Text(
-                              AppFormatters.weight(
-                                deltaFromPrev,
-                                unit: unit,
-                                signed: true,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.sm,
+                                vertical: 3,
                               ),
-                              style: textTheme.labelSmall?.copyWith(
-                                color: semantic.textSecondary,
+                              decoration: BoxDecoration(
+                                color: semantic.surfaceMuted,
+                                borderRadius: BorderRadius.circular(
+                                  AppSpacing.pillRadius,
+                                ),
+                              ),
+                              child: Text(
+                                AppFormatters.weight(
+                                  deltaFromPrev,
+                                  unit: unit,
+                                  signed: true,
+                                ),
+                                style: textTheme.labelSmall?.copyWith(
+                                  color: semantic.textSecondary,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                             const SizedBox(width: AppSpacing.sm),
@@ -447,12 +512,6 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                               fontSize: 18,
                             ),
                           ),
-                          const SizedBox(width: AppSpacing.xs),
-                          Icon(
-                            Icons.edit_outlined,
-                            size: AppSpacing.iconSm,
-                            color: semantic.textSecondary,
-                          ),
                         ],
                       ),
                     ),
@@ -462,6 +521,117 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+class _BmiSpectrumBar extends StatelessWidget {
+  const _BmiSpectrumBar({
+    required this.bmi,
+    required this.categoryLabel,
+  });
+
+  final double bmi;
+  final String categoryLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final semantic = context.semanticColors;
+    final scheme = context.colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    // Petakan BMI 15..35 ke posisi 0.0..1.0
+    final pos = ((bmi - 15.0) / 20.0).clamp(0.04, 0.96);
+
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm + 4),
+      decoration: BoxDecoration(
+        color: semantic.heroCardSurface,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd + 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                'BMI ${AppFormatters.decimal1(bmi)}',
+                style: textTheme.labelMedium?.copyWith(
+                  color: semantic.heroCardFg,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  categoryLabel,
+                  style: textTheme.labelSmall?.copyWith(
+                    color: semantic.heroAccent,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.end,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final markerLeft = (constraints.maxWidth - 12) * pos;
+              return Stack(
+                alignment: Alignment.centerLeft,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
+                    child: SizedBox(
+                      height: 6,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 18,
+                            child: ColoredBox(color: scheme.secondary),
+                          ),
+                          const SizedBox(width: 2),
+                          Expanded(
+                            flex: 32,
+                            child: ColoredBox(color: semantic.heroAccent),
+                          ),
+                          const SizedBox(width: 2),
+                          Expanded(
+                            flex: 25,
+                            child: ColoredBox(color: scheme.tertiary),
+                          ),
+                          const SizedBox(width: 2),
+                          Expanded(
+                            flex: 25,
+                            child: ColoredBox(color: scheme.error),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: markerLeft,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: semantic.heroCardFg,
+                        border: Border.all(
+                          color: semantic.heroCardBg,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -483,7 +653,7 @@ class _TwoColumnStatsRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(child: left),
-          const SizedBox(width: AppSpacing.sm),
+          const SizedBox(width: AppSpacing.sm + 2),
           Expanded(child: right),
         ],
       ),

@@ -10,20 +10,21 @@ import '../../../core/utils/formatters.dart';
 import '../../../core/utils/reduce_motion.dart';
 import '../../../core/widgets/animated_count.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/date_strip_selector.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/progress_ring.dart';
 import '../../../core/widgets/skeleton_box.dart';
+import '../../home/data/home_providers.dart';
 import '../data/calories_repository.dart';
 import '../domain/calorie_models.dart';
 import 'widgets/food_picker_sheet.dart';
 import 'widgets/weekly_calorie_chart_card.dart';
 
-/// Layar Kalori & Catatan Makanan Harian:
-/// - Ring kalori besar + animasi count-up
-/// - Bar makro (Protein / Karbohidrat / Lemak)
-/// - Salin makanan dari kemarin dengan satu tap
-/// - Kartu per waktu makan yang bisa dilipat + tombol "+ Tambah" di tiap kartu
-/// - Grafik riwayat kalori 7 hari
+/// Layar Nutrisi & Kalori bergaya AI Nutrition Tracker (Nixtio):
+/// - Strip kalender kapsul 7 hari + pemilih kalender penuh
+/// - Hero Obsidian Nutrition Dial & Macro Percentage Breakdown
+/// - Bento Meal Slots (Sarapan, Makan Siang, Makan Malam, Camilan)
+/// - Grafik Riwayat Kalori 7 Hari
 class CaloriesScreen extends ConsumerStatefulWidget {
   const CaloriesScreen({super.key});
 
@@ -93,10 +94,7 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                 children: [
                   Text(entry.item.name, style: textTheme.headlineSmall),
                   const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    entry.item.servingDesc,
-                    style: textTheme.bodySmall,
-                  ),
+                  Text(entry.item.servingDesc, style: textTheme.bodySmall),
                   const SizedBox(height: AppSpacing.lg),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -191,8 +189,10 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
   Widget build(BuildContext context) {
     final selectedDate = ref.watch(selectedCalorieDateProvider);
     final summaryAsync = ref.watch(selectedDailyCalorieSummaryProvider);
-    final weeklySeries = ref.watch(weeklyCalorieSeriesProvider).value ?? const [];
-    final isToday = AppDateUtils.isSameDay(selectedDate, AppDateUtils.today());
+    final weeklySeries =
+        ref.watch(weeklyCalorieSeriesProvider).value ?? const [];
+    final loggedDates =
+        ref.watch(activeLoggedDatesProvider).value ?? const <String>{};
 
     final textTheme = Theme.of(context).textTheme;
     final semantic = context.semanticColors;
@@ -202,6 +202,24 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
       appBar: AppBar(
         title: const Text(AppStrings.navCalories),
         actions: [
+          IconButton(
+            tooltip: 'Pilih tanggal di kalender',
+            onPressed: () async {
+              final today = AppDateUtils.today();
+              final picked = await showDatePicker(
+                context: context,
+                initialDate: selectedDate,
+                firstDate: DateTime(today.year - 3, 1, 1),
+                lastDate: today,
+              );
+              if (picked != null) {
+                ref
+                    .read(selectedCalorieDateProvider.notifier)
+                    .selectDate(picked);
+              }
+            },
+            icon: const Icon(Icons.calendar_month_rounded),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: AppSpacing.sm),
             child: TextButton.icon(
@@ -223,9 +241,9 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
             AppSpacing.bottomNavClearance,
           ),
           children: const [
-            SkeletonBox(height: 240),
+            SkeletonBox(height: 82),
             SizedBox(height: AppSpacing.md),
-            SkeletonBox(height: 92),
+            SkeletonBox(height: 260),
             SizedBox(height: AppSpacing.md),
             SkeletonBox(height: 92),
           ],
@@ -242,7 +260,7 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
         data: (summary) {
           final ringColor = summary.isOverTarget
               ? scheme.tertiary
-              : scheme.primary;
+              : semantic.heroAccent;
 
           return ListView(
             padding: const EdgeInsets.fromLTRB(
@@ -252,74 +270,33 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
               AppSpacing.bottomNavClearance,
             ),
             children: [
-              // Navigasi tanggal harian
-              AppCard(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.xs,
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      tooltip: 'Hari sebelumnya',
-                      onPressed: () => ref
-                          .read(selectedCalorieDateProvider.notifier)
-                          .shiftDays(-1),
-                      icon: const Icon(Icons.chevron_left_rounded),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () async {
-                          final today = AppDateUtils.today();
-                          final picked = await showDatePicker(
-                            context: context,
-                            initialDate: selectedDate,
-                            firstDate: DateTime(today.year - 3, 1, 1),
-                            lastDate: today,
-                          );
-                          if (picked != null) {
-                            ref
-                                .read(selectedCalorieDateProvider.notifier)
-                                .selectDate(picked);
-                          }
-                        },
-                        child: Text(
-                          AppFormatters.relativeDate(selectedDate),
-                          style: textTheme.titleSmall,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: 'Hari berikutnya',
-                      onPressed: isToday
-                          ? null
-                          : () => ref
-                              .read(selectedCalorieDateProvider.notifier)
-                              .shiftDays(1),
-                      icon: const Icon(Icons.chevron_right_rounded),
-                    ),
-                  ],
-                ),
+              // Strip kalender 7 hari kapsul
+              DateStripSelector(
+                selectedDate: selectedDate,
+                loggedIsoDates: loggedDates,
+                onDateSelected: (d) => ref
+                    .read(selectedCalorieDateProvider.notifier)
+                    .selectDate(d),
               ),
               const SizedBox(height: AppSpacing.md),
 
-              // Ring kalori besar + bar makro (responsif terhadap layar 360dp)
+              // HERO OBSIDIAN NUTRITION DIAL & MACRO BREAKDOWN
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isCompact = constraints.maxWidth < 350;
-                  final ringSize = isCompact ? 124.0 : 148.0;
-                  final cardPad = isCompact ? AppSpacing.md : AppSpacing.lg;
+                  final ringSize = isCompact ? 124.0 : 146.0;
+                  final cardPad = isCompact ? AppSpacing.md : AppSpacing.lg - 4;
 
-                  return AppCard(
+                  return HeroBentoCard(
                     padding: EdgeInsets.all(cardPad),
+                    accentGlowColor: ringColor,
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                              child: _CalorieSideStat(
+                              child: _DarkCalorieSideStat(
                                 label: 'Terpakai',
                                 kcal: summary.consumedCalories.round(),
                                 alignEnd: false,
@@ -331,6 +308,7 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                               size: ringSize,
                               strokeWidth: AppSpacing.ringStrokeLg,
                               color: ringColor,
+                              trackColor: semantic.heroCardSurface,
                               semanticLabel:
                                   'Kalori terpakai ${summary.consumedCalories.round()} dari target ${summary.targetCalories} kilokalori',
                               center: FittedBox(
@@ -347,7 +325,7 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                                       style: AppTextStyles.heroNumber(
                                         context,
                                         fontSize: AppSpacing.heroNumberMd,
-                                        color: ringColor,
+                                        color: semantic.heroCardFg,
                                       ),
                                     ),
                                     Text(
@@ -355,7 +333,7 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                                           ? 'kkal lebih'
                                           : 'kkal tersisa',
                                       style: textTheme.labelSmall?.copyWith(
-                                        color: semantic.textSecondary,
+                                        color: semantic.heroCardMuted,
                                       ),
                                     ),
                                   ],
@@ -364,7 +342,7 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                             ),
                             const SizedBox(width: AppSpacing.xs),
                             Expanded(
-                              child: _CalorieSideStat(
+                              child: _DarkCalorieSideStat(
                                 label: 'Target',
                                 kcal: summary.targetCalories,
                                 alignEnd: true,
@@ -372,33 +350,31 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: AppSpacing.lg),
-                        const Divider(),
-                        const SizedBox(height: AppSpacing.md),
+                        const SizedBox(height: AppSpacing.lg - 4),
 
-                        // Bar Makro: Protein, Karbohidrat, Lemak
+                        // 3 Macro Breakdown Pods dengan persentase & mini progress bar
                         Row(
                           children: [
                             Expanded(
-                              child: _MacroProgressBar(
+                              child: _MacroBreakdownTile(
                                 label: 'Protein',
                                 consumedGrams: summary.consumedProteinGrams,
                                 targetGrams: summary.targetProteinGrams,
                                 color: semantic.proteinColor,
                               ),
                             ),
-                            const SizedBox(width: AppSpacing.md),
+                            const SizedBox(width: AppSpacing.sm),
                             Expanded(
-                              child: _MacroProgressBar(
+                              child: _MacroBreakdownTile(
                                 label: 'Karbo',
                                 consumedGrams: summary.consumedCarbsGrams,
                                 targetGrams: summary.targetCarbsGrams,
-                                color: semantic.carbsColor,
+                                color: semantic.heroAccent,
                               ),
                             ),
-                            const SizedBox(width: AppSpacing.md),
+                            const SizedBox(width: AppSpacing.sm),
                             Expanded(
-                              child: _MacroProgressBar(
+                              child: _MacroBreakdownTile(
                                 label: 'Lemak',
                                 consumedGrams: summary.consumedFatGrams,
                                 targetGrams: summary.targetFatGrams,
@@ -414,20 +390,29 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
               ),
               const SizedBox(height: AppSpacing.md),
 
-              // Kartu per waktu makan yang bisa dilipat + tombol "+ Tambah"
+              // 4 Kartu Bento Waktu Makan
               ...MealType.values.map((meal) {
                 final items = summary.byMeal[meal] ?? const [];
                 final mealKcal = summary.mealCalories(meal);
                 final isCollapsed = _collapsedMeals.contains(meal);
-                final mealIcon = switch (meal) {
-                  MealType.breakfast => Icons.wb_twilight_rounded,
-                  MealType.lunch => Icons.wb_sunny_outlined,
-                  MealType.dinner => Icons.nights_stay_outlined,
-                  MealType.snack => Icons.cookie_outlined,
+                final (mealIcon, mealAccent) = switch (meal) {
+                  MealType.breakfast => (
+                    Icons.wb_twilight_rounded,
+                    scheme.tertiary,
+                  ),
+                  MealType.lunch => (Icons.wb_sunny_rounded, scheme.primary),
+                  MealType.dinner => (
+                    Icons.nights_stay_rounded,
+                    scheme.secondary,
+                  ),
+                  MealType.snack => (
+                    Icons.cookie_outlined,
+                    AppColors.softViolet,
+                  ),
                 };
 
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm + 4),
                   child: AppCard(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     child: Column(
@@ -451,16 +436,26 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    vertical: AppSpacing.xs,
+                                    vertical: AppSpacing.xxs,
                                   ),
                                   child: Row(
                                     children: [
-                                      Icon(
-                                        mealIcon,
-                                        color: scheme.tertiary,
-                                        size: AppSpacing.iconMd,
+                                      Container(
+                                        width: 42,
+                                        height: 42,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: mealAccent.withValues(
+                                            alpha: 0.14,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          mealIcon,
+                                          color: mealAccent,
+                                          size: 20,
+                                        ),
                                       ),
-                                      const SizedBox(width: AppSpacing.sm),
+                                      const SizedBox(width: AppSpacing.sm + 4),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
@@ -468,11 +463,14 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                                           children: [
                                             Text(
                                               meal.label,
-                                              style: textTheme.titleMedium,
+                                              style: textTheme.titleMedium
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                             Text(
-                                              '${items.length} item • ${AppFormatters.calories(mealKcal)}',
+                                              '${items.length} menu • ${AppFormatters.calories(mealKcal)}',
                                               style: textTheme.bodySmall
                                                   ?.copyWith(
                                                     color:
@@ -500,8 +498,17 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                               ),
                             ),
                             const SizedBox(width: AppSpacing.xs),
-                            TextButton.icon(
+                            FilledButton.tonalIcon(
                               key: Key('add_meal_${meal.storageKey}_button'),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: semantic.surfaceMuted,
+                                foregroundColor: scheme.onSurface,
+                                shape: const StadiumBorder(),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.sm + 4,
+                                  vertical: AppSpacing.xs,
+                                ),
+                              ),
                               onPressed: () =>
                                   _openFoodPicker(selectedDate, meal),
                               icon: const Icon(Icons.add_rounded, size: 18),
@@ -510,7 +517,7 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                           ],
                         ),
                         if (!isCollapsed && items.isNotEmpty) ...[
-                          const SizedBox(height: AppSpacing.sm),
+                          const SizedBox(height: AppSpacing.sm + 2),
                           const Divider(),
                           ...items.map((entry) {
                             return Dismissible(
@@ -521,7 +528,12 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                                 padding: const EdgeInsets.only(
                                   right: AppSpacing.md,
                                 ),
-                                color: scheme.errorContainer,
+                                decoration: BoxDecoration(
+                                  color: scheme.errorContainer,
+                                  borderRadius: BorderRadius.circular(
+                                    AppSpacing.radiusMd,
+                                  ),
+                                ),
                                 child: Icon(
                                   Icons.delete_outline_rounded,
                                   color: scheme.error,
@@ -532,7 +544,7 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                                 onTap: () => _editQuantitySheet(entry),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    vertical: AppSpacing.sm + AppSpacing.xxs,
+                                    vertical: AppSpacing.sm + 2,
                                   ),
                                   child: Row(
                                     children: [
@@ -549,7 +561,7 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                                                   ),
                                             ),
                                             Text(
-                                              '${AppFormatters.rateDecimal(entry.log.quantity)} x ${entry.item.servingDesc}',
+                                              '${AppFormatters.rateDecimal(entry.log.quantity)} x ${entry.item.servingDesc} • P ${AppFormatters.compactDecimal(entry.totalProtein)}g',
                                               style: textTheme.bodySmall
                                                   ?.copyWith(
                                                     color:
@@ -559,11 +571,27 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                                           ],
                                         ),
                                       ),
-                                      Text(
-                                        AppFormatters.calories(
-                                          entry.totalCalories,
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: AppSpacing.sm + 2,
+                                          vertical: 4,
                                         ),
-                                        style: textTheme.labelLarge,
+                                        decoration: BoxDecoration(
+                                          color: semantic.surfaceMuted,
+                                          borderRadius: BorderRadius.circular(
+                                            AppSpacing.pillRadius,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          AppFormatters.calories(
+                                            entry.totalCalories,
+                                          ),
+                                          style: textTheme.labelMedium
+                                              ?.copyWith(
+                                                color: scheme.onSurface,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -592,8 +620,8 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
   }
 }
 
-class _CalorieSideStat extends StatelessWidget {
-  const _CalorieSideStat({
+class _DarkCalorieSideStat extends StatelessWidget {
+  const _DarkCalorieSideStat({
     required this.label,
     required this.kcal,
     required this.alignEnd,
@@ -614,27 +642,34 @@ class _CalorieSideStat extends StatelessWidget {
       children: [
         Text(
           label,
-          style: textTheme.labelSmall?.copyWith(color: semantic.textSecondary),
+          style: textTheme.labelSmall?.copyWith(color: semantic.heroCardMuted),
         ),
         const SizedBox(height: AppSpacing.xxs),
         FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
             AppFormatters.integer(kcal),
-            style: AppTextStyles.tabularValue(context, fontSize: 18),
+            style: AppTextStyles.tabularValue(
+              context,
+              fontSize: 19,
+              color: semantic.heroCardFg,
+            ),
           ),
         ),
         Text(
           AppStrings.unitKcal,
-          style: textTheme.labelSmall?.copyWith(color: semantic.textSecondary),
+          style: textTheme.labelSmall?.copyWith(
+            color: semantic.heroCardMuted,
+            fontSize: 10.5,
+          ),
         ),
       ],
     );
   }
 }
 
-class _MacroProgressBar extends StatelessWidget {
-  const _MacroProgressBar({
+class _MacroBreakdownTile extends StatelessWidget {
+  const _MacroBreakdownTile({
     required this.label,
     required this.consumedGrams,
     required this.targetGrams,
@@ -654,39 +689,69 @@ class _MacroProgressBar extends StatelessWidget {
         ? 0.0
         : (consumedGrams / targetGrams).clamp(0.0, 1.0);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: textTheme.labelMedium),
-        const SizedBox(height: AppSpacing.xs),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
-          child: TweenAnimationBuilder<double>(
-            tween: Tween<double>(begin: 0, end: ratio),
-            duration: MotionUtils.duration(context, AppSpacing.animNormal),
-            curve: Curves.easeOutCubic,
-            builder: (context, val, _) {
-              return LinearProgressIndicator(
-                value: val,
-                minHeight: 7,
-                backgroundColor: semantic.surfaceMuted,
-                valueColor: AlwaysStoppedAnimation<Color>(color),
-              );
-            },
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm + 3),
+      decoration: BoxDecoration(
+        color: semantic.heroCardSurface,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd + 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: textTheme.labelSmall?.copyWith(
+                    color: semantic.heroCardMuted,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Text(
+                '${(ratio * 100).round()}%',
+                style: textTheme.labelSmall?.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 10.5,
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          alignment: Alignment.centerLeft,
-          child: Text(
-            '${consumedGrams.round()} / ${targetGrams}g',
-            style: textTheme.labelSmall?.copyWith(
-              color: semantic.textSecondary,
+          const SizedBox(height: 6),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0, end: ratio),
+              duration: MotionUtils.duration(context, AppSpacing.animNormal),
+              curve: Curves.easeOutCubic,
+              builder: (context, val, _) {
+                return LinearProgressIndicator(
+                  value: val,
+                  minHeight: 6,
+                  backgroundColor: semantic.heroCardBg,
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
+                );
+              },
             ),
           ),
-        ),
-      ],
+          const SizedBox(height: 6),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '${consumedGrams.round()} / ${targetGrams}g',
+              style: AppTextStyles.tabularValue(
+                context,
+                fontSize: 13,
+                color: semantic.heroCardFg,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

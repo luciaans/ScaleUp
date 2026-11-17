@@ -43,12 +43,12 @@ class WeightChartCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Segmented filter 7H / 30H / 90H / Semua
+          // Segmented pill filter 7H / 30H / 90H / Semua (gaya kapsul Nixtio)
           Container(
-            padding: const EdgeInsets.all(AppSpacing.xs),
+            padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: semantic.surfaceMuted,
-              borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
+              borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
             ),
             child: Row(
               children: WeightRangeFilter.values.map((filter) {
@@ -69,28 +69,20 @@ class WeightChartCard extends StatelessWidget {
                           AppSpacing.animFast,
                         ),
                         curve: Curves.easeOutCubic,
-                        constraints: const BoxConstraints(minHeight: 40),
+                        constraints: const BoxConstraints(minHeight: 38),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: selected
-                              ? semantic.cardSurface
+                              ? semantic.heroCardBg
                               : semantic.surfaceMuted.withValues(alpha: 0),
                           borderRadius:
-                              BorderRadius.circular(AppSpacing.radiusMd),
-                          boxShadow: selected
-                              ? [
-                                  BoxShadow(
-                                    color: scheme.shadow,
-                                    blurRadius: AppSpacing.xs,
-                                  ),
-                                ]
-                              : null,
+                              BorderRadius.circular(AppSpacing.pillRadius),
                         ),
                         child: Text(
                           filter.label,
                           style: textTheme.labelLarge?.copyWith(
                             color: selected
-                                ? scheme.primary
+                                ? semantic.heroAccent
                                 : semantic.textSecondary,
                           ),
                         ),

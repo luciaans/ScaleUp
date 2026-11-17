@@ -370,49 +370,71 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Center(
-          child: Semantics(
-            label: 'Logo ScaleUp',
-            image: true,
-            child: Image.asset(
-              'assets/branding/scaleup_logo.png',
-              width: 96,
-              height: 96,
-              errorBuilder: (_, _, _) => Container(
-                width: 96,
-                height: 96,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: scheme.primaryContainer,
+        HeroBentoCard(
+          accentGlowColor: semantic.heroAccent,
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm + 4,
+                  vertical: 5,
                 ),
-                child: Icon(
-                  Icons.trending_up_rounded,
-                  size: AppSpacing.iconHero,
-                  color: scheme.primary,
+                decoration: BoxDecoration(
+                  color: semantic.heroCardSurface,
+                  borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
+                ),
+                child: Text(
+                  'Smart Nutrition & Weight Tracker',
+                  style: textTheme.labelSmall?.copyWith(
+                    color: semantic.heroAccent,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(height: AppSpacing.md),
+              Semantics(
+                label: 'Logo ScaleUp',
+                image: true,
+                child: Image.asset(
+                  'assets/branding/scaleup_logo.png',
+                  width: 84,
+                  height: 84,
+                  errorBuilder: (_, _, _) => Container(
+                    width: 84,
+                    height: 84,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: semantic.heroCardSurface,
+                    ),
+                    child: Icon(
+                      Icons.trending_up_rounded,
+                      size: AppSpacing.iconHero,
+                      color: semantic.heroAccent,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                'Selamat Datang di ${AppStrings.appName}',
+                style: textTheme.headlineMedium?.copyWith(
+                  color: semantic.heroCardFg,
+                  fontWeight: FontWeight.w800,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                AppStrings.appTagline,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: semantic.heroCardMuted,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
-        Center(
-          child: Text(
-            'Selamat Datang di ${AppStrings.appName}',
-            style: textTheme.headlineMedium,
-            textAlign: TextAlign.center,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Center(
-          child: Text(
-            AppStrings.appTagline,
-            style: textTheme.bodyLarge?.copyWith(
-              color: semantic.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.xl),
         _FeatureHighlightRow(
           icon: Icons.monitor_weight_rounded,
           color: scheme.secondary,
@@ -941,14 +963,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
         const SizedBox(height: AppSpacing.md),
         if (validation.isValid)
-          AppCard(
-            backgroundColor: semantic.surfaceMuted,
+          HeroBentoCard(
+            accentGlowColor: semantic.heroAccent,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Estimasi Rencana Harianmu',
-                  style: textTheme.titleMedium,
+                  style: textTheme.titleMedium?.copyWith(
+                    color: semantic.heroCardFg,
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 FittedBox(
@@ -963,14 +987,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         style: AppTextStyles.heroNumber(
                           context,
                           fontSize: AppSpacing.heroNumberMd,
-                          color: scheme.primary,
+                          color: semantic.heroAccent,
                         ),
                       ),
                       const SizedBox(width: AppSpacing.xs),
                       Text(
                         '${AppStrings.unitKcal} / hari',
                         style: textTheme.titleSmall?.copyWith(
-                          color: semantic.textSecondary,
+                          color: semantic.heroCardMuted,
                         ),
                       ),
                     ],
@@ -990,7 +1014,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     Text(
                       'Karbo ${plan.carbsGrams}g',
                       style: textTheme.labelMedium?.copyWith(
-                        color: semantic.carbsColor,
+                        color: semantic.heroAccent,
                       ),
                     ),
                     Text(
@@ -1004,20 +1028,22 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 if (_goalType != GoalType.maintain &&
                     plan.estimatedTargetDate != null) ...[
                   const SizedBox(height: AppSpacing.sm),
-                  const Divider(),
+                  Divider(color: semantic.dockBorder),
                   const SizedBox(height: AppSpacing.sm),
                   Row(
                     children: [
                       Icon(
                         Icons.event_available_rounded,
                         size: AppSpacing.iconSm,
-                        color: scheme.secondary,
+                        color: semantic.heroAccent,
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: Text(
                           'Estimasi tercapai: ${AppFormatters.mediumDate(plan.estimatedTargetDate!)}',
-                          style: textTheme.labelLarge,
+                          style: textTheme.labelLarge?.copyWith(
+                            color: semantic.heroCardFg,
+                          ),
                         ),
                       ),
                     ],

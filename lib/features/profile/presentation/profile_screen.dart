@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/empty_state.dart';
@@ -17,8 +18,7 @@ import '../domain/active_nutrition_plan.dart';
 import 'widgets/edit_goal_sheet.dart';
 import 'widgets/edit_profile_sheet.dart';
 
-/// Layar Profil, Tujuan Aktif, Riwayat Tujuan, dan Disclaimer Kesehatan (Fase 2;
-/// Pengaturan lengkap & Ekspor CSV ditambahkan pada Fase 5).
+/// Layar Profil, Identitas Metabolik, Tujuan & Pengaturan bergaya Bento (Nixtio).
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
@@ -44,9 +44,9 @@ class ProfileScreen extends ConsumerWidget {
             AppSpacing.bottomNavClearance,
           ),
           children: const [
-            SkeletonBox(height: 148),
+            SkeletonBox(height: 170),
             SizedBox(height: AppSpacing.md),
-            SkeletonBox(height: 180),
+            SkeletonBox(height: 185),
           ],
         ),
         error: (_, _) => const Center(
@@ -80,11 +80,6 @@ class ProfileScreen extends ConsumerWidget {
             GoalType.gain => semantic.goalGain,
             GoalType.maintain => semantic.goalMaintain,
           };
-          final goalContainer = switch (plan.goalType) {
-            GoalType.lose => semantic.goalLoseContainer,
-            GoalType.gain => semantic.goalGainContainer,
-            GoalType.maintain => semantic.goalMaintainContainer,
-          };
 
           final pastGoals = (historyAsync.value ?? const [])
               .where((g) => !g.isActive)
@@ -93,25 +88,38 @@ class ProfileScreen extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.fromLTRB(
               AppSpacing.md,
-              AppSpacing.sm,
+              AppSpacing.xs,
               AppSpacing.md,
               AppSpacing.bottomNavClearance,
             ),
             children: [
-              // Kartu Profil Diri
-              AppCard(
+              // HERO OBSIDIAN IDENTITY & METABOLIC CARD
+              HeroBentoCard(
+                accentGlowColor: semantic.heroAccent,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        CircleAvatar(
-                          radius: AppSpacing.lg,
-                          backgroundColor: scheme.primaryContainer,
-                          child: Text(
-                            plan.profile.name.characters.first.toUpperCase(),
-                            style: textTheme.headlineSmall?.copyWith(
-                              color: scheme.primary,
+                        Container(
+                          width: 54,
+                          height: 54,
+                          padding: const EdgeInsets.all(2.5),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: semantic.heroAccent,
+                              width: AppSpacing.borderThick,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            backgroundColor: semantic.heroCardSurface,
+                            child: Text(
+                              plan.profile.name.characters.first.toUpperCase(),
+                              style: textTheme.headlineSmall?.copyWith(
+                                color: semantic.heroAccent,
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
                           ),
                         ),
@@ -122,19 +130,31 @@ class ProfileScreen extends ConsumerWidget {
                             children: [
                               Text(
                                 plan.profile.name,
-                                style: textTheme.titleLarge,
+                                style: textTheme.titleLarge?.copyWith(
+                                  color: semantic.heroCardFg,
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
-                              const SizedBox(height: AppSpacing.xxs),
+                              const SizedBox(height: 2),
                               Text(
-                                '${plan.gender.label} • ${plan.ageYears} tahun • ${AppFormatters.compactDecimal(plan.profile.heightCm)} cm',
+                                '${plan.gender.label} • ${plan.ageYears} th • ${AppFormatters.compactDecimal(plan.profile.heightCm)} cm',
                                 style: textTheme.bodySmall?.copyWith(
-                                  color: semantic.textSecondary,
+                                  color: semantic.heroCardMuted,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        TextButton.icon(
+                        FilledButton.tonalIcon(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: semantic.heroCardSurface,
+                            foregroundColor: semantic.heroAccent,
+                            shape: const StadiumBorder(),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm + 4,
+                              vertical: AppSpacing.xs,
+                            ),
+                          ),
                           onPressed: () async {
                             final updated = await EditProfileSheet.show(
                               context,
@@ -151,29 +171,34 @@ class ProfileScreen extends ConsumerWidget {
                                 );
                             }
                           },
-                          icon: const Icon(Icons.edit_outlined, size: 18),
+                          icon: const Icon(Icons.edit_outlined, size: 16),
                           label: const Text(AppStrings.edit),
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppSpacing.md),
-                    const Divider(),
-                    const SizedBox(height: AppSpacing.sm),
-                    Wrap(
-                      spacing: AppSpacing.md,
-                      runSpacing: AppSpacing.xs,
+                    const SizedBox(height: AppSpacing.md + 2),
+                    Row(
                       children: [
-                        _MiniProfileBadge(
-                          label: 'Aktivitas',
-                          value: plan.activityLevel.label,
+                        Expanded(
+                          child: _DarkProfilePod(
+                            label: 'Aktivitas',
+                            value: plan.activityLevel.label,
+                          ),
                         ),
-                        _MiniProfileBadge(
-                          label: 'BMR',
-                          value: AppFormatters.calories(plan.caloriePlan.bmr),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: _DarkProfilePod(
+                            label: 'BMR',
+                            value: AppFormatters.calories(plan.caloriePlan.bmr),
+                          ),
                         ),
-                        _MiniProfileBadge(
-                          label: 'TDEE',
-                          value: AppFormatters.calories(plan.caloriePlan.tdee),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: _DarkProfilePod(
+                            label: 'TDEE',
+                            value:
+                                AppFormatters.calories(plan.caloriePlan.tdee),
+                          ),
                         ),
                       ],
                     ),
@@ -182,10 +207,9 @@ class ProfileScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpacing.md),
 
-              // Kartu Tujuan Aktif (warna aksen sesuai jenis tujuan)
+              // Kartu Tujuan Aktif Bento
               AppCard(
-                backgroundColor: goalContainer.withValues(alpha: 0.55),
-                borderColor: goalAccent.withValues(alpha: 0.45),
+                borderColor: goalAccent.withValues(alpha: 0.35),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -193,11 +217,11 @@ class ProfileScreen extends ConsumerWidget {
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.sm + AppSpacing.xs,
-                            vertical: AppSpacing.xs,
+                            horizontal: AppSpacing.sm + 4,
+                            vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: goalAccent.withValues(alpha: 0.16),
+                            color: goalAccent.withValues(alpha: 0.14),
                             borderRadius:
                                 BorderRadius.circular(AppSpacing.pillRadius),
                           ),
@@ -205,6 +229,7 @@ class ProfileScreen extends ConsumerWidget {
                             'Tujuan Aktif',
                             style: textTheme.labelMedium?.copyWith(
                               color: goalAccent,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
@@ -222,17 +247,22 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(plan.goalType.label, style: textTheme.headlineSmall),
+                    const SizedBox(height: AppSpacing.sm + 4),
+                    Text(
+                      plan.goalType.label,
+                      style: textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
                       plan.goalType == GoalType.maintain
-                          ? 'Menjaga di sekitar ${AppFormatters.weight(plan.goal.targetWeight, unit: unit)} • Target ${AppFormatters.calories(plan.caloriePlan.targetCalories)}/hari'
-                          : 'Dari ${AppFormatters.weight(plan.goal.startWeight, unit: unit)} -> Target ${AppFormatters.weight(plan.goal.targetWeight, unit: unit)}',
+                          ? 'Menjaga di sekitar ${AppFormatters.weight(plan.goal.targetWeight, unit: unit)} • ${AppFormatters.calories(plan.caloriePlan.targetCalories)}/hari'
+                          : '${AppFormatters.weight(plan.goal.startWeight, unit: unit)} menuju ${AppFormatters.weight(plan.goal.targetWeight, unit: unit)}',
                       style: textTheme.bodyMedium,
                     ),
                     if (plan.goalType != GoalType.maintain) ...[
-                      const SizedBox(height: AppSpacing.xs),
+                      const SizedBox(height: AppSpacing.xxs),
                       Text(
                         'Kecepatan ${AppFormatters.rateDecimal(plan.caloriePlan.effectiveWeeklyRateKg)} kg/minggu • Target ${AppFormatters.calories(plan.caloriePlan.targetCalories)}/hari',
                         style: textTheme.bodySmall?.copyWith(
@@ -363,8 +393,8 @@ class ProfileScreen extends ConsumerWidget {
   }
 }
 
-class _MiniProfileBadge extends StatelessWidget {
-  const _MiniProfileBadge({
+class _DarkProfilePod extends StatelessWidget {
+  const _DarkProfilePod({
     required this.label,
     required this.value,
   });
@@ -374,18 +404,45 @@ class _MiniProfileBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     final semantic = context.semanticColors;
+    final textTheme = Theme.of(context).textTheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: textTheme.labelSmall?.copyWith(color: semantic.textSecondary),
-        ),
-        Text(value, style: textTheme.labelLarge),
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm + 2,
+        vertical: AppSpacing.sm + 2,
+      ),
+      decoration: BoxDecoration(
+        color: semantic.heroCardSurface,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: textTheme.labelSmall?.copyWith(
+              color: semantic.heroCardMuted,
+              fontSize: 10.5,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 3),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              style: AppTextStyles.tabularValue(
+                context,
+                fontSize: 13.5,
+                color: semantic.heroCardFg,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

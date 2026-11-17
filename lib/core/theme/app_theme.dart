@@ -1,18 +1,18 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../constants/app_spacing.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
 
-/// Konfigurasi ThemeData Material 3 untuk Light & Dark mode tema "Fresh Health".
+/// Konfigurasi ThemeData bergaya studio modern (Bento cards, Pill buttons, Soft surfaces).
 abstract final class AppTheme {
   static ThemeData get lightTheme => _buildTheme(
         colorScheme: AppColors.lightColorScheme,
         semanticColors: AppSemanticColors.light,
         overlayStyle: SystemUiOverlayStyle.dark.copyWith(
           statusBarColor: AppColors.lightBackground.withValues(alpha: 0),
-          systemNavigationBarColor: AppColors.lightSurface,
+          systemNavigationBarColor: AppColors.lightBackground,
           systemNavigationBarIconBrightness: Brightness.dark,
         ),
       );
@@ -22,7 +22,7 @@ abstract final class AppTheme {
         semanticColors: AppSemanticColors.dark,
         overlayStyle: SystemUiOverlayStyle.light.copyWith(
           statusBarColor: AppColors.darkBackground.withValues(alpha: 0),
-          systemNavigationBarColor: AppColors.darkSurface,
+          systemNavigationBarColor: AppColors.darkBackground,
           systemNavigationBarIconBrightness: Brightness.light,
         ),
       );
@@ -48,11 +48,14 @@ abstract final class AppTheme {
         backgroundColor: semanticColors.background,
         foregroundColor: colorScheme.onSurface,
         elevation: 0,
-        scrolledUnderElevation: 0.5,
+        scrolledUnderElevation: 0,
         surfaceTintColor: colorScheme.surface.withValues(alpha: 0),
         centerTitle: false,
         systemOverlayStyle: overlayStyle,
-        titleTextStyle: textTheme.headlineSmall,
+        titleTextStyle: textTheme.headlineSmall?.copyWith(
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.4,
+        ),
       ),
       cardTheme: CardThemeData(
         color: semanticColors.cardSurface,
@@ -60,26 +63,23 @@ abstract final class AppTheme {
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-          side: BorderSide(
-            color: colorScheme.outlineVariant,
-            width: AppSpacing.borderThin,
-          ),
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: semanticColors.cardSurface,
-        indicatorColor: colorScheme.primaryContainer,
+        backgroundColor: semanticColors.dockBg.withValues(alpha: 0),
+        indicatorColor: semanticColors.dockActivePill,
         indicatorShape: const StadiumBorder(),
         elevation: 0,
-        height: 68,
+        height: 64,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final isSelected = states.contains(WidgetState.selected);
           return textTheme.labelSmall?.copyWith(
+            fontSize: 10.5,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
             color: isSelected
-                ? colorScheme.primary
-                : semanticColors.textSecondary,
+                ? semanticColors.dockActiveFg
+                : semanticColors.dockInactiveFg,
           );
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
@@ -87,8 +87,8 @@ abstract final class AppTheme {
           return IconThemeData(
             size: AppSpacing.iconMd,
             color: isSelected
-                ? colorScheme.onPrimaryContainer
-                : semanticColors.textSecondary,
+                ? semanticColors.dockActiveFg
+                : semanticColors.dockInactiveFg,
           );
         }),
       ),
@@ -117,9 +117,7 @@ abstract final class AppTheme {
             horizontal: AppSpacing.lg,
             vertical: AppSpacing.md,
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
-          ),
+          shape: const StadiumBorder(),
           textStyle: textTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.w700,
           ),
@@ -137,9 +135,7 @@ abstract final class AppTheme {
             horizontal: AppSpacing.lg,
             vertical: AppSpacing.md,
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
-          ),
+          shape: const StadiumBorder(),
           textStyle: textTheme.labelLarge,
         ),
       ),
@@ -150,26 +146,40 @@ abstract final class AppTheme {
             AppSpacing.minTouchTarget,
             AppSpacing.minTouchTarget,
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
-          ),
+          shape: const StadiumBorder(),
           textStyle: textTheme.labelLarge,
+        ),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: semanticColors.surfaceMuted,
+        selectedColor: semanticColors.heroCardBg,
+        secondarySelectedColor: semanticColors.heroCardBg,
+        labelStyle: textTheme.labelMedium!,
+        secondaryLabelStyle: textTheme.labelMedium!.copyWith(
+          color: semanticColors.heroAccent,
+          fontWeight: FontWeight.w700,
+        ),
+        side: BorderSide.none,
+        shape: const StadiumBorder(),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm + AppSpacing.xs,
+          vertical: AppSpacing.xs,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: semanticColors.surfaceMuted,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
+          horizontal: AppSpacing.md + AppSpacing.xs,
           vertical: AppSpacing.md,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
-          borderSide: BorderSide(color: colorScheme.outlineVariant),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
-          borderSide: BorderSide(color: colorScheme.outlineVariant),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
@@ -195,9 +205,9 @@ abstract final class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: colorScheme.inverseSurface,
+        backgroundColor: semanticColors.heroCardBg,
         contentTextStyle: textTheme.bodyMedium?.copyWith(
-          color: colorScheme.onInverseSurface,
+          color: semanticColors.heroCardFg,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
@@ -209,9 +219,9 @@ abstract final class AppTheme {
         space: AppSpacing.borderThin,
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-        elevation: 3,
+        backgroundColor: semanticColors.heroAccent,
+        foregroundColor: AppColors.darkOnPrimary,
+        elevation: 0,
         shape: const CircleBorder(),
       ),
     );

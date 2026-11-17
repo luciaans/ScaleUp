@@ -110,7 +110,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('64,6'), findsWidgets);
 
-    await tester.drag(find.byType(ListView).first, const Offset(0, -400));
+    await tester.drag(find.byType(ListView).first, const Offset(0, -650));
     await tester.pumpAndSettle();
     expect(find.text('Setelah jalan pagi'), findsOneWidget);
 

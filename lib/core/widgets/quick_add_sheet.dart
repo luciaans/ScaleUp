@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../constants/app_spacing.dart';
 import '../constants/app_strings.dart';
@@ -7,13 +7,12 @@ import '../theme/app_colors.dart';
 import '../utils/reduce_motion.dart';
 import 'app_card.dart';
 
-/// Pilihan aksi dari Bottom Sheet "Catat Cepat".
 enum QuickAddChoice {
   weight,
   food,
 }
 
-/// Bottom sheet "Catat Cepat" dengan dua pilihan aksi beranimasi stagger.
+/// Bottom sheet "Catat Cepat" bergaya Bento Action Cards Nixtio.
 class QuickAddSheet extends StatelessWidget {
   const QuickAddSheet({super.key});
 
@@ -34,41 +33,132 @@ class QuickAddSheet extends StatelessWidget {
     final scheme = context.colorScheme;
     final reduceMotion = MotionUtils.shouldReduceMotion(context);
 
-    Widget weightTile = _QuickActionTile(
-      icon: Icons.monitor_weight_rounded,
-      accentColor: scheme.secondary,
-      title: AppStrings.quickAddWeightTitle,
-      subtitle: AppStrings.quickAddWeightSubtitle,
+    Widget weightCard = HeroBentoCard(
+      accentGlowColor: scheme.secondary,
       onTap: () => Navigator.of(context).pop(QuickAddChoice.weight),
+      padding: const EdgeInsets.all(AppSpacing.md + AppSpacing.xs),
+      child: Row(
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: scheme.secondary.withValues(alpha: 0.2),
+            ),
+            child: Icon(
+              Icons.monitor_weight_rounded,
+              color: scheme.secondary,
+              size: AppSpacing.iconMd + 2,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppStrings.quickAddWeightTitle,
+                  style: textTheme.titleMedium?.copyWith(
+                    color: semantic.heroCardFg,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xxs),
+                Text(
+                  AppStrings.quickAddWeightSubtitle,
+                  style: textTheme.bodySmall?.copyWith(
+                    color: semantic.heroCardMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: semantic.heroCardSurface,
+            ),
+            child: Icon(
+              Icons.north_east_rounded,
+              size: 18,
+              color: semantic.heroAccent,
+            ),
+          ),
+        ],
+      ),
     );
 
-    Widget foodTile = _QuickActionTile(
-      icon: Icons.restaurant_rounded,
-      accentColor: scheme.tertiary,
-      title: AppStrings.quickAddFoodTitle,
-      subtitle: AppStrings.quickAddFoodSubtitle,
+    Widget foodCard = AppCard(
+      backgroundColor: semantic.surfaceMuted,
       onTap: () => Navigator.of(context).pop(QuickAddChoice.food),
+      padding: const EdgeInsets.all(AppSpacing.md + AppSpacing.xs),
+      child: Row(
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: scheme.tertiary.withValues(alpha: 0.16),
+            ),
+            child: Icon(
+              Icons.local_dining_rounded,
+              color: scheme.tertiary,
+              size: AppSpacing.iconMd + 2,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppStrings.quickAddFoodTitle,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xxs),
+                Text(
+                  AppStrings.quickAddFoodSubtitle,
+                  style: textTheme.bodySmall?.copyWith(
+                    color: semantic.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: semantic.cardSurface,
+            ),
+            child: Icon(
+              Icons.north_east_rounded,
+              size: 18,
+              color: scheme.onSurface,
+            ),
+          ),
+        ],
+      ),
     );
 
     if (!reduceMotion) {
-      weightTile = weightTile
+      weightCard = weightCard
           .animate()
           .fadeIn(duration: AppSpacing.animNormal, curve: Curves.easeOutCubic)
-          .slideY(
-            begin: 0.12,
-            end: 0,
-            duration: AppSpacing.animNormal,
-            curve: Curves.easeOutCubic,
-          );
-      foodTile = foodTile
+          .slideY(begin: 0.10, end: 0, duration: AppSpacing.animNormal);
+      foodCard = foodCard
           .animate(delay: AppSpacing.staggerDelay)
           .fadeIn(duration: AppSpacing.animNormal, curve: Curves.easeOutCubic)
-          .slideY(
-            begin: 0.12,
-            end: 0,
-            duration: AppSpacing.animNormal,
-            curve: Curves.easeOutCubic,
-          );
+          .slideY(begin: 0.10, end: 0, duration: AppSpacing.animNormal);
     }
 
     return SafeArea(
@@ -85,7 +175,7 @@ class QuickAddSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(AppStrings.quickAddTitle, style: textTheme.headlineSmall),
-            const SizedBox(height: AppSpacing.xs),
+            const SizedBox(height: AppSpacing.xxs),
             Text(
               AppStrings.quickAddSubtitle,
               style: textTheme.bodyMedium?.copyWith(
@@ -93,73 +183,11 @@ class QuickAddSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-            weightTile,
-            const SizedBox(height: AppSpacing.md),
-            foodTile,
+            weightCard,
+            const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
+            foodCard,
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _QuickActionTile extends StatelessWidget {
-  const _QuickActionTile({
-    required this.icon,
-    required this.accentColor,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final Color accentColor;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final semantic = context.semanticColors;
-
-    return AppCard(
-      onTap: onTap,
-      padding: const EdgeInsets.all(AppSpacing.md),
-      semanticLabel: '$title. $subtitle',
-      child: Row(
-        children: [
-          Container(
-            width: AppSpacing.minTouchTarget,
-            height: AppSpacing.minTouchTarget,
-            decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
-            ),
-            child: Icon(icon, color: accentColor, size: AppSpacing.iconMd),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: textTheme.titleMedium),
-                const SizedBox(height: AppSpacing.xxs),
-                Text(
-                  subtitle,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: semantic.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Icon(
-            Icons.chevron_right_rounded,
-            color: semantic.textSecondary,
-          ),
-        ],
       ),
     );
   }

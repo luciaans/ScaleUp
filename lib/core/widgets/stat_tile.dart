@@ -5,7 +5,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import 'app_card.dart';
 
-/// Tile metrik ringkas yang responsif terhadap layar sempit (360dp) dan skala teks 1.3x.
+/// Bento Metric Tile khas Nixtio: ikon kapsul bulat di atas, nilai besar bertabular di bawah.
 class StatTile extends StatelessWidget {
   const StatTile({
     super.key,
@@ -42,10 +42,11 @@ class StatTile extends StatelessWidget {
             children: [
               if (icon != null) ...[
                 Container(
-                  padding: const EdgeInsets.all(AppSpacing.xs + AppSpacing.xxs),
+                  width: 34,
+                  height: 34,
                   decoration: BoxDecoration(
+                    shape: BoxShape.circle,
                     color: effectiveAccent.withValues(alpha: 0.14),
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                   ),
                   child: Icon(
                     icon,
@@ -65,17 +66,17 @@ class StatTile extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
             child: Text(
               value,
-              style: AppTextStyles.tabularValue(context, fontSize: 20),
+              style: AppTextStyles.tabularValue(context, fontSize: 21),
             ),
           ),
           if (subtitle != null) ...[
-            const SizedBox(height: AppSpacing.xs),
+            const SizedBox(height: AppSpacing.xxs),
             Text(
               subtitle!,
               style: textTheme.bodySmall?.copyWith(
