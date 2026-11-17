@@ -1,4 +1,5 @@
 import 'package:cupertino_ui/cupertino_ui.dart' show GlobalCupertinoLocalizations;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'
     show GlobalWidgetsLocalizations;
@@ -7,6 +8,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'core/constants/app_constants.dart';
+import 'core/constants/app_spacing.dart';
 import 'core/constants/app_strings.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_colors.dart';
@@ -65,12 +67,52 @@ class ScaleUpApp extends ConsumerWidget {
               isDark ? Brightness.light : Brightness.dark,
         );
 
+        Widget content = child ?? const SizedBox.shrink();
+
+        // Pada preview Web lebar (mis. panel preview Orca / desktop browser),
+        // tampilkan dalam bingkai proporsi ponsel portrait (412dp) agar realistis.
+        if (kIsWeb && mq.size.width > 500) {
+          const mobileWidth = 412.0;
+          final frameBg = isDark
+              ? AppColors.darkBackground
+              : AppColors.lightSurfaceVariant;
+          final borderColor =
+              isDark ? AppColors.darkOutlineStrong : AppColors.lightOutlineStrong;
+
+          content = ColoredBox(
+            color: frameBg,
+            child: Center(
+              child: Container(
+                width: mobileWidth,
+                margin: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppSpacing.sheetTopRadius),
+                  border: Border.all(
+                    color: borderColor,
+                    width: AppSpacing.borderMedium,
+                  ),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: MediaQuery(
+                  data: mq.copyWith(
+                    size: Size(mobileWidth, mq.size.height - AppSpacing.md),
+                    textScaler: clampedScaler,
+                  ),
+                  child: content,
+                ),
+              ),
+            ),
+          );
+        } else {
+          content = MediaQuery(
+            data: mq.copyWith(textScaler: clampedScaler),
+            child: content,
+          );
+        }
+
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: overlayStyle,
-          child: MediaQuery(
-            data: mq.copyWith(textScaler: clampedScaler),
-            child: child ?? const SizedBox.shrink(),
-          ),
+          child: content,
         );
       },
       routerConfig: router,

@@ -59,8 +59,11 @@ flutter analyze
 # 4. Jalankan seluruh unit test & widget test
 flutter test
 
-# 5. Jalankan aplikasi di perangkat/emulator
+# 5. Jalankan aplikasi di perangkat/emulator Android/iOS
 flutter run
+
+# 6. Atau jalankan server preview lokal (mis. untuk Preview di Orca / Browser)
+flutter run -d web-server --web-hostname 127.0.0.1 --web-port 8080
 ```
 
 ---

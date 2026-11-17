@@ -1,9 +1,7 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:csv/csv.dart';
 import 'package:drift/drift.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -13,7 +11,7 @@ import '../../calories/domain/calorie_models.dart';
 
 part 'csv_export_service.g.dart';
 
-/// Layanan ekspor riwayat berat & log makanan ke format CSV standar.
+/// Layanan ekspor riwayat berat & log makanan ke format CSV standar (mendukung Mobile & Web).
 class CsvExportService {
   const CsvExportService(this._db);
 
@@ -73,8 +71,8 @@ class CsvExportService {
     return csv.encode(rows);
   }
 
-  /// Mengumpulkan seluruh data dari SQLite, menulis file CSV sementara, dan membuka Share Sheet.
-  Future<File> exportAndShareCsv() async {
+  /// Mengumpulkan seluruh data dari SQLite dan membagikan / mengunduh file CSV.
+  Future<void> exportAndShareCsv() async {
     final weights = await (_db.select(_db.weightEntries)
           ..orderBy([(t) => OrderingTerm.desc(t.date)]))
         .get();
@@ -102,21 +100,25 @@ class CsvExportService {
       foodLogs: foodLogs,
     );
 
-    final tempDir = await getTemporaryDirectory();
     final dateStamp =
         AppDateUtils.toIsoDateKey(AppDateUtils.today()).replaceAll('-', '');
-    final file = File(p.join(tempDir.path, 'scaleup_data_$dateStamp.csv'));
-    await file.writeAsString(csvString, flush: true);
+    final fileName = 'scaleup_data_$dateStamp.csv';
+    final csvBytes = Uint8List.fromList(utf8.encode(csvString));
 
     await SharePlus.instance.share(
       ShareParams(
-        files: [XFile(file.path)],
+        files: [
+          XFile.fromData(
+            csvBytes,
+            mimeType: 'text/csv',
+            name: fileName,
+          ),
+        ],
+        fileNameOverrides: [fileName],
         subject: 'Ekspor Data ScaleUp ($dateStamp)',
         text: 'Berikut data pencatatan berat badan dan kalori harian dari ScaleUp.',
       ),
     );
-
-    return file;
   }
 }
 
