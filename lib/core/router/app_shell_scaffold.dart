@@ -1,9 +1,9 @@
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../features/calories/presentation/widgets/food_picker_sheet.dart';
 import '../../features/weight/presentation/widgets/weight_input_sheet.dart';
 import '../constants/app_spacing.dart';
-import '../constants/app_strings.dart';
 import '../utils/reduce_motion.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/quick_add_sheet.dart';
@@ -105,12 +105,7 @@ class _AppShellScaffoldState extends State<AppShellScaffold>
       if (widget.onQuickAddFood != null) {
         widget.onQuickAddFood!();
       } else {
-        widget.navigationShell.goBranch(2);
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            const SnackBar(content: Text(AppStrings.quickAddFoodTitle)),
-          );
+        await FoodPickerSheet.show(context);
       }
     }
   }
