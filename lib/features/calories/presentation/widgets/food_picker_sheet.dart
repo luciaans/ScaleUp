@@ -9,6 +9,7 @@ import '../../../../core/utils/formatters.dart';
 import '../../../../core/utils/reduce_motion.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/empty_state.dart';
+import '../../../../core/widgets/mochi_companion.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../data/database/app_database.dart';
 import '../../data/calories_repository.dart';
@@ -163,6 +164,12 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             child: Row(
               children: [
+                const MochiCompanion(
+                  pose: MochiPose.chef,
+                  size: 40,
+                  showFramedBadge: true,
+                ),
+                const SizedBox(width: AppSpacing.sm + 2),
                 Expanded(
                   child: Text(
                     'Tambah Makanan',

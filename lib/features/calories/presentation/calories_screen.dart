@@ -686,7 +686,7 @@ class _DarkCalorieSideStat extends StatelessWidget {
           AppStrings.unitKcal,
           style: textTheme.labelSmall?.copyWith(
             color: semantic.heroCardMuted,
-            fontSize: 10.5,
+            fontSize: 12,
           ),
         ),
       ],
@@ -739,9 +739,9 @@ class _MacroBreakdownTile extends StatelessWidget {
               Text(
                 '${(ratio * 100).round()}%',
                 style: textTheme.labelSmall?.copyWith(
-                  color: color,
+                  color: semantic.heroCardFg,
                   fontWeight: FontWeight.w700,
-                  fontSize: 10.5,
+                  fontSize: 12,
                 ),
               ),
             ],

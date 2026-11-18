@@ -253,26 +253,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                         child: Row(
                           children: [
-                            GestureDetector(
-                              onTap: () => context.go(AppRoutes.profile),
-                              child: Container(
-                                width: 46,
-                                height: 46,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: scheme.primaryContainer,
-                                  border: Border.all(
-                                    color: scheme.onSurface,
-                                    width: AppSpacing.borderMedium,
+                            Semantics(
+                              button: true,
+                              label: 'Buka profil pengguna',
+                              child: GestureDetector(
+                                onTap: () => context.go(AppRoutes.profile),
+                                child: Container(
+                                  width: AppSpacing.minTouchTarget,
+                                  height: AppSpacing.minTouchTarget,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: scheme.primaryContainer,
+                                    border: Border.all(
+                                      color: scheme.onSurface,
+                                      width: AppSpacing.borderMedium,
+                                    ),
                                   ),
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  plan.profile.name.characters.first
-                                      .toUpperCase(),
-                                  style: textTheme.titleMedium?.copyWith(
-                                    color: scheme.onSurface,
-                                    fontWeight: FontWeight.w800,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    plan.profile.name.characters.first
+                                        .toUpperCase(),
+                                    style: textTheme.titleMedium?.copyWith(
+                                      color: scheme.onSurface,
+                                      fontWeight: FontWeight.w800,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -513,17 +517,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                           targetDate: today,
                                         ),
                                         customBorder: const CircleBorder(),
-                                        child: Container(
-                                          width: 38,
-                                          height: 38,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: scheme.primary,
-                                          ),
-                                          child: Icon(
-                                            Icons.add_rounded,
-                                            color: scheme.onPrimary,
-                                            size: 20,
+                                        child: SizedBox(
+                                          width: AppSpacing.minTouchTarget,
+                                          height: AppSpacing.minTouchTarget,
+                                          child: Center(
+                                            child: Container(
+                                              width: 40,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: scheme.primary,
+                                              ),
+                                              child: Icon(
+                                                Icons.add_rounded,
+                                                color: scheme.onPrimary,
+                                                size: 20,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -606,7 +616,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                               'terisi',
                                               style: textTheme.labelSmall
                                                   ?.copyWith(
-                                                    fontSize: 10,
+                                                    fontSize: 12,
                                                     color:
                                                         semantic.heroCardMuted,
                                                   ),
@@ -1020,7 +1030,7 @@ class _HeroMacroPod extends StatelessWidget {
                   label,
                   style: textTheme.labelSmall?.copyWith(
                     color: semantic.heroCardMuted,
-                    fontSize: 11,
+                    fontSize: 12,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

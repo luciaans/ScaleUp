@@ -100,7 +100,7 @@ abstract final class AppTextStyles {
         color: secondaryText,
       ),
       labelSmall: bodyFont(
-        fontSize: 11,
+        fontSize: 12,
         fontWeight: FontWeight.w600,
         height: 1.28,
         color: secondaryText,

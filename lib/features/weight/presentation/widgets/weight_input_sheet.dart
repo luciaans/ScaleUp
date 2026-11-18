@@ -11,6 +11,7 @@ import '../../../../core/utils/date_utils_ext.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/utils/reduce_motion.dart';
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/widgets/mochi_companion.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../data/database/app_database.dart';
 import '../../../settings/data/settings_repository.dart';
@@ -192,35 +193,26 @@ class _WeightInputSheetState extends ConsumerState<WeightInputSheet> {
         ),
         child: _showSuccessCheck
             ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxl),
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        width: 72,
-                        height: 72,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: semantic.successContainer,
-                        ),
-                        child: Icon(
-                          Icons.check_rounded,
-                          size: AppSpacing.iconLg + AppSpacing.sm,
-                          color: semantic.success,
-                        ),
+                      const MochiCompanion(
+                        pose: MochiPose.cheer,
+                        size: 112,
                       )
                           .animate()
                           .scale(
-                            begin: const Offset(0.6, 0.6),
+                            begin: const Offset(0.7, 0.7),
                             end: const Offset(1.0, 1.0),
                             duration: AppSpacing.animFast,
                             curve: Curves.easeOutCubic,
                           )
                           .fadeIn(duration: AppSpacing.animFast),
-                      const SizedBox(height: AppSpacing.md),
+                      const SizedBox(height: AppSpacing.sm),
                       Text(
-                        'Berat Tersimpan!',
+                        'Meow! Berat Tersimpan!',
                         style: textTheme.headlineSmall,
                       ),
                     ],
@@ -233,6 +225,12 @@ class _WeightInputSheetState extends ConsumerState<WeightInputSheet> {
                 children: [
                   Row(
                     children: [
+                      const MochiCompanion(
+                        pose: MochiPose.welcome,
+                        size: 42,
+                        showFramedBadge: true,
+                      ),
+                      const SizedBox(width: AppSpacing.sm + 2),
                       Expanded(
                         child: Text(
                           existingForDate != null
@@ -283,7 +281,7 @@ class _WeightInputSheetState extends ConsumerState<WeightInputSheet> {
                                 style: AppTextStyles.heroNumber(
                                   context,
                                   fontSize: AppSpacing.heroNumberLg,
-                                  color: scheme.secondary,
+                                  color: scheme.onSurface,
                                 ),
                               ),
                               const SizedBox(width: AppSpacing.xs),
