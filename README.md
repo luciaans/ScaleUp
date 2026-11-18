@@ -78,9 +78,9 @@ lib/
 ├── core/
 │   ├── constants/                     # Konstanta bisnis, ukuran spacing 8dp, & string Bahasa Indonesia
 │   ├── router/                        # Konfigurasi GoRouter (StatefulShellRoute 4 tab + FAB Catat Cepat)
-│   ├── theme/                         # Palet Fresh Health (Light/Dark), tipografi Plus Jakarta Sans + Inter
+│   ├── theme/                         # Palet Mochi Neko (Milk Paper & Sumi Ink), tipografi Quicksand + Plus Jakarta Sans
 │   ├── utils/                         # Formatter id_ID, konversi kg/lb, tanggal kalender, reduce motion
-│   └── widgets/                       # Design system: AppCard, PrimaryButton, StatTile, ProgressRing,
+│   └── widgets/                       # Design system: AppCard, MochiCompanion, PrimaryButton, StatTile, ProgressRing,
 │                                      # AppBottomNav, SkeletonBox, EmptyState, AnimatedCount, QuickAddSheet
 ├── data/
 │   ├── database/                      # Skema 6 tabel Drift (SQLite), indeks tanggal, & strategi migrasi

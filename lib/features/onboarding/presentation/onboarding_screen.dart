@@ -13,6 +13,7 @@ import '../../../core/utils/formatters.dart';
 import '../../../core/utils/number_parser.dart';
 import '../../../core/utils/reduce_motion.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/mochi_companion.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../profile/data/goal_repository.dart';
 import '../../profile/data/profile_repository.dart';
@@ -21,8 +22,8 @@ import '../../weight/data/weight_repository.dart';
 import '../domain/health_calculator.dart';
 import '../domain/user_enums.dart';
 
-/// Alur Onboarding 4 langkah dengan progress indicator:
-/// (1) Selamat datang + disclaimer kesehatan
+/// Alur Onboarding "Mochi Neko" (Cozy Sumi-Ink & Milk Paper):
+/// (1) Layar Sambutan Hero Maskot Kucing Mochi + catatan kesehatan lembut
 /// (2) Data diri + validasi usia >= 18 thn, tinggi 100-250 cm, berat 25-300 kg
 /// (3) Tingkat aktivitas dengan penjelasan tiap pilihan
 /// (4) Pilih tujuan + pratinjau target kalori & estimasi tanggal tercapai
@@ -120,7 +121,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     setState(() => _step2Error = null);
 
-    // Sesuaikan saran berat target awal jika pengguna belum mengubahnya secara kompatibel
     if (_goalType == GoalType.lose && _parsedTargetWeight >= weightVal!) {
       final minSafe = HealthCalculator.minHealthyWeightForHeight(heightVal!);
       final suggested = (weightVal - 4.0).clamp(minSafe, weightVal - 0.5);
@@ -234,7 +234,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final textTheme = Theme.of(context).textTheme;
     final semantic = context.semanticColors;
     final scheme = context.colorScheme;
-    final progress = (_currentStep + 1) / _totalSteps;
     final animDuration = MotionUtils.duration(context, AppSpacing.animNormal);
 
     final buttonLabel = switch (_currentStep) {
@@ -247,66 +246,130 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header progress indicator 4 langkah
+            // Header: Pada langkah 0 tampil sebagai brand cover header yang manis,
+            // pada langkah 1-3 tampil dengan tombol kembali & indikator kapsul jejak kucing.
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.md,
-                AppSpacing.sm,
+                AppSpacing.sm + 2,
                 AppSpacing.md,
-                AppSpacing.sm,
+                AppSpacing.xs,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      if (_currentStep > 0)
-                        IconButton(
-                          onPressed: _isSubmitting ? null : _handleBack,
-                          tooltip: AppStrings.back,
-                          icon: const Icon(Icons.arrow_back_rounded),
-                        )
-                      else
-                        const SizedBox(
-                          width: AppSpacing.minTouchTarget,
-                          height: AppSpacing.minTouchTarget,
-                        ),
-                      Expanded(
-                        child: Text(
-                          'Langkah ${_currentStep + 1} dari $_totalSteps',
-                          style: textTheme.labelLarge?.copyWith(
-                            color: semantic.textSecondary,
+              child: _currentStep == 0
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm + 4,
+                            vertical: 6,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: AppSpacing.minTouchTarget,
-                        height: AppSpacing.minTouchTarget,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
-                    child: TweenAnimationBuilder<double>(
-                      tween: Tween<double>(begin: 0.25, end: progress),
-                      duration: animDuration,
-                      curve: Curves.easeOutCubic,
-                      builder: (context, value, _) {
-                        return LinearProgressIndicator(
-                          value: value,
-                          minHeight: AppSpacing.sm,
-                          backgroundColor: semantic.surfaceMuted,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            scheme.primary,
+                          decoration: BoxDecoration(
+                            color: scheme.onSurface,
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.pillRadius,
+                            ),
                           ),
-                        );
-                      },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.pets_rounded,
+                                size: 14,
+                                color: AppColors.sakuraBlush,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                AppStrings.appName,
+                                style: textTheme.labelMedium?.copyWith(
+                                  color: scheme.surface,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm + 2,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: semantic.cardSurface,
+                              borderRadius: BorderRadius.circular(
+                                AppSpacing.pillRadius,
+                              ),
+                              border: Border.all(color: scheme.outlineVariant),
+                            ),
+                            child: Text(
+                              'Langkah 1 dari $_totalSteps',
+                              style: textTheme.labelSmall?.copyWith(
+                                color: semantic.textSecondary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: _isSubmitting ? null : _handleBack,
+                              tooltip: AppStrings.back,
+                              style: IconButton.styleFrom(
+                                backgroundColor: semantic.cardSurface,
+                                side: BorderSide(color: scheme.outlineVariant),
+                              ),
+                              icon: const Icon(Icons.arrow_back_rounded),
+                            ),
+                            Expanded(
+                              child: Text(
+                                'Langkah ${_currentStep + 1} dari $_totalSteps',
+                                style: textTheme.labelLarge?.copyWith(
+                                  color: scheme.onSurface,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: AppSpacing.minTouchTarget,
+                              height: AppSpacing.minTouchTarget,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        // 4 Kapsul progres bergaya buku sketsa
+                        Row(
+                          children: List.generate(_totalSteps, (idx) {
+                            final isDoneOrActive = idx <= _currentStep;
+                            return Expanded(
+                              child: AnimatedContainer(
+                                duration: animDuration,
+                                height: 7,
+                                margin: EdgeInsets.only(
+                                  right: idx < _totalSteps - 1 ? 6 : 0,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isDoneOrActive
+                                      ? scheme.primary
+                                      : semantic.surfaceMuted,
+                                  borderRadius: BorderRadius.circular(
+                                    AppSpacing.pillRadius,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
 
             // Isi langkah aktif
@@ -317,11 +380,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 switchOutCurve: Curves.easeOutCubic,
                 child: SingleChildScrollView(
                   key: ValueKey<int>(_currentStep),
-                  padding: const EdgeInsets.fromLTRB(
+                  padding: EdgeInsets.fromLTRB(
                     AppSpacing.md,
+                    _currentStep == 0 ? AppSpacing.sm : AppSpacing.md,
                     AppSpacing.md,
-                    AppSpacing.md,
-                    AppSpacing.xl,
+                    AppSpacing.lg,
                   ),
                   child: switch (_currentStep) {
                     0 => _buildWelcomeStep(context),
@@ -333,27 +396,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
             ),
 
-            // Area tombol bawah ramah satu tangan
-            Container(
+            // Area tombol utama bawah (bersih, kapsul Sumi-Ink tanpa panah template)
+            Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.md,
-                AppSpacing.sm,
+                AppSpacing.xs,
                 AppSpacing.md,
                 AppSpacing.md,
-              ),
-              decoration: BoxDecoration(
-                color: semantic.cardSurface,
-                border: Border(
-                  top: BorderSide(color: scheme.outlineVariant),
-                ),
               ),
               child: PrimaryButton(
                 label: buttonLabel,
                 isLoading: _isSubmitting,
                 onPressed: _handleNext,
-                icon: _currentStep == 3
-                    ? Icons.check_circle_outline_rounded
-                    : Icons.arrow_forward_rounded,
+                icon: _currentStep == 3 ? Icons.pets_rounded : null,
               ),
             ),
           ],
@@ -362,128 +417,118 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
+  /// Langkah 1: Layar Pembuka (Welcome Hero) dengan Maskot Kucing Mochi Interaktif
   Widget _buildWelcomeStep(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final semantic = context.semanticColors;
     final scheme = context.colorScheme;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        HeroBentoCard(
-          accentGlowColor: semantic.heroAccent,
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm + 4,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: semantic.heroCardSurface,
-                  borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
-                ),
-                child: Text(
-                  'Smart Nutrition & Weight Tracker',
-                  style: textTheme.labelSmall?.copyWith(
-                    color: semantic.heroAccent,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Semantics(
-                label: 'Logo ScaleUp',
-                image: true,
-                child: Image.asset(
-                  'assets/branding/scaleup_logo.png',
-                  width: 84,
-                  height: 84,
-                  errorBuilder: (_, _, _) => Container(
-                    width: 84,
-                    height: 84,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: semantic.heroCardSurface,
-                    ),
-                    child: Icon(
-                      Icons.trending_up_rounded,
-                      size: AppSpacing.iconHero,
-                      color: semantic.heroAccent,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                'Selamat Datang di ${AppStrings.appName}',
-                style: textTheme.headlineMedium?.copyWith(
-                  color: semantic.heroCardFg,
-                  fontWeight: FontWeight.w800,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                AppStrings.appTagline,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: semantic.heroCardMuted,
-                ),
-                textAlign: TextAlign.center,
-              ),
+        const SizedBox(height: AppSpacing.xs),
+        // Ilustrasi Maskot Kucing Mochi menyatu langsung di atas kertas susu hangat
+        const Center(
+          child: MochiCompanion(
+            pose: MochiPose.welcome,
+            size: 204,
+            quotes: [
+              'Meow~ Aku Mochi, teman sehatmu!',
+              'Ketuk aku buat sapaan semangat ya!',
+              'Makan nasi uduk? Tetap bisa diatur kok!',
             ],
           ),
         ),
+        const SizedBox(height: AppSpacing.sm + 2),
+        Text(
+          'Jaga Berat & Kalori\nBareng Mochi',
+          style: textTheme.displayMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            height: 1.18,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          child: Text(
+            'Catatan harian yang lucu, santai, dan tanpa menghakimi untuk menemani perjalanan sehatmu setiap hari.',
+            style: textTheme.bodyMedium?.copyWith(
+              color: semantic.textSecondary,
+              height: 1.45,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg - 4),
+
+        // 3 Kartu Stiker Ringkas (menggantikan daftar poin korporat yang kaku)
+        const Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          alignment: WrapAlignment.center,
+          children: [
+            _StickerPillFeature(
+              icon: Icons.rice_bowl_rounded,
+              accent: AppColors.sakuraBlush,
+              label: '92+ Menu Lokal',
+            ),
+            _StickerPillFeature(
+              icon: Icons.insights_rounded,
+              accent: AppColors.skyFish,
+              label: 'Tren 7 Hari Tenang',
+            ),
+            _StickerPillFeature(
+              icon: Icons.favorite_rounded,
+              accent: AppColors.butterBell,
+              label: 'Target Aman & Sehat',
+            ),
+          ],
+        ),
         const SizedBox(height: AppSpacing.lg),
-        _FeatureHighlightRow(
-          icon: Icons.monitor_weight_rounded,
-          color: scheme.secondary,
-          title: 'Pantau Berat Tanpa Cemas',
-          subtitle:
-              'Dilengkapi garis tren rata-rata 7 hari agar fluktuasi harian tidak membingungkan.',
-        ),
-        const SizedBox(height: AppSpacing.md),
-        _FeatureHighlightRow(
-          icon: Icons.restaurant_menu_rounded,
-          color: scheme.tertiary,
-          title: 'Database Makanan Indonesia',
-          subtitle:
-              'Catat nasi uduk, tempe, soto, hingga kopi susu lengkap dengan kalori dan makro.',
-        ),
-        const SizedBox(height: AppSpacing.md),
-        _FeatureHighlightRow(
-          icon: Icons.favorite_rounded,
-          color: scheme.primary,
-          title: 'Aman & Berbasis Kesehatan',
-          subtitle:
-              'Target disesuaikan secara suportif mengikuti batas kalori aman dan laju realistis.',
-        ),
-        const SizedBox(height: AppSpacing.xl),
-        AppCard(
-          backgroundColor: scheme.secondaryContainer.withValues(alpha: 0.45),
-          borderColor: scheme.secondary.withValues(alpha: 0.3),
+
+        // Catatan Kesehatan yang lembut & ringkas di bagian bawah kertas
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: semantic.surfaceMuted,
+            borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+            border: Border.all(color: scheme.outlineVariant),
+          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                Icons.health_and_safety_outlined,
-                color: scheme.secondary,
-                size: AppSpacing.iconMd,
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: semantic.cardSurface,
+                ),
+                child: const Icon(
+                  Icons.pets_rounded,
+                  color: AppColors.sakuraBlush,
+                  size: 16,
+                ),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              const SizedBox(width: AppSpacing.sm + 2),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       AppStrings.healthDisclaimerTitle,
-                      style: textTheme.titleSmall,
+                      style: textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                    const SizedBox(height: AppSpacing.xs),
+                    const SizedBox(height: 2),
                     Text(
                       AppStrings.healthDisclaimerBody,
                       style: textTheme.bodySmall?.copyWith(
-                        color: scheme.onSurface,
+                        color: semantic.textSecondary,
+                        height: 1.4,
                       ),
                     ),
                   ],
@@ -507,11 +552,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Kenalan Dulu, Yuk!', style: textTheme.headlineMedium),
-        const SizedBox(height: AppSpacing.xs),
-        Text(
-          'Data ini digunakan untuk menghitung kebutuhan energi harianmu secara akurat.',
-          style: textTheme.bodyMedium?.copyWith(color: semantic.textSecondary),
+        const _MochiStepBanner(
+          pose: MochiPose.welcome,
+          title: 'Kenalan Dulu, Yuk!',
+          subtitle:
+              'Biar Mochi bisa menghitung kebutuhan energi harianmu dengan pas.',
         ),
         const SizedBox(height: AppSpacing.lg),
 
@@ -524,7 +569,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           textInputAction: TextInputAction.next,
           decoration: const InputDecoration(
             hintText: 'Contoh: Budi atau Sari',
-            prefixIcon: Icon(Icons.person_outline_rounded),
+            prefixIcon: Icon(Icons.face_rounded),
           ),
           onChanged: (_) {
             if (_step2Error != null) setState(() => _step2Error = null);
@@ -549,7 +594,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       ? scheme.primaryContainer
                       : semantic.cardSurface,
                   borderColor:
-                      isSelected ? scheme.primary : scheme.outlineVariant,
+                      isSelected ? scheme.onSurface : scheme.outlineVariant,
                   padding: const EdgeInsets.symmetric(
                     vertical: AppSpacing.md,
                     horizontal: AppSpacing.sm,
@@ -562,7 +607,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             ? Icons.male_rounded
                             : Icons.female_rounded,
                         color: isSelected
-                            ? scheme.primary
+                            ? scheme.onSurface
                             : semantic.textSecondary,
                       ),
                       const SizedBox(width: AppSpacing.xs),
@@ -570,9 +615,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         child: Text(
                           g.label,
                           style: textTheme.titleSmall?.copyWith(
-                            color: isSelected
-                                ? scheme.onPrimaryContainer
-                                : scheme.onSurface,
+                            color: scheme.onSurface,
+                            fontWeight: isSelected
+                                ? FontWeight.w800
+                                : FontWeight.w600,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -597,7 +643,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           semanticLabel: 'Pilih tanggal lahir',
           child: Row(
             children: [
-              Icon(Icons.cake_outlined, color: scheme.primary),
+              const Icon(Icons.cake_outlined, color: AppColors.sakuraBlush),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Text(
@@ -692,11 +738,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Tingkat Aktivitas Harian', style: textTheme.headlineMedium),
-        const SizedBox(height: AppSpacing.xs),
-        Text(
-          'Pilih gambaran aktivitas mingguan yang paling mendekati keseharianmu.',
-          style: textTheme.bodyMedium?.copyWith(color: semantic.textSecondary),
+        const _MochiStepBanner(
+          pose: MochiPose.cheer,
+          title: 'Aktivitas Harianmu',
+          subtitle:
+              'Pilih gambaran gerak mingguan yang paling mirip keseharianmu.',
         ),
         const SizedBox(height: AppSpacing.lg),
         ...ActivityLevel.values.map((level) {
@@ -709,16 +755,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   ? scheme.primaryContainer
                   : semantic.cardSurface,
               borderColor:
-                  isSelected ? scheme.primary : scheme.outlineVariant,
+                  isSelected ? scheme.onSurface : scheme.outlineVariant,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     isSelected
-                        ? Icons.radio_button_checked_rounded
+                        ? Icons.pets_rounded
                         : Icons.radio_button_off_rounded,
                     color: isSelected
-                        ? scheme.primary
+                        ? AppColors.sakuraBlush
                         : semantic.textSecondary,
                   ),
                   const SizedBox(width: AppSpacing.md),
@@ -729,18 +775,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         Text(
                           level.label,
                           style: textTheme.titleMedium?.copyWith(
-                            color: isSelected
-                                ? scheme.onPrimaryContainer
-                                : scheme.onSurface,
+                            color: scheme.onSurface,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.xxs),
                         Text(
                           level.description,
                           style: textTheme.bodySmall?.copyWith(
-                            color: isSelected
-                                ? scheme.onPrimaryContainer
-                                : semantic.textSecondary,
+                            color: semantic.textSecondary,
                           ),
                         ),
                       ],
@@ -790,11 +833,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Pilih Tujuan Sehatmu', style: textTheme.headlineMedium),
-        const SizedBox(height: AppSpacing.xs),
-        Text(
-          'Kamu selalu bisa mengganti tujuan ini kapan saja melalui menu Profil.',
-          style: textTheme.bodyMedium?.copyWith(color: semantic.textSecondary),
+        const _MochiStepBanner(
+          pose: MochiPose.chef,
+          title: 'Pilih Tujuan Sehatmu',
+          subtitle:
+              'Tenang, tujuan ini bisa kamu ubah kapan saja lewat tab Profil.',
         ),
         const SizedBox(height: AppSpacing.lg),
 
@@ -839,16 +882,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 });
               },
               backgroundColor: isSelected ? accentBg : semantic.cardSurface,
-              borderColor: isSelected ? accent : scheme.outlineVariant,
+              borderColor: isSelected ? scheme.onSurface : scheme.outlineVariant,
               child: Row(
                 children: [
                   Container(
                     width: AppSpacing.minTouchTarget,
                     height: AppSpacing.minTouchTarget,
                     decoration: BoxDecoration(
-                      color: accent.withValues(alpha: 0.16),
+                      color: semantic.cardSurface,
                       borderRadius:
                           BorderRadius.circular(AppSpacing.buttonRadius),
+                      border: Border.all(color: scheme.outlineVariant),
                     ),
                     child: Icon(icon, color: accent),
                   ),
@@ -908,7 +952,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     ? scheme.primaryContainer
                     : semantic.cardSurface,
                 borderColor:
-                    selected ? scheme.primary : scheme.outlineVariant,
+                    selected ? scheme.onSurface : scheme.outlineVariant,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md,
                   vertical: AppSpacing.sm + AppSpacing.xs,
@@ -916,11 +960,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 child: Row(
                   children: [
                     Icon(
-                      selected
-                          ? Icons.check_circle_rounded
-                          : Icons.circle_outlined,
-                      color:
-                          selected ? scheme.primary : semantic.textSecondary,
+                      selected ? Icons.pets_rounded : Icons.circle_outlined,
+                      color: selected
+                          ? AppColors.sakuraBlush
+                          : semantic.textSecondary,
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
@@ -964,15 +1007,26 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         const SizedBox(height: AppSpacing.md),
         if (validation.isValid)
           HeroBentoCard(
-            accentGlowColor: semantic.heroAccent,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Estimasi Rencana Harianmu',
-                  style: textTheme.titleMedium?.copyWith(
-                    color: semantic.heroCardFg,
-                  ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.pets_rounded,
+                      size: 16,
+                      color: AppColors.sakuraBlush,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        'Rencana Harian dari Mochi',
+                        style: textTheme.titleMedium?.copyWith(
+                          color: semantic.heroCardFg,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 FittedBox(
@@ -987,7 +1041,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         style: AppTextStyles.heroNumber(
                           context,
                           fontSize: AppSpacing.heroNumberMd,
-                          color: semantic.heroAccent,
+                          color: semantic.heroCardFg,
                         ),
                       ),
                       const SizedBox(width: AppSpacing.xs),
@@ -1008,19 +1062,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     Text(
                       'Protein ${plan.proteinGrams}g',
                       style: textTheme.labelMedium?.copyWith(
-                        color: semantic.proteinColor,
+                        color: semantic.heroCardFg,
                       ),
                     ),
                     Text(
                       'Karbo ${plan.carbsGrams}g',
                       style: textTheme.labelMedium?.copyWith(
-                        color: semantic.heroAccent,
+                        color: semantic.heroCardFg,
                       ),
                     ),
                     Text(
                       'Lemak ${plan.fatGrams}g',
                       style: textTheme.labelMedium?.copyWith(
-                        color: semantic.fatColor,
+                        color: semantic.heroCardFg,
                       ),
                     ),
                   ],
@@ -1028,14 +1082,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 if (_goalType != GoalType.maintain &&
                     plan.estimatedTargetDate != null) ...[
                   const SizedBox(height: AppSpacing.sm),
-                  Divider(color: semantic.dockBorder),
+                  Divider(color: scheme.outlineVariant),
                   const SizedBox(height: AppSpacing.sm),
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.event_available_rounded,
                         size: AppSpacing.iconSm,
-                        color: semantic.heroAccent,
+                        color: AppColors.sakuraBlush,
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
@@ -1057,16 +1111,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 }
 
-class _FeatureHighlightRow extends StatelessWidget {
-  const _FeatureHighlightRow({
-    required this.icon,
-    required this.color,
+/// Banner kepala langkah dengan maskot Mochi mini untuk langkah 2-4.
+class _MochiStepBanner extends StatelessWidget {
+  const _MochiStepBanner({
+    required this.pose,
     required this.title,
     required this.subtitle,
   });
 
-  final IconData icon;
-  final Color color;
+  final MochiPose pose;
   final String title;
   final String subtitle;
 
@@ -1076,34 +1129,89 @@ class _FeatureHighlightRow extends StatelessWidget {
     final semantic = context.semanticColors;
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          width: AppSpacing.minTouchTarget,
-          height: AppSpacing.minTouchTarget,
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.14),
-            borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
-          ),
-          child: Icon(icon, color: color),
+        MochiCompanion(
+          pose: pose,
+          size: 76,
+          showFramedBadge: true,
         ),
         const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: textTheme.titleMedium),
+              Text(title, style: textTheme.headlineMedium),
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 subtitle,
                 style: textTheme.bodySmall?.copyWith(
                   color: semantic.textSecondary,
+                  height: 1.4,
                 ),
               ),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Kapsul stiker fitur ringkas untuk layar sambutan Mochi.
+class _StickerPillFeature extends StatelessWidget {
+  const _StickerPillFeature({
+    required this.icon,
+    required this.accent,
+    required this.label,
+  });
+
+  final IconData icon;
+  final Color accent;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final scheme = context.colorScheme;
+    final semantic = context.semanticColors;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm + 4,
+        vertical: AppSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: semantic.cardSurface,
+        borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
+        border: Border.all(
+          color: scheme.onSurface,
+          width: AppSpacing.borderMedium,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: scheme.shadow,
+            offset: const Offset(0, 2),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: accent),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              label,
+              style: textTheme.labelMedium?.copyWith(
+                color: scheme.onSurface,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1135,7 +1243,7 @@ class _ValidationBanner extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
-            isError ? Icons.info_outline_rounded : Icons.lightbulb_outline,
+            isError ? Icons.info_outline_rounded : Icons.pets_rounded,
             color: fg,
             size: AppSpacing.iconMd,
           ),

@@ -1,5 +1,3 @@
-import 'dart:ui' show ImageFilter;
-
 import 'package:material_ui/material_ui.dart';
 
 import '../constants/app_spacing.dart';
@@ -7,7 +5,7 @@ import '../constants/app_strings.dart';
 import '../theme/app_colors.dart';
 import '../utils/reduce_motion.dart';
 
-/// Floating Obsidian Glass Pill Dock khas Nixtio dengan 4 destinasi + slot FAB tengah.
+/// Kapsul Navigasi Bawah bergaya stiker monokrom Sumi-Ink & Kertas Susu.
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
     super.key,
@@ -31,6 +29,7 @@ class AppBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final semantic = context.semanticColors;
+    final scheme = context.colorScheme;
 
     return SafeArea(
       top: false,
@@ -42,71 +41,59 @@ class AppBottomNav extends StatelessWidget {
       ),
       child: Container(
         decoration: BoxDecoration(
+          color: semantic.dockBg,
           borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
+          border: Border.all(
+            color: scheme.onSurface,
+            width: 1.8,
+          ),
           boxShadow: [
             BoxShadow(
-              color: semantic.heroCardBg.withValues(alpha: 0.28),
-              blurRadius: 28,
-              spreadRadius: -4,
-              offset: const Offset(0, 12),
+              color: scheme.onSurface.withValues(alpha: 0.10),
+              offset: const Offset(0, 4),
+              blurRadius: 0,
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-            child: Container(
-              decoration: BoxDecoration(
-                color: semantic.dockBg,
-                borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
-                border: Border.all(
-                  color: semantic.dockBorder,
-                  width: AppSpacing.borderThin,
-                ),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+        child: MediaQuery.removePadding(
+          context: context,
+          removeBottom: true,
+          removeTop: true,
+          child: NavigationBar(
+            height: 64,
+            backgroundColor: semantic.dockBg.withValues(alpha: 0),
+            selectedIndex: _mappedDestinationIndex,
+            onDestinationSelected: _handleSelect,
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.pets_outlined),
+                selectedIcon: Icon(Icons.pets_rounded),
+                label: AppStrings.navHome,
+                tooltip: AppStrings.navHome,
               ),
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-              child: MediaQuery.removePadding(
-                context: context,
-                removeBottom: true,
-                removeTop: true,
-                child: NavigationBar(
-                  height: 66,
-                  backgroundColor: semantic.dockBg.withValues(alpha: 0),
-                  selectedIndex: _mappedDestinationIndex,
-                  onDestinationSelected: _handleSelect,
-                  destinations: const [
-                    NavigationDestination(
-                      icon: Icon(Icons.grid_view_outlined),
-                      selectedIcon: Icon(Icons.grid_view_rounded),
-                      label: AppStrings.navHome,
-                      tooltip: AppStrings.navHome,
-                    ),
-                    NavigationDestination(
-                      icon: Icon(Icons.monitor_weight_outlined),
-                      selectedIcon: Icon(Icons.monitor_weight_rounded),
-                      label: AppStrings.navWeight,
-                      tooltip: AppStrings.navWeight,
-                    ),
-                    IgnorePointer(
-                      child: SizedBox(width: AppSpacing.xxxl + AppSpacing.sm),
-                    ),
-                    NavigationDestination(
-                      icon: Icon(Icons.local_dining_outlined),
-                      selectedIcon: Icon(Icons.local_dining_rounded),
-                      label: AppStrings.navCalories,
-                      tooltip: AppStrings.navCalories,
-                    ),
-                    NavigationDestination(
-                      icon: Icon(Icons.person_outline_rounded),
-                      selectedIcon: Icon(Icons.person_rounded),
-                      label: AppStrings.navProfile,
-                      tooltip: AppStrings.navProfile,
-                    ),
-                  ],
-                ),
+              NavigationDestination(
+                icon: Icon(Icons.monitor_weight_outlined),
+                selectedIcon: Icon(Icons.monitor_weight_rounded),
+                label: AppStrings.navWeight,
+                tooltip: AppStrings.navWeight,
               ),
-            ),
+              IgnorePointer(
+                child: SizedBox(width: AppSpacing.xxxl + AppSpacing.sm),
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.rice_bowl_outlined),
+                selectedIcon: Icon(Icons.rice_bowl_rounded),
+                label: AppStrings.navCalories,
+                tooltip: AppStrings.navCalories,
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.face_outlined),
+                selectedIcon: Icon(Icons.face_rounded),
+                label: AppStrings.navProfile,
+                tooltip: AppStrings.navProfile,
+              ),
+            ],
           ),
         ),
       ),
@@ -114,7 +101,7 @@ class AppBottomNav extends StatelessWidget {
   }
 }
 
-/// FloatingActionButton Electric Lime bercahaya yang duduk menyatu di tengah Floating Pill Dock.
+/// Tombol tengah bundar hitam Sumi-Ink dengan aksen pipi kucing Sakura Blush.
 class QuickAddFab extends StatefulWidget {
   const QuickAddFab({
     super.key,
@@ -134,6 +121,7 @@ class _QuickAddFabState extends State<QuickAddFab> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.colorScheme;
     final semantic = context.semanticColors;
     final reduceMotion = MotionUtils.shouldReduceMotion(context);
     final duration = MotionUtils.duration(context, AppSpacing.animNormal);
@@ -153,18 +141,11 @@ class _QuickAddFabState extends State<QuickAddFab> {
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: semantic.heroCardBg,
+              color: semantic.cardSurface,
               border: Border.all(
-                color: semantic.dockBorder,
-                width: AppSpacing.borderThin,
+                color: scheme.onSurface,
+                width: 1.8,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: semantic.heroAccent.withValues(alpha: 0.35),
-                  blurRadius: 18,
-                  spreadRadius: -2,
-                ),
-              ],
             ),
             child: SizedBox(
               width: 52,
@@ -172,8 +153,8 @@ class _QuickAddFabState extends State<QuickAddFab> {
               child: FloatingActionButton(
                 heroTag: 'quick_add_fab',
                 tooltip: AppStrings.quickAddTooltip,
-                backgroundColor: semantic.heroAccent,
-                foregroundColor: AppColors.darkOnPrimary,
+                backgroundColor: scheme.primary,
+                foregroundColor: scheme.onPrimary,
                 elevation: 0,
                 onPressed: () {
                   MotionUtils.lightImpact();

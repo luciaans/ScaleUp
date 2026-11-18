@@ -32,7 +32,7 @@ class ScaleUpApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
     final themeModeAsync = ref.watch(appThemeModeProvider);
-    final themeMode = themeModeAsync.value ?? ThemeMode.system;
+    final themeMode = themeModeAsync.value ?? ThemeMode.light;
 
     return MaterialApp.router(
       title: AppStrings.appName,
@@ -60,9 +60,9 @@ class ScaleUpApp extends ConsumerWidget {
                 ? SystemUiOverlayStyle.light
                 : SystemUiOverlayStyle.dark)
             .copyWith(
-          statusBarColor: AppColors.lightBackground.withValues(alpha: 0),
+          statusBarColor: AppColors.milkPaper.withValues(alpha: 0),
           systemNavigationBarColor:
-              isDark ? AppColors.darkSurface : AppColors.lightSurface,
+              isDark ? AppColors.darkSurface : AppColors.milkPaper,
           systemNavigationBarIconBrightness:
               isDark ? Brightness.light : Brightness.dark,
         );
@@ -73,11 +73,9 @@ class ScaleUpApp extends ConsumerWidget {
         // tampilkan dalam bingkai proporsi ponsel portrait (412dp) agar realistis.
         if (kIsWeb && mq.size.width > 500) {
           const mobileWidth = 412.0;
-          final frameBg = isDark
-              ? AppColors.darkBackground
-              : AppColors.lightSurfaceVariant;
+          final frameBg = isDark ? AppColors.darkBackground : AppColors.oatWash;
           final borderColor =
-              isDark ? AppColors.darkOutlineStrong : AppColors.lightOutlineStrong;
+              isDark ? AppColors.darkBorder : AppColors.sumiInk;
 
           content = ColoredBox(
             color: frameBg,
@@ -89,8 +87,15 @@ class ScaleUpApp extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(AppSpacing.sheetTopRadius),
                   border: Border.all(
                     color: borderColor,
-                    width: AppSpacing.borderMedium,
+                    width: 2.0,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.sumiInk.withValues(alpha: 0.14),
+                      offset: const Offset(0, 6),
+                      blurRadius: 0,
+                    ),
+                  ],
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: MediaQuery(

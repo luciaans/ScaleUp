@@ -12,6 +12,7 @@ import '../../../core/widgets/animated_count.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/date_strip_selector.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/mochi_companion.dart';
 import '../../../core/widgets/progress_ring.dart';
 import '../../../core/widgets/skeleton_box.dart';
 import '../../home/data/home_providers.dart';
@@ -293,6 +294,31 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                     child: Column(
                       children: [
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const MochiCompanion(
+                              pose: MochiPose.chef,
+                              size: 40,
+                              showFramedBadge: true,
+                            ),
+                            const SizedBox(width: AppSpacing.xs + 2),
+                            Flexible(
+                              child: Text(
+                                summary.isOverTarget
+                                    ? 'Meow~ Sedikit lewat target, tetap santai ya!'
+                                    : 'Dapur Mochi siap mencatat menumu~',
+                                style: textTheme.labelMedium?.copyWith(
+                                  color: semantic.heroCardFg,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
@@ -369,7 +395,7 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                                 label: 'Karbo',
                                 consumedGrams: summary.consumedCarbsGrams,
                                 targetGrams: summary.targetCarbsGrams,
-                                color: semantic.heroAccent,
+                                color: semantic.carbsColor,
                               ),
                             ),
                             const SizedBox(width: AppSpacing.sm),
@@ -407,7 +433,7 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                   ),
                   MealType.snack => (
                     Icons.cookie_outlined,
-                    AppColors.softViolet,
+                    AppColors.lavenderSnack,
                   ),
                 };
 

@@ -1,12 +1,11 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 import '../constants/app_spacing.dart';
 import '../theme/app_colors.dart';
-import '../utils/reduce_motion.dart';
+import 'mochi_companion.dart';
 import 'primary_button.dart';
 
-/// Komponen Empty State seragam: ilustrasi ikon lembut + judul + deskripsi + tombol aksi.
+/// Empty State menggemaskan dengan ilustrasi Mochi si Kucing tidur melingkar.
 class EmptyState extends StatelessWidget {
   const EmptyState({
     super.key,
@@ -29,47 +28,31 @@ class EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final semantic = context.semanticColors;
-    final color = accentColor ?? context.colorScheme.primary;
-    final reduceMotion = MotionUtils.shouldReduceMotion(context);
 
-    final content = Padding(
+    return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,
-        vertical: AppSpacing.xl,
+        vertical: AppSpacing.lg,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 88,
-            height: 88,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: color.withValues(alpha: 0.12),
-            ),
-            child: Center(
-              child: Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: color.withValues(alpha: 0.18),
-                ),
-                child: Icon(
-                  icon,
-                  size: AppSpacing.iconLg,
-                  color: color,
-                ),
-              ),
-            ),
+          const MochiCompanion(
+            pose: MochiPose.nap,
+            size: 136,
+            showFramedBadge: true,
+            quotes: [
+              'Zzz... belum ada catatan nih, yuk mulai!',
+              'Meow~ ketuk tombol di bawah ya!',
+            ],
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.md),
           Text(
             title,
             style: textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             subtitle,
             style: textTheme.bodyMedium?.copyWith(
@@ -83,23 +66,10 @@ class EmptyState extends StatelessWidget {
               label: actionLabel!,
               onPressed: onAction,
               isFullWidth: false,
-              icon: Icons.add_rounded,
             ),
           ],
         ],
       ),
     );
-
-    if (reduceMotion) return content;
-
-    return content
-        .animate()
-        .fadeIn(duration: AppSpacing.animNormal, curve: Curves.easeOutCubic)
-        .slideY(
-          begin: 0.06,
-          end: 0,
-          duration: AppSpacing.animNormal,
-          curve: Curves.easeOutCubic,
-        );
   }
 }

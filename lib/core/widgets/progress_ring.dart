@@ -159,7 +159,7 @@ class _NixtioGaugePainter extends CustomPainter {
           center.dx + outerRadius * math.cos(endAngle),
           center.dy + outerRadius * math.sin(endAngle),
         );
-        final dotPaint = Paint()..color = const Color(0xFFFFFFFF);
+        final dotPaint = Paint()..color = AppColors.snowCream;
         canvas.drawCircle(tipCenter, strokeWidth * 0.24, dotPaint);
       }
     }

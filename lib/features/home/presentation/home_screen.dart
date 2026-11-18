@@ -16,6 +16,7 @@ import '../../../core/widgets/animated_count.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/date_strip_selector.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/mochi_companion.dart';
 import '../../../core/widgets/progress_ring.dart';
 import '../../../core/widgets/skeleton_box.dart';
 import '../../calories/data/calories_repository.dart';
@@ -28,12 +29,13 @@ import '../../weight/presentation/widgets/weight_input_sheet.dart';
 import '../data/home_providers.dart';
 import '../domain/streak_and_tips.dart';
 
-/// Dashboard Beranda bergaya Bento & Bio-Tracker modern (inspirasi Nixtio UI):
-/// - Header profil & badge kapsul streak
+/// Dashboard Beranda "Mochi Neko" (Cozy Sumi-Ink & Milk Paper):
+/// - Header sapaan & kapsul streak buku sketsa
 /// - Strip kalender 7 hari berbentuk pil
-/// - Hero Obsidian Nutrition & Macro Bento Card dengan radial tick-gauge bercahaya
-/// - Bento Grid 2 kolom (Berat Hari Ini & Skor Progres Tujuan/BMI)
-/// - Kartu Wawasan Kesehatan Harian
+/// - Kartu Sapaan Interaktif Maskot Mochi
+/// - Hero Energi & Makro Bento Sticker Card
+/// - Bento Grid 2 kolom (Berat Hari Ini & Progres Tujuan/BMI)
+/// - Kartu Catatan Harian dari Mochi
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -180,7 +182,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               if (plan == null) {
                 return const Center(
                   child: EmptyState(
-                    icon: Icons.favorite_rounded,
+                    icon: Icons.pets_rounded,
                     title: AppStrings.homePlaceholderTitle,
                     subtitle: AppStrings.homePlaceholderSubtitle,
                   ),
@@ -226,9 +228,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               final consumedKcal = cal?.consumedCalories ?? 0.0;
               final isOverCal = cal?.isOverTarget ?? false;
 
+              final mochiPose = streak.loggedToday
+                  ? MochiPose.cheer
+                  : (consumedKcal > 0 ? MochiPose.chef : MochiPose.welcome);
+
+              final mochiMessage = isOverCal
+                  ? 'Meow, tidak apa-apa lebih sedikit~ Besok kita lanjut pelan-pelan ya!'
+                  : (streak.loggedToday
+                      ? 'Meow, hebat banget! Catatan hari ini sudah rapi, Mochi bangga!'
+                      : 'Meow~ Jangan lupa catat makan atau beratmu hari ini ya!');
+
               return CustomScrollView(
                 slivers: [
-                  // Top Header modern ala Nixtio (Avatar + Salam + Streak Pill)
+                  // Header Sapaan & Kapsul Streak Monokrom-Krem
                   SliverSafeArea(
                     bottom: false,
                     sliver: SliverToBoxAdapter(
@@ -246,23 +258,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               child: Container(
                                 width: 46,
                                 height: 46,
-                                padding: const EdgeInsets.all(2),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
+                                  color: scheme.primaryContainer,
                                   border: Border.all(
-                                    color: scheme.primary,
+                                    color: scheme.onSurface,
                                     width: AppSpacing.borderMedium,
                                   ),
                                 ),
-                                child: CircleAvatar(
-                                  backgroundColor: semantic.heroCardBg,
-                                  child: Text(
-                                    plan.profile.name.characters.first
-                                        .toUpperCase(),
-                                    style: textTheme.titleMedium?.copyWith(
-                                      color: semantic.heroAccent,
-                                      fontWeight: FontWeight.w800,
-                                    ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  plan.profile.name.characters.first
+                                      .toUpperCase(),
+                                  style: textTheme.titleMedium?.copyWith(
+                                    color: scheme.onSurface,
+                                    fontWeight: FontWeight.w800,
                                   ),
                                 ),
                               ),
@@ -304,18 +314,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     AppSpacing.pillRadius,
                                   ),
                                   border: Border.all(
-                                    color: scheme.outlineVariant,
+                                    color: scheme.onSurface,
+                                    width: AppSpacing.borderMedium,
                                   ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: scheme.shadow,
+                                      offset: const Offset(0, 2),
+                                      blurRadius: 0,
+                                    ),
+                                  ],
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(
-                                      Icons.local_fire_department_rounded,
-                                      size: 18,
-                                      color: scheme.tertiary,
+                                    const Icon(
+                                      Icons.pets_rounded,
+                                      size: 16,
+                                      color: AppColors.sakuraBlush,
                                     ),
-                                    const SizedBox(width: 4),
+                                    const SizedBox(width: 5),
                                     Flexible(
                                       child: Text(
                                         '${streak.currentStreakDays} Hari Beruntun',
@@ -363,15 +381,77 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                         const SizedBox(height: AppSpacing.md),
 
-                        // 1. HERO OBSIDIAN NUTRITION & CALORIE BENTO CARD
+                        // Banner Sapaan Interaktif Maskot Kucing Mochi
                         _staggeredCard(
                           context,
                           index: 1,
+                          child: AppCard(
+                            backgroundColor: scheme.primaryContainer.withValues(
+                              alpha: 0.55,
+                            ),
+                            borderColor: scheme.onSurface,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.md,
+                              vertical: AppSpacing.sm + 4,
+                            ),
+                            child: Row(
+                              children: [
+                                MochiCompanion(
+                                  pose: mochiPose,
+                                  size: 68,
+                                  showFramedBadge: true,
+                                ),
+                                const SizedBox(width: AppSpacing.sm + 4),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.pets_rounded,
+                                            size: 13,
+                                            color: AppColors.sakuraBlush,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Flexible(
+                                            child: Text(
+                                              'Sapaan Mochi',
+                                              style: textTheme.labelSmall
+                                                  ?.copyWith(
+                                                    color: scheme.onSurface,
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        mochiMessage,
+                                        style: textTheme.bodySmall?.copyWith(
+                                          color: scheme.onSurface,
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.35,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+
+                        // 1. HERO ENERGI & MAKRO HARIAN (Sticker Sketchbook Card)
+                        _staggeredCard(
+                          context,
+                          index: 2,
                           child: HeroBentoCard(
                             onTap: () => context.go(AppRoutes.calories),
-                            accentGlowColor: isOverCal
-                                ? scheme.tertiary
-                                : semantic.heroAccent,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -394,17 +474,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(
-                                              Icons.bolt_rounded,
+                                            const Icon(
+                                              Icons.rice_bowl_rounded,
                                               size: 15,
-                                              color: semantic.heroAccent,
+                                              color: AppColors.sakuraBlush,
                                             ),
-                                            const SizedBox(width: 4),
+                                            const SizedBox(width: 5),
                                             Flexible(
                                               child: Text(
                                                 isOverCal
                                                     ? 'Kalori Melebihi Target'
-                                                    : 'Energi Harian',
+                                                    : 'Mangkuk Energi Harian',
                                                 style: textTheme.labelSmall
                                                     ?.copyWith(
                                                       color:
@@ -438,11 +518,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                           height: 38,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
-                                            color: semantic.heroAccent,
+                                            color: scheme.primary,
                                           ),
-                                          child: const Icon(
+                                          child: Icon(
                                             Icons.add_rounded,
-                                            color: AppColors.darkOnPrimary,
+                                            color: scheme.onPrimary,
                                             size: 20,
                                           ),
                                         ),
@@ -492,7 +572,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                             '${AppFormatters.integer(consumedKcal)} / ${AppFormatters.calories(plan.caloriePlan.targetCalories)}',
                                             style:
                                                 textTheme.labelMedium?.copyWith(
-                                                  color: semantic.heroAccent,
+                                                  color: semantic.heroCardFg,
                                                   fontWeight: FontWeight.w700,
                                                 ),
                                           ),
@@ -557,7 +637,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         label: 'Karbo',
                                         current: cal?.consumedCarbsGrams ?? 0,
                                         target: plan.caloriePlan.carbsGrams,
-                                        color: semantic.heroAccent,
+                                        color: semantic.carbsColor,
                                       ),
                                     ),
                                     const SizedBox(width: AppSpacing.sm),
@@ -580,7 +660,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         // 2. BENTO GRID 2 KOLOM: BERAT HARI INI & SKOR TUJUAN/BMI
                         _staggeredCard(
                           context,
-                          index: 2,
+                          index: 3,
                           child: IntrinsicHeight(
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -602,8 +682,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                               height: 34,
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
-                                                color: scheme.secondary
-                                                    .withValues(alpha: 0.14),
+                                                color: scheme.secondaryContainer,
                                               ),
                                               child: Icon(
                                                 Icons.monitor_weight_rounded,
@@ -658,15 +737,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         const SizedBox(height: AppSpacing.sm),
                                         SizedBox(
                                           width: double.infinity,
-                                          child: FilledButton.tonal(
+                                          child: FilledButton(
                                             key: const Key(
                                               'home_log_weight_button',
                                             ),
                                             style: FilledButton.styleFrom(
-                                              backgroundColor:
-                                                  scheme.secondaryContainer,
-                                              foregroundColor:
-                                                  scheme.onSecondaryContainer,
+                                              backgroundColor: scheme.primary,
+                                              foregroundColor: scheme.onPrimary,
                                               shape: const StadiumBorder(),
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -690,8 +767,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                     : 'Catat Berat',
                                                 style: textTheme.labelLarge
                                                     ?.copyWith(
-                                                      color: scheme
-                                                          .onSecondaryContainer,
+                                                      color: scheme.onPrimary,
                                                       fontWeight:
                                                           FontWeight.w700,
                                                     ),
@@ -723,7 +799,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 color: goalAccent.withValues(
-                                                  alpha: 0.14,
+                                                  alpha: 0.18,
                                                 ),
                                               ),
                                               child: Icon(
@@ -751,9 +827,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                             strokeWidth: 8,
                                             showTicks: false,
                                             color: goalAccent,
-                                            trackColor: goalAccent.withValues(
-                                              alpha: 0.14,
-                                            ),
+                                            trackColor: semantic.surfaceMuted,
                                             center: FittedBox(
                                               fit: BoxFit.scaleDown,
                                               child: Text(
@@ -762,7 +836,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                     AppTextStyles.tabularValue(
                                                       context,
                                                       fontSize: 16,
-                                                      color: goalAccent,
+                                                      color: scheme.onSurface,
                                                     ),
                                               ),
                                             ),
@@ -794,10 +868,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                         const SizedBox(height: AppSpacing.md),
 
-                        // 3. KARTU WAWASAN & TIPS HARIAN (Gaya AI Longevity Insight Nixtio)
+                        // 3. KARTU CATATAN HARIAN DARI MOCHI
                         _staggeredCard(
                           context,
-                          index: 3,
+                          index: 4,
                           child: AppCard(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -818,14 +892,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Icon(
-                                            Icons.auto_awesome_rounded,
+                                          const Icon(
+                                            Icons.pets_rounded,
                                             size: 14,
-                                            color: scheme.primary,
+                                            color: AppColors.sakuraBlush,
                                           ),
-                                          const SizedBox(width: 4),
+                                          const SizedBox(width: 5),
                                           Text(
-                                            'Wawasan Harian',
+                                            'Tips dari Mochi',
                                             style:
                                                 textTheme.labelSmall?.copyWith(
                                                   color:

@@ -104,22 +104,20 @@ class ProfileScreen extends ConsumerWidget {
                         Container(
                           width: 54,
                           height: 54,
-                          padding: const EdgeInsets.all(2.5),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
+                            color: scheme.primaryContainer,
                             border: Border.all(
-                              color: semantic.heroAccent,
-                              width: AppSpacing.borderThick,
+                              color: scheme.onSurface,
+                              width: AppSpacing.borderMedium,
                             ),
                           ),
-                          child: CircleAvatar(
-                            backgroundColor: semantic.heroCardSurface,
-                            child: Text(
-                              plan.profile.name.characters.first.toUpperCase(),
-                              style: textTheme.headlineSmall?.copyWith(
-                                color: semantic.heroAccent,
-                                fontWeight: FontWeight.w800,
-                              ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            plan.profile.name.characters.first.toUpperCase(),
+                            style: textTheme.headlineSmall?.copyWith(
+                              color: scheme.onSurface,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ),
@@ -148,7 +146,7 @@ class ProfileScreen extends ConsumerWidget {
                         FilledButton.tonalIcon(
                           style: FilledButton.styleFrom(
                             backgroundColor: semantic.heroCardSurface,
-                            foregroundColor: semantic.heroAccent,
+                            foregroundColor: semantic.heroCardFg,
                             shape: const StadiumBorder(),
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.sm + 4,

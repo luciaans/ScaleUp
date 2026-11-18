@@ -169,9 +169,9 @@ class SettingsRepository {
 
   static ThemeMode _parseThemeMode(String? raw) {
     return switch (raw) {
-      'light' => ThemeMode.light,
       'dark' => ThemeMode.dark,
-      _ => ThemeMode.system,
+      'system' => ThemeMode.system,
+      _ => ThemeMode.light,
     };
   }
 }

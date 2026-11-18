@@ -7,7 +7,7 @@ import '../theme/app_colors.dart';
 import '../utils/date_utils_ext.dart';
 import '../utils/reduce_motion.dart';
 
-/// Strip kalender 7 hari berbentuk kapsul vertikal khas Nixtio Nutrition & Health UI.
+/// Strip kalender 7 hari berbentuk kapsul stiker hitam-krem dengan titik Sakura Blush.
 class DateStripSelector extends StatelessWidget {
   const DateStripSelector({
     super.key,
@@ -24,9 +24,9 @@ class DateStripSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final today = AppDateUtils.today();
     final semantic = context.semanticColors;
+    final scheme = context.colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    // 7 hari berakhir di hari ini (atau berpusat di selectedDate jika mundur jauh)
     final anchorEnd = selectedDate.isBefore(
       DateTime(today.year, today.month, today.day - 6),
     )
@@ -66,16 +66,13 @@ class DateStripSelector extends StatelessWidget {
                   horizontal: 2,
                 ),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? semantic.heroCardBg
-                      : semantic.cardSurface,
+                  color: isSelected ? scheme.primary : semantic.cardSurface,
                   borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
                   border: Border.all(
                     color: isSelected
-                        ? semantic.heroCardBg
-                        : (isToday
-                            ? context.colorScheme.primary.withValues(alpha: 0.5)
-                            : context.colorScheme.outlineVariant),
+                        ? scheme.primary
+                        : (isToday ? scheme.onSurface : scheme.outlineVariant),
+                    width: isSelected || isToday ? 1.5 : 1.0,
                   ),
                 ),
                 child: Column(
@@ -88,21 +85,21 @@ class DateStripSelector extends StatelessWidget {
                         style: textTheme.labelSmall?.copyWith(
                           fontSize: 10.5,
                           color: isSelected
-                              ? semantic.heroCardMuted
+                              ? scheme.onPrimary.withValues(alpha: 0.85)
                               : semantic.textSecondary,
                         ),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     Container(
-                      width: 28,
-                      height: 28,
+                      width: 26,
+                      height: 26,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isSelected
-                            ? semantic.heroAccent
-                            : semantic.surfaceMuted.withValues(alpha: 0.65),
+                            ? scheme.onPrimary
+                            : semantic.surfaceMuted,
                       ),
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
@@ -110,10 +107,8 @@ class DateStripSelector extends StatelessWidget {
                           '${date.day}',
                           style: textTheme.labelLarge?.copyWith(
                             fontSize: 12.5,
-                            fontWeight: FontWeight.w800,
-                            color: isSelected
-                                ? AppColors.darkOnPrimary
-                                : context.colorScheme.onSurface,
+                            fontWeight: FontWeight.w700,
+                            color: scheme.onSurface,
                           ),
                         ),
                       ),
@@ -125,9 +120,7 @@ class DateStripSelector extends StatelessWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: hasLog
-                            ? (isSelected
-                                ? semantic.heroAccent
-                                : context.colorScheme.primary)
+                            ? AppColors.sakuraBlush
                             : semantic.cardSurface.withValues(alpha: 0),
                       ),
                     ),

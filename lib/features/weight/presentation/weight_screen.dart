@@ -94,10 +94,10 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: AppSpacing.md),
-            child: FilledButton.tonalIcon(
+            child: FilledButton.icon(
               style: FilledButton.styleFrom(
-                backgroundColor: semantic.heroCardBg,
-                foregroundColor: semantic.heroAccent,
+                backgroundColor: scheme.primary,
+                foregroundColor: scheme.onPrimary,
                 shape: const StadiumBorder(),
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md,
@@ -107,7 +107,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
               onPressed: () => _openWeightSheet(
                 fallbackKg: planAsync.value?.currentWeightKg,
               ),
-              icon: const Icon(Icons.add_rounded, size: 18),
+              icon: const Icon(Icons.pets_rounded, size: 16),
               label: const Text('Catat'),
             ),
           ),
@@ -223,7 +223,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                               signed: true,
                             ),
                             style: textTheme.labelMedium?.copyWith(
-                              color: semantic.heroAccent,
+                              color: semantic.heroCardFg,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -566,8 +566,8 @@ class _BmiSpectrumBar extends StatelessWidget {
                 child: Text(
                   categoryLabel,
                   style: textTheme.labelSmall?.copyWith(
-                    color: semantic.heroAccent,
-                    fontWeight: FontWeight.w600,
+                    color: semantic.heroCardMuted,
+                    fontWeight: FontWeight.w700,
                   ),
                   textAlign: TextAlign.end,
                   maxLines: 1,

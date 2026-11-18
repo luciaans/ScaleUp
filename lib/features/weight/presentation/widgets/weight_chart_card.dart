@@ -73,7 +73,7 @@ class WeightChartCard extends StatelessWidget {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: selected
-                              ? semantic.heroCardBg
+                              ? semantic.dockActivePill
                               : semantic.surfaceMuted.withValues(alpha: 0),
                           borderRadius:
                               BorderRadius.circular(AppSpacing.pillRadius),
@@ -82,7 +82,7 @@ class WeightChartCard extends StatelessWidget {
                           filter.label,
                           style: textTheme.labelLarge?.copyWith(
                             color: selected
-                                ? semantic.heroAccent
+                                ? semantic.dockActiveFg
                                 : semantic.textSecondary,
                           ),
                         ),

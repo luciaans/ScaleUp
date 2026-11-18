@@ -6,13 +6,14 @@ import '../constants/app_strings.dart';
 import '../theme/app_colors.dart';
 import '../utils/reduce_motion.dart';
 import 'app_card.dart';
+import 'mochi_companion.dart';
 
 enum QuickAddChoice {
   weight,
   food,
 }
 
-/// Bottom sheet "Catat Cepat" bergaya Bento Action Cards Nixtio.
+/// Bottom sheet "Catat Cepat" bergaya stiker kucing Mochi.
 class QuickAddSheet extends StatelessWidget {
   const QuickAddSheet({super.key});
 
@@ -34,23 +35,14 @@ class QuickAddSheet extends StatelessWidget {
     final reduceMotion = MotionUtils.shouldReduceMotion(context);
 
     Widget weightCard = HeroBentoCard(
-      accentGlowColor: scheme.secondary,
       onTap: () => Navigator.of(context).pop(QuickAddChoice.weight),
       padding: const EdgeInsets.all(AppSpacing.md + AppSpacing.xs),
       child: Row(
         children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: scheme.secondary.withValues(alpha: 0.2),
-            ),
-            child: Icon(
-              Icons.monitor_weight_rounded,
-              color: scheme.secondary,
-              size: AppSpacing.iconMd + 2,
-            ),
+          const MochiCompanion(
+            pose: MochiPose.welcome,
+            size: 54,
+            showFramedBadge: true,
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
@@ -80,36 +72,27 @@ class QuickAddSheet extends StatelessWidget {
             height: 36,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: semantic.heroCardSurface,
+              color: scheme.primary,
             ),
             child: Icon(
-              Icons.north_east_rounded,
+              Icons.add_rounded,
               size: 18,
-              color: semantic.heroAccent,
+              color: scheme.onPrimary,
             ),
           ),
         ],
       ),
     );
 
-    Widget foodCard = AppCard(
-      backgroundColor: semantic.surfaceMuted,
+    Widget foodCard = HeroBentoCard(
       onTap: () => Navigator.of(context).pop(QuickAddChoice.food),
       padding: const EdgeInsets.all(AppSpacing.md + AppSpacing.xs),
       child: Row(
         children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: scheme.tertiary.withValues(alpha: 0.16),
-            ),
-            child: Icon(
-              Icons.local_dining_rounded,
-              color: scheme.tertiary,
-              size: AppSpacing.iconMd + 2,
-            ),
+          const MochiCompanion(
+            pose: MochiPose.chef,
+            size: 54,
+            showFramedBadge: true,
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
@@ -119,6 +102,7 @@ class QuickAddSheet extends StatelessWidget {
                 Text(
                   AppStrings.quickAddFoodTitle,
                   style: textTheme.titleMedium?.copyWith(
+                    color: semantic.heroCardFg,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -126,7 +110,7 @@ class QuickAddSheet extends StatelessWidget {
                 Text(
                   AppStrings.quickAddFoodSubtitle,
                   style: textTheme.bodySmall?.copyWith(
-                    color: semantic.textSecondary,
+                    color: semantic.heroCardMuted,
                   ),
                 ),
               ],
@@ -138,12 +122,12 @@ class QuickAddSheet extends StatelessWidget {
             height: 36,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: semantic.cardSurface,
+              color: scheme.primary,
             ),
             child: Icon(
-              Icons.north_east_rounded,
+              Icons.add_rounded,
               size: 18,
-              color: scheme.onSurface,
+              color: scheme.onPrimary,
             ),
           ),
         ],
@@ -174,7 +158,22 @@ class QuickAddSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(AppStrings.quickAddTitle, style: textTheme.headlineSmall),
+            Row(
+              children: [
+                const Icon(
+                  Icons.pets_rounded,
+                  size: 18,
+                  color: AppColors.sakuraBlush,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    AppStrings.quickAddTitle,
+                    style: textTheme.headlineSmall,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: AppSpacing.xxs),
             Text(
               AppStrings.quickAddSubtitle,

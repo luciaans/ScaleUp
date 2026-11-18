@@ -1,140 +1,107 @@
 import 'package:material_ui/material_ui.dart';
 
-/// Palet warna modern gaya Nixtio ("AI Nutrition & Health Tracking"):
-/// Menggabungkan kanvas organik bersih, Hero Obsidian Bento Card kontras tinggi,
-/// dan aksen segar Emerald-Lime, Electric Sky, serta Warm Coral.
+/// Palet warna "Mochi Neko — Cozy Sumi-Ink & Milk Paper":
+/// Monokrom hangat (Kertas Susu #FCF9F4 & Tinta Arang #24211F)
+/// dipadukan dengan aksen lembut Sakura Blush, Butter Bell, dan Sky Fish.
 abstract final class AppColors {
-  // ================= LIGHT PALETTE =================
-  static const Color lightPrimary = Color(0xFF16A34A);
-  static const Color lightOnPrimary = Color(0xFFFFFFFF);
-  static const Color lightPrimaryContainer = Color(0xFFDCFCE7);
-  static const Color lightOnPrimaryContainer = Color(0xFF052E16);
+  // ================= COZY LIGHT PALETTE (DEFAULT) =================
+  static const Color sumiInk = Color(0xFF24211F);
+  static const Color milkPaper = Color(0xFFF9F4E8);
+  static const Color snowCream = Color(0xFFFFFFFF);
+  static const Color oatWash = Color(0xFFF1EAE0);
+  static const Color biscuitBorder = Color(0xFFDDD4C6);
+  static const Color warmGreyText = Color(0xFF6B635B);
 
-  static const Color lightSecondary = Color(0xFF0EA5E9);
-  static const Color lightOnSecondary = Color(0xFFFFFFFF);
-  static const Color lightSecondaryContainer = Color(0xFFE0F2FE);
-  static const Color lightOnSecondaryContainer = Color(0xFF082F49);
+  static const Color sakuraBlush = Color(0xFFFF9B8E);
+  static const Color sakuraSoft = Color(0xFFFFE8E4);
+  static const Color sakuraDeep = Color(0xFF6E241C);
 
-  static const Color lightTertiary = Color(0xFFF97316);
-  static const Color lightOnTertiary = Color(0xFFFFFFFF);
-  static const Color lightTertiaryContainer = Color(0xFFFFEDD5);
-  static const Color lightOnTertiaryContainer = Color(0xFF431407);
+  static const Color skyFish = Color(0xFF5BA8E6);
+  static const Color skySoft = Color(0xFFE3F2FD);
+  static const Color skyDeep = Color(0xFF10375C);
 
-  // Kanvas organik lembut agar kartu putih & kartu obsidian menonjol tajam
-  static const Color lightBackground = Color(0xFFF2F5F3);
-  static const Color lightSurface = Color(0xFFFFFFFF);
-  static const Color lightSurfaceVariant = Color(0xFFE7ECE9);
-  static const Color lightTextPrimary = Color(0xFF0F172A);
-  static const Color lightTextMuted = Color(0xFF64748B);
-  static const Color lightOutline = Color(0xFFE2E8E4);
-  static const Color lightOutlineStrong = Color(0xFFCBD5CE);
+  static const Color butterBell = Color(0xFFF4B942);
+  static const Color butterSoft = Color(0xFFFFF3D1);
+  static const Color butterDeep = Color(0xFF593B04);
 
-  static const Color lightError = Color(0xFFEF4444);
-  static const Color lightOnError = Color(0xFFFFFFFF);
-  static const Color lightErrorContainer = Color(0xFFFEE2E2);
-  static const Color lightOnErrorContainer = Color(0xFF7F1D1D);
-  static const Color lightSuccess = Color(0xFF22C55E);
+  static const Color matchaSafe = Color(0xFF4F9D69);
+  static const Color matchaSoft = Color(0xFFE3F4E8);
 
-  // ================= DARK PALETTE =================
-  static const Color darkPrimary = Color(0xFF84CC16); // Vibrant Lime-Green khas Nixtio dark mode
-  static const Color darkOnPrimary = Color(0xFF0B1404);
-  static const Color darkPrimaryContainer = Color(0xFF1E3512);
-  static const Color darkOnPrimaryContainer = Color(0xFFECFCCB);
+  static const Color lavenderSnack = Color(0xFF9A7CE8);
 
-  static const Color darkSecondary = Color(0xFF38BDF8);
-  static const Color darkOnSecondary = Color(0xFF082F49);
-  static const Color darkSecondaryContainer = Color(0xFF0F2D44);
-  static const Color darkOnSecondaryContainer = Color(0xFFE0F2FE);
+  static const Color berryError = Color(0xFFD9534F);
+  static const Color berryErrorSoft = Color(0xFFFDE8E8);
 
-  static const Color darkTertiary = Color(0xFFFB923C);
-  static const Color darkOnTertiary = Color(0xFF431407);
-  static const Color darkTertiaryContainer = Color(0xFF3B1D0E);
-  static const Color darkOnTertiaryContainer = Color(0xFFFFEDD5);
+  // ================= COZY DARK PALETTE ("MIDNIGHT FUR") =================
+  static const Color darkBackground = Color(0xFF1B1918);
+  static const Color darkSurface = Color(0xFF262321);
+  static const Color darkSurfaceVariant = Color(0xFF332E2B);
+  static const Color darkInkCream = Color(0xFFF7F3EC);
+  static const Color darkMutedText = Color(0xFFA89F96);
+  static const Color darkBorder = Color(0xFF3D3734);
 
-  static const Color darkBackground = Color(0xFF090D12);
-  static const Color darkSurface = Color(0xFF131922);
-  static const Color darkSurfaceVariant = Color(0xFF1C2430);
-  static const Color darkTextPrimary = Color(0xFFF8FAFC);
-  static const Color darkTextSecondary = Color(0xFF94A3B8);
-  static const Color darkOutline = Color(0xFF222D3D);
-  static const Color darkOutlineStrong = Color(0xFF334155);
-
-  static const Color darkError = Color(0xFFF87171);
-  static const Color darkOnError = Color(0xFF450A0A);
-  static const Color darkErrorContainer = Color(0xFF451212);
-  static const Color darkOnErrorContainer = Color(0xFFFEE2E2);
-  static const Color darkSuccess = Color(0xFF84CC16);
-
-  // ================= HERO OBSIDIAN & LIME ACCENTS =================
-  static const Color obsidianCard = Color(0xFF111714);
-  static const Color obsidianCardElevated = Color(0xFF1B2420);
-  static const Color obsidianCardDarkTheme = Color(0xFF161F1B);
-  static const Color electricLime = Color(0xFFA3E635);
-  static const Color electricMint = Color(0xFF4ADE80);
-  static const Color softViolet = Color(0xFFA78BFA);
-
-  static const Color shadowLight = Color(0x0C0F172A);
-  static const Color shadowDark = Color(0x40000000);
-  static const Color scrim = Color(0x73090D12);
+  static const Color shadowStickerLight = Color(0xFFE6DFD4);
+  static const Color shadowStickerDark = Color(0xFF110F0E);
+  static const Color scrim = Color(0x6624211F);
 
   static ColorScheme get lightColorScheme => const ColorScheme(
         brightness: Brightness.light,
-        primary: lightPrimary,
-        onPrimary: lightOnPrimary,
-        primaryContainer: lightPrimaryContainer,
-        onPrimaryContainer: lightOnPrimaryContainer,
-        secondary: lightSecondary,
-        onSecondary: lightOnSecondary,
-        secondaryContainer: lightSecondaryContainer,
-        onSecondaryContainer: lightOnSecondaryContainer,
-        tertiary: lightTertiary,
-        onTertiary: lightOnTertiary,
-        tertiaryContainer: lightTertiaryContainer,
-        onTertiaryContainer: lightOnTertiaryContainer,
-        error: lightError,
-        onError: lightOnError,
-        errorContainer: lightErrorContainer,
-        onErrorContainer: lightOnErrorContainer,
-        surface: lightSurface,
-        onSurface: lightTextPrimary,
-        surfaceContainerHighest: lightSurfaceVariant,
-        onSurfaceVariant: lightTextMuted,
-        outline: lightOutlineStrong,
-        outlineVariant: lightOutline,
-        shadow: shadowLight,
+        primary: sumiInk,
+        onPrimary: milkPaper,
+        primaryContainer: sakuraSoft,
+        onPrimaryContainer: sumiInk,
+        secondary: skyFish,
+        onSecondary: snowCream,
+        secondaryContainer: skySoft,
+        onSecondaryContainer: skyDeep,
+        tertiary: butterBell,
+        onTertiary: sumiInk,
+        tertiaryContainer: butterSoft,
+        onTertiaryContainer: butterDeep,
+        error: berryError,
+        onError: snowCream,
+        errorContainer: berryErrorSoft,
+        onErrorContainer: sakuraDeep,
+        surface: snowCream,
+        onSurface: sumiInk,
+        surfaceContainerHighest: oatWash,
+        onSurfaceVariant: warmGreyText,
+        outline: sumiInk,
+        outlineVariant: biscuitBorder,
+        shadow: shadowStickerLight,
         scrim: scrim,
       );
 
   static ColorScheme get darkColorScheme => const ColorScheme(
         brightness: Brightness.dark,
-        primary: darkPrimary,
-        onPrimary: darkOnPrimary,
-        primaryContainer: darkPrimaryContainer,
-        onPrimaryContainer: darkOnPrimaryContainer,
-        secondary: darkSecondary,
-        onSecondary: darkOnSecondary,
-        secondaryContainer: darkSecondaryContainer,
-        onSecondaryContainer: darkOnSecondaryContainer,
-        tertiary: darkTertiary,
-        onTertiary: darkOnTertiary,
-        tertiaryContainer: darkTertiaryContainer,
-        onTertiaryContainer: darkOnTertiaryContainer,
-        error: darkError,
-        onError: darkOnError,
-        errorContainer: darkErrorContainer,
-        onErrorContainer: darkOnErrorContainer,
+        primary: darkInkCream,
+        onPrimary: darkBackground,
+        primaryContainer: darkSurfaceVariant,
+        onPrimaryContainer: darkInkCream,
+        secondary: Color(0xFF7CC2F8),
+        onSecondary: darkBackground,
+        secondaryContainer: Color(0xFF1E3446),
+        onSecondaryContainer: skySoft,
+        tertiary: Color(0xFFF7CA65),
+        onTertiary: darkBackground,
+        tertiaryContainer: Color(0xFF423416),
+        onTertiaryContainer: butterSoft,
+        error: Color(0xFFF28B82),
+        onError: darkBackground,
+        errorContainer: Color(0xFF4A201E),
+        onErrorContainer: berryErrorSoft,
         surface: darkSurface,
-        onSurface: darkTextPrimary,
+        onSurface: darkInkCream,
         surfaceContainerHighest: darkSurfaceVariant,
-        onSurfaceVariant: darkTextSecondary,
-        outline: darkOutlineStrong,
-        outlineVariant: darkOutline,
-        shadow: shadowDark,
+        onSurfaceVariant: darkMutedText,
+        outline: darkInkCream,
+        outlineVariant: darkBorder,
+        shadow: shadowStickerDark,
         scrim: scrim,
       );
 }
 
-/// Warna semantik Bento & Hero agar seluruh widget bebas hardcode warna.
+/// Warna semantik terpusat untuk gaya buku sketsa kucing monokrom-pastel.
 @immutable
 class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   const AppSemanticColors({
@@ -188,14 +155,14 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   final Color shimmerBase;
   final Color shimmerHighlight;
 
-  /// Kartu Hero kontras tinggi khas Nixtio (Obsidian + Electric Lime)
+  /// Kartu Panggung Utama Mochi (Krem Hangat & Sumi Ink)
   final Color heroCardBg;
   final Color heroCardSurface;
   final Color heroCardFg;
   final Color heroCardMuted;
   final Color heroAccent;
 
-  /// Floating Pill Dock Navigation Bar
+  /// Kapsul Navigasi Bawah (Monokrom Kertas Susu & Tinta)
   final Color dockBg;
   final Color dockBorder;
   final Color dockActivePill;
@@ -203,63 +170,63 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   final Color dockInactiveFg;
 
   static const AppSemanticColors light = AppSemanticColors(
-    background: AppColors.lightBackground,
-    cardSurface: AppColors.lightSurface,
-    surfaceMuted: AppColors.lightSurfaceVariant,
-    textSecondary: AppColors.lightTextMuted,
-    success: AppColors.lightSuccess,
-    successContainer: AppColors.lightPrimaryContainer,
-    goalLose: AppColors.lightSecondary,
-    goalLoseContainer: AppColors.lightSecondaryContainer,
-    goalGain: AppColors.lightTertiary,
-    goalGainContainer: AppColors.lightTertiaryContainer,
-    goalMaintain: AppColors.lightPrimary,
-    goalMaintainContainer: AppColors.lightPrimaryContainer,
-    proteinColor: Color(0xFF0EA5E9),
-    carbsColor: Color(0xFF65A30D),
-    fatColor: Color(0xFFF97316),
-    shimmerBase: Color(0xFFE2E8E4),
-    shimmerHighlight: Color(0xFFF8FAF9),
-    heroCardBg: AppColors.obsidianCard,
-    heroCardSurface: AppColors.obsidianCardElevated,
-    heroCardFg: Color(0xFFF8FAFC),
-    heroCardMuted: Color(0xFF94A39B),
-    heroAccent: AppColors.electricLime,
-    dockBg: Color(0xF0111714),
-    dockBorder: Color(0xFF26312B),
-    dockActivePill: Color(0xFF233029),
-    dockActiveFg: AppColors.electricLime,
-    dockInactiveFg: Color(0xFF94A39B),
+    background: AppColors.milkPaper,
+    cardSurface: AppColors.snowCream,
+    surfaceMuted: AppColors.oatWash,
+    textSecondary: AppColors.warmGreyText,
+    success: AppColors.matchaSafe,
+    successContainer: AppColors.matchaSoft,
+    goalLose: AppColors.skyFish,
+    goalLoseContainer: AppColors.skySoft,
+    goalGain: AppColors.sakuraBlush,
+    goalGainContainer: AppColors.sakuraSoft,
+    goalMaintain: AppColors.matchaSafe,
+    goalMaintainContainer: AppColors.matchaSoft,
+    proteinColor: AppColors.skyFish,
+    carbsColor: AppColors.butterBell,
+    fatColor: AppColors.sakuraBlush,
+    shimmerBase: AppColors.oatWash,
+    shimmerHighlight: AppColors.snowCream,
+    heroCardBg: AppColors.snowCream,
+    heroCardSurface: AppColors.oatWash,
+    heroCardFg: AppColors.sumiInk,
+    heroCardMuted: AppColors.warmGreyText,
+    heroAccent: AppColors.sakuraBlush,
+    dockBg: Color(0xF5FFFFFF),
+    dockBorder: AppColors.sumiInk,
+    dockActivePill: AppColors.sumiInk,
+    dockActiveFg: AppColors.milkPaper,
+    dockInactiveFg: AppColors.warmGreyText,
   );
 
   static const AppSemanticColors dark = AppSemanticColors(
     background: AppColors.darkBackground,
     cardSurface: AppColors.darkSurface,
     surfaceMuted: AppColors.darkSurfaceVariant,
-    textSecondary: AppColors.darkTextSecondary,
-    success: AppColors.darkSuccess,
-    successContainer: AppColors.darkPrimaryContainer,
-    goalLose: AppColors.darkSecondary,
-    goalLoseContainer: AppColors.darkSecondaryContainer,
-    goalGain: AppColors.darkTertiary,
-    goalGainContainer: AppColors.darkTertiaryContainer,
-    goalMaintain: AppColors.darkPrimary,
-    goalMaintainContainer: AppColors.darkPrimaryContainer,
-    proteinColor: Color(0xFF38BDF8),
-    carbsColor: AppColors.electricLime,
-    fatColor: Color(0xFFFB923C),
-    shimmerBase: Color(0xFF1B2430),
-    shimmerHighlight: Color(0xFF263344),
-    heroCardBg: AppColors.obsidianCardDarkTheme,
-    heroCardSurface: Color(0xFF212D27),
-    heroCardFg: Color(0xFFF8FAFC),
-    heroCardMuted: Color(0xFF9CA3AF),
-    heroAccent: AppColors.electricLime,
-    dockBg: Color(0xF2151C26),
-    dockBorder: Color(0xFF273446),
-    dockActivePill: Color(0xFF233029),
-    dockActiveFg: AppColors.electricLime,
-    dockInactiveFg: Color(0xFF94A3B8),
+    textSecondary: AppColors.darkMutedText,
+    success: Color(0xFF74C69D),
+    successContainer: Color(0xFF1F382B),
+    goalLose: Color(0xFF7CC2F8),
+    goalLoseContainer: Color(0xFF1E3446),
+    goalGain: AppColors.sakuraBlush,
+    goalGainContainer: Color(0xFF472622),
+    goalMaintain: Color(0xFF74C69D),
+    goalMaintainContainer: Color(0xFF1F382B),
+    proteinColor: Color(0xFF7CC2F8),
+    carbsColor: Color(0xFFF7CA65),
+    fatColor: AppColors.sakuraBlush,
+    shimmerBase: AppColors.darkSurfaceVariant,
+    shimmerHighlight: AppColors.darkBorder,
+    heroCardBg: AppColors.darkSurface,
+    heroCardSurface: AppColors.darkSurfaceVariant,
+    heroCardFg: AppColors.darkInkCream,
+    heroCardMuted: AppColors.darkMutedText,
+    heroAccent: AppColors.sakuraBlush,
+    dockBg: Color(0xF5262321),
+    dockBorder: AppColors.darkBorder,
+    dockActivePill: AppColors.darkInkCream,
+    dockActiveFg: AppColors.darkBackground,
+    dockInactiveFg: AppColors.darkMutedText,
   );
 
   @override
