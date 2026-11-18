@@ -1,7 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:confetti/confetti.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/constants/app_spacing.dart';
@@ -93,9 +98,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(content: Text(milestone.message)),
-        );
+        ..showSnackBar(SnackBar(content: Text(milestone.message)));
     });
   }
 
@@ -109,10 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
     return child
         .animate(delay: AppSpacing.staggerDelay * index)
-        .fadeIn(
-          duration: AppSpacing.animNormal,
-          curve: Curves.easeOutCubic,
-        )
+        .fadeIn(duration: AppSpacing.animNormal, curve: Curves.easeOutCubic)
         .moveY(
           begin: AppSpacing.slideOffsetPx,
           end: 0,
@@ -195,7 +195,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   .where((e) => AppDateUtils.isSameDay(e.date, today))
                   .firstOrNull;
               final cal = todayCaloriesAsync.value;
-              final streak = streakAsync.value ??
+              final streak =
+                  streakAsync.value ??
                   const StreakSummary(
                     currentStreakDays: 0,
                     loggedToday: false,
@@ -231,16 +232,49 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               final mochiPose = isOverCal
                   ? MochiPose.shock
                   : (streak.loggedToday
-                      ? MochiPose.cheer
-                      : (consumedKcal > 0
-                          ? MochiPose.chef
-                          : MochiPose.welcome));
+                        ? MochiPose.cheer
+                        : (consumedKcal > 0
+                              ? MochiPose.chef
+                              : MochiPose.welcome));
 
-              final mochiMessage = isOverCal
-                  ? 'Kalori hari ini sedikit melewati target. Besok kita atur porsinya lagi — tidak apa-apa!'
+              final encouragementMessages = isOverCal
+                  ? const [
+                      'Target hari ini terlewati sedikit. Besok lanjut dengan tenang.',
+                      'Satu hari tidak menentukan progresmu. Kita lanjut lagi besok.',
+                      'Tetap pilih makanan yang mengenyangkan dan seimbang.',
+                      'Tidak harus sempurna. Pilihan kecil yang baik tetap berarti.',
+                      'Dengarkan tubuhmu dan lanjutkan dengan ritme yang nyaman.',
+                      'Progres kesehatan punya naik turun. Kamu tetap bergerak maju.',
+                      'Besok selalu ada kesempatan untuk memulai lagi.',
+                      'Fokus pada kebiasaan, bukan satu angka hari ini.',
+                      'Kamu sedang belajar mengenali kebutuhan tubuhmu.',
+                      'Pelan-pelan saja, yang penting tetap peduli pada diri sendiri.',
+                    ]
                   : (streak.loggedToday
-                      ? 'Catatan hari ini sudah lengkap. Konsistensi seperti ini yang bikin progress nyata!'
-                      : 'Halo! Jangan lupa catat berat badan atau makanan hari ini ya.');
+                        ? const [
+                            'Catatan hari ini lengkap. Konsistensi kecil membawa progres nyata!',
+                            'Kamu sudah meluangkan waktu untuk dirimu hari ini. Bagus!',
+                            'Satu hari tercatat. Besok kita lanjutkan lagi.',
+                            'Kebiasaan baik tumbuh dari langkah sederhana yang diulang.',
+                            'Terima kasih sudah menjaga komitmen pada dirimu hari ini.',
+                            'Setiap catatan membantumu memahami progres dengan lebih baik.',
+                            'Kamu tidak perlu terburu-buru untuk terus berkembang.',
+                            'Hari ini kamu hadir untuk tujuanmu. Itu sudah berarti.',
+                            'Rayakan konsistensi kecil yang sudah kamu bangun.',
+                            'Langkahmu mungkin kecil, tapi arahnya sudah tepat.',
+                          ]
+                        : const [
+                            'Satu catatan sederhana bisa jadi awal yang baik.',
+                            'Yuk, catat berat atau makananmu hari ini.',
+                            'Progres dibangun pelan-pelan. Mulai dari hari ini.',
+                            'Luangkan sebentar untuk mencatat apa yang sudah kamu lakukan.',
+                            'Mulai dari satu pilihan kecil yang terasa mudah.',
+                            'Konsisten bukan berarti sempurna, cukup kembali mencoba.',
+                            'Catatan singkat hari ini membantu melihat gambaran besarnya.',
+                            'Sediakan waktu untuk dirimu dan tujuan sehatmu.',
+                            'Hari baru, kesempatan baru untuk merawat diri.',
+                            'Pilih satu kebiasaan sehat untuk dimulai hari ini.',
+                          ]);
 
               return CustomScrollView(
                 slivers: [
@@ -269,8 +303,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     shape: BoxShape.circle,
                                     color: scheme.primaryContainer,
                                     border: Border.all(
-                                      color: scheme.onSurface,
-                                      width: AppSpacing.borderMedium,
+                                      color: scheme.outlineVariant,
+                                      width: AppSpacing.borderThin,
                                     ),
                                   ),
                                   alignment: Alignment.center,
@@ -300,8 +334,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   ),
                                   Text(
                                     plan.profile.name,
-                                    style: textTheme.headlineSmall?.copyWith(
-                                      fontWeight: FontWeight.w800,
+                                    style: textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.w700,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -309,48 +343,54 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ],
                               ),
                             ),
-                            const SizedBox(width: AppSpacing.xs),
-                            Flexible(
+                            const SizedBox(width: AppSpacing.sm),
+                            Semantics(
+                              label:
+                                  '${streak.currentStreakDays} hari beruntun',
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.sm + 4,
-                                  vertical: AppSpacing.sm,
+                                  horizontal: AppSpacing.sm + 2,
+                                  vertical: AppSpacing.xs + 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: semantic.cardSurface,
+                                  color: scheme.tertiaryContainer,
                                   borderRadius: BorderRadius.circular(
-                                    AppSpacing.pillRadius,
+                                    AppSpacing.radiusMd,
                                   ),
-                                  border: Border.all(
-                                    color: scheme.outlineVariant,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: scheme.shadow,
-                                      offset: const Offset(0, 3),
-                                      blurRadius: 8,
-                                    ),
-                                  ],
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Icon(
                                       Icons.local_fire_department_rounded,
-                                      size: 16,
+                                      size: 18,
                                       color: AppColors.amberPop,
                                     ),
-                                    const SizedBox(width: 5),
-                                    Flexible(
-                                      child: Text(
-                                        '${streak.currentStreakDays} Hari Beruntun',
-                                        style: textTheme.labelMedium?.copyWith(
-                                          color: scheme.onSurface,
-                                          fontWeight: FontWeight.w700,
+                                    const SizedBox(width: AppSpacing.xs),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          '${streak.currentStreakDays} hari',
+                                          style: textTheme.labelMedium
+                                              ?.copyWith(
+                                                color:
+                                                    scheme.onTertiaryContainer,
+                                                fontWeight: FontWeight.w800,
+                                                height: 1.1,
+                                              ),
                                         ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
+                                        Text(
+                                          'beruntun',
+                                          style: textTheme.labelSmall?.copyWith(
+                                            color: scheme.onTertiaryContainer
+                                                .withValues(alpha: 0.75),
+                                            height: 1.1,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -387,67 +427,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.md),
-
-                        // Banner Reaksi Kucing Meme Harian (ketuk stiker buat ganti ekspresi!)
+                        // Pesan penyemangat berganti otomatis dan bisa dipilih manual.
                         _staggeredCard(
                           context,
                           index: 1,
-                          child: AppCard(
-                            backgroundColor: semantic.cardSurface,
-                            borderColor: scheme.outlineVariant,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.md,
-                              vertical: AppSpacing.sm + 4,
-                            ),
-                            child: Row(
-                              children: [
-                                MochiCompanion(
-                                  pose: mochiPose,
-                                  size: 68,
-                                  showFramedBadge: true,
-                                  cyclePosesOnTap: true,
-                                ),
-                                const SizedBox(width: AppSpacing.sm + 4),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.mood_rounded,
-                                            size: 14,
-                                            color: semantic.heroAccent,
-                                          ),
-                                          const SizedBox(width: 5),
-                                          Flexible(
-                                            child: Text(
-                                              'Mood Harian Mochi',
-                                              style: textTheme.labelSmall
-                                                  ?.copyWith(
-                                                    color: semantic.heroAccent,
-                                                    fontWeight: FontWeight.w800,
-                                                  ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 3),
-                                      Text(
-                                        mochiMessage,
-                                        style: textTheme.bodySmall?.copyWith(
-                                          color: scheme.onSurface,
-                                          fontWeight: FontWeight.w600,
-                                          height: 1.38,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                          child: _DailyEncouragementCard(
+                            pose: mochiPose,
+                            messages: encouragementMessages,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.md),
@@ -574,16 +560,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                             isOverCal
                                                 ? 'kkal di atas target harian'
                                                 : 'kkal tersisa hari ini',
-                                            style:
-                                                textTheme.bodySmall?.copyWith(
+                                            style: textTheme.bodySmall
+                                                ?.copyWith(
                                                   color: semantic.heroCardMuted,
                                                 ),
                                           ),
                                           const SizedBox(height: AppSpacing.sm),
                                           Text(
                                             '${AppFormatters.integer(consumedKcal)} / ${AppFormatters.calories(plan.caloriePlan.targetCalories)}',
-                                            style:
-                                                textTheme.labelMedium?.copyWith(
+                                            style: textTheme.labelMedium
+                                                ?.copyWith(
                                                   color: semantic.heroCardFg,
                                                   fontWeight: FontWeight.w700,
                                                 ),
@@ -637,8 +623,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     Expanded(
                                       child: _HeroMacroPod(
                                         label: 'Protein',
-                                        current:
-                                            cal?.consumedProteinGrams ?? 0,
+                                        current: cal?.consumedProteinGrams ?? 0,
                                         target: plan.caloriePlan.proteinGrams,
                                         color: semantic.proteinColor,
                                       ),
@@ -681,8 +666,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 Expanded(
                                   child: AppCard(
                                     onTap: () => context.go(AppRoutes.weight),
-                                    padding:
-                                        const EdgeInsets.all(AppSpacing.md),
+                                    padding: const EdgeInsets.all(
+                                      AppSpacing.md,
+                                    ),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -694,15 +680,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                               height: 34,
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
-                                                color: scheme.secondaryContainer,
+                                                color:
+                                                    scheme.secondaryContainer,
                                               ),
                                               child: Icon(
-                                                Icons.monitor_weight_rounded,
+                                                Icons.scale_rounded,
                                                 size: 18,
                                                 color: scheme.secondary,
                                               ),
                                             ),
-                                            const SizedBox(width: AppSpacing.xs),
+                                            const SizedBox(
+                                              width: AppSpacing.xs,
+                                            ),
                                             Expanded(
                                               child: Text(
                                                 todayWeight != null
@@ -797,8 +786,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 Expanded(
                                   child: AppCard(
                                     onTap: () => context.go(AppRoutes.profile),
-                                    padding:
-                                        const EdgeInsets.all(AppSpacing.md),
+                                    padding: const EdgeInsets.all(
+                                      AppSpacing.md,
+                                    ),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -815,12 +805,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                 ),
                                               ),
                                               child: Icon(
-                                                Icons.flag_rounded,
+                                                Icons.track_changes_rounded,
                                                 size: 18,
                                                 color: goalAccent,
                                               ),
                                             ),
-                                            const SizedBox(width: AppSpacing.xs),
+                                            const SizedBox(
+                                              width: AppSpacing.xs,
+                                            ),
                                             Expanded(
                                               child: Text(
                                                 plan.goalType.shortLabel,
@@ -885,65 +877,67 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           context,
                           index: 4,
                           child: AppCard(
+                            padding: const EdgeInsets.all(AppSpacing.md),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   children: [
                                     Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: AppSpacing.sm + 2,
-                                        vertical: 4,
-                                      ),
+                                      width: 40,
+                                      height: 40,
                                       decoration: BoxDecoration(
                                         color: scheme.primaryContainer,
-                                        borderRadius: BorderRadius.circular(
-                                          AppSpacing.pillRadius,
-                                        ),
+                                        shape: BoxShape.circle,
                                       ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
+                                      child: Icon(
+                                        Icons.menu_book_rounded,
+                                        size: 20,
+                                        color: scheme.onPrimaryContainer,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.sm + 4),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          const Icon(
-                                            Icons.tips_and_updates_rounded,
-                                            size: 14,
-                                            color: AppColors.sakuraBlush,
-                                          ),
-                                          const SizedBox(width: 5),
                                           Text(
-                                            'Tips Sehat Harian',
-                                            style:
-                                                textTheme.labelSmall?.copyWith(
-                                                  color:
-                                                      scheme.onPrimaryContainer,
-                                                  fontWeight: FontWeight.w700,
+                                            'Tips sehat hari ini',
+                                            style: textTheme.labelMedium
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w800,
                                                 ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            plan.goalType.label,
+                                            style: textTheme.labelSmall
+                                                ?.copyWith(
+                                                  color: semantic.textSecondary,
+                                                ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(width: AppSpacing.sm),
-                                    Expanded(
-                                      child: Text(
-                                        plan.goalType.label,
-                                        style: textTheme.labelSmall?.copyWith(
-                                          color: semantic.textSecondary,
-                                        ),
-                                        textAlign: TextAlign.end,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
                                   ],
                                 ),
-                                const SizedBox(height: AppSpacing.sm + 2),
+                                const SizedBox(height: AppSpacing.md),
+                                Divider(
+                                  height: 1,
+                                  color: scheme.outlineVariant,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
                                 Text(
                                   tip.title,
                                   style: textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w800,
+                                    height: 1.25,
                                   ),
                                 ),
-                                const SizedBox(height: AppSpacing.xs),
+                                const SizedBox(height: AppSpacing.sm),
                                 Text(
                                   tip.body,
                                   style: textTheme.bodySmall?.copyWith(
@@ -972,10 +966,195 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               emissionFrequency: 0.05,
               numberOfParticles: 16,
               gravity: 0.25,
-              colors: [
-                semantic.heroAccent,
-                scheme.secondary,
-                scheme.tertiary,
+              colors: [semantic.heroAccent, scheme.secondary, scheme.tertiary],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DailyEncouragementCard extends StatefulWidget {
+  const _DailyEncouragementCard({required this.pose, required this.messages});
+
+  final MochiPose pose;
+  final List<String> messages;
+
+  @override
+  State<_DailyEncouragementCard> createState() =>
+      _DailyEncouragementCardState();
+}
+
+class _DailyEncouragementCardState extends State<_DailyEncouragementCard> {
+  Timer? _messageTimer;
+  Timer? _onlineTimer;
+  int _messageIndex = 0;
+  bool _isFetchingOnline = false;
+  late List<String> _messages;
+  final List<String> _onlineMessages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _messages = List<String>.of(widget.messages);
+    _messageTimer = Timer.periodic(
+      const Duration(seconds: 8),
+      (_) => _showNextMessage(),
+    );
+    if (!kIsWeb) {
+      unawaited(_loadOnlineMessage());
+      _onlineTimer = Timer.periodic(
+        const Duration(minutes: 1),
+        (_) => unawaited(_loadOnlineMessage()),
+      );
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _DailyEncouragementCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.messages, widget.messages)) {
+      final currentMessage = _messages.isEmpty
+          ? null
+          : _messages[_messageIndex % _messages.length];
+      _messages = [...widget.messages, ..._onlineMessages];
+      final currentIndex = currentMessage == null
+          ? -1
+          : _messages.indexOf(currentMessage);
+      _messageIndex = currentIndex >= 0 ? currentIndex : 0;
+    }
+  }
+
+  Future<void> _loadOnlineMessage() async {
+    if (kIsWeb || _isFetchingOnline) return;
+    _isFetchingOnline = true;
+    try {
+      final response = await http
+          .get(
+            Uri.https('quotes.liupurnomo.com', '/api/quotes/random', const {
+              'category': 'motivasi',
+            }),
+          )
+          .timeout(const Duration(seconds: 6));
+      if (response.statusCode != 200) return;
+
+      final payload = jsonDecode(response.body);
+      if (payload is! Map<String, dynamic> || payload['status'] != 'SUCCESS') {
+        return;
+      }
+      final data = payload['data'];
+      if (data is! Map<String, dynamic>) return;
+
+      final text = data['text']?.toString().trim() ?? '';
+      final author = data['author']?.toString().trim() ?? '';
+      if (text.isEmpty) return;
+      final quote = author.isEmpty ? text : '$text\n— $author';
+      if (!mounted || _onlineMessages.contains(quote)) return;
+
+      setState(() {
+        if (_onlineMessages.length >= 30) {
+          final expiredQuote = _onlineMessages.removeAt(0);
+          _messages.remove(expiredQuote);
+          _messageIndex %= _messages.length;
+        }
+        _onlineMessages.add(quote);
+        _messages.add(quote);
+      });
+    } catch (_) {
+      // Pesan lokal tetap tersedia saat offline atau API tidak merespons.
+    } finally {
+      _isFetchingOnline = false;
+    }
+  }
+
+  void _showNextMessage() {
+    if (!mounted || widget.messages.isEmpty) return;
+    setState(
+      () => _messageIndex = (_messageIndex + 1) % widget.messages.length,
+    );
+  }
+
+  @override
+  void dispose() {
+    _messageTimer?.cancel();
+    _onlineTimer?.cancel();
+    super.dispose();
+  }
+
+  MochiPose get _currentPose {
+    final poses = MochiPose.values;
+    final start = poses.indexOf(widget.pose);
+    return poses[(start + _messageIndex) % poses.length];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final semantic = context.semanticColors;
+    final scheme = context.colorScheme;
+    final message = _messages[_messageIndex % _messages.length];
+
+    return AppCard(
+      backgroundColor: semantic.cardSurface,
+      borderColor: scheme.outlineVariant,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm + 4,
+      ),
+      child: Row(
+        children: [
+          AnimatedSwitcher(
+            duration: MotionUtils.duration(context, AppSpacing.animFast),
+            child: MochiCompanion(
+              key: ValueKey<MochiPose>(_currentPose),
+              pose: _currentPose,
+              size: 68,
+              showFramedBadge: true,
+              cyclePosesOnTap: false,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm + 4),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.format_quote_rounded,
+                      size: 15,
+                      color: semantic.heroAccent,
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        'Semangat Hari Ini',
+                        style: textTheme.labelMedium?.copyWith(
+                          color: semantic.heroAccent,
+                          fontWeight: FontWeight.w800,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                AnimatedSwitcher(
+                  duration: MotionUtils.duration(context, AppSpacing.animFast),
+                  child: Text(
+                    message,
+                    key: ValueKey<String>(message),
+                    style: textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                      height: 1.38,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
           ),
@@ -1021,10 +1200,7 @@ class _HeroMacroPod extends StatelessWidget {
               Container(
                 width: 7,
                 height: 7,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: color,
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: color),
               ),
               const SizedBox(width: 5),
               Expanded(

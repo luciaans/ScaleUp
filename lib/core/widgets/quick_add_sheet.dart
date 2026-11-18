@@ -8,10 +8,7 @@ import '../utils/reduce_motion.dart';
 import 'app_card.dart';
 import 'mochi_companion.dart';
 
-enum QuickAddChoice {
-  weight,
-  food,
-}
+enum QuickAddChoice { weight, food }
 
 /// Bottom sheet "Catat Cepat" bergaya stiker kucing Mochi.
 class QuickAddSheet extends StatelessWidget {
@@ -31,7 +28,6 @@ class QuickAddSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final semantic = context.semanticColors;
-    final scheme = context.colorScheme;
     final reduceMotion = MotionUtils.shouldReduceMotion(context);
 
     Widget weightCard = HeroBentoCard(
@@ -64,20 +60,6 @@ class QuickAddSheet extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: scheme.primary,
-            ),
-            child: Icon(
-              Icons.add_rounded,
-              size: 18,
-              color: scheme.onPrimary,
             ),
           ),
         ],
@@ -116,20 +98,6 @@ class QuickAddSheet extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: scheme.primary,
-            ),
-            child: Icon(
-              Icons.add_rounded,
-              size: 18,
-              color: scheme.onPrimary,
-            ),
-          ),
         ],
       ),
     );
@@ -158,22 +126,7 @@ class QuickAddSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.add_circle_outline_rounded,
-                  size: 20,
-                  color: scheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    AppStrings.quickAddTitle,
-                    style: textTheme.headlineSmall,
-                  ),
-                ),
-              ],
-            ),
+            Text(AppStrings.quickAddTitle, style: textTheme.headlineSmall),
             const SizedBox(height: AppSpacing.xxs),
             Text(
               AppStrings.quickAddSubtitle,

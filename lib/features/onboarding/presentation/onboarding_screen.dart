@@ -70,7 +70,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   double get _parsedWeight =>
       NumberParser.tryParseDouble(_weightController.text) ?? 68.0;
   double get _parsedTargetWeight =>
-      NumberParser.tryParseDouble(_targetWeightController.text) ?? _parsedWeight;
+      NumberParser.tryParseDouble(_targetWeightController.text) ??
+      _parsedWeight;
 
   Future<void> _pickBirthDate() async {
     final now = AppDateUtils.today();
@@ -192,26 +193,33 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     try {
       final heightCm = _parsedHeight;
       final weightKg = _parsedWeight;
-      final targetKg =
-          _goalType == GoalType.maintain ? weightKg : _parsedTargetWeight;
+      final targetKg = _goalType == GoalType.maintain
+          ? weightKg
+          : _parsedTargetWeight;
       final maxRate = HealthCalculator.maxSafeWeeklyRateKg(weightKg);
       final savedRate = _goalType == GoalType.maintain
           ? 0.0
           : (_weeklyRate > maxRate ? maxRate : _weeklyRate);
 
-      await ref.read(weightRepositoryProvider).upsertWeight(
+      await ref
+          .read(weightRepositoryProvider)
+          .upsertWeight(
             date: AppDateUtils.today(),
             weightKg: weightKg,
             note: 'Berat awal',
           );
-      await ref.read(profileRepositoryProvider).saveProfile(
+      await ref
+          .read(profileRepositoryProvider)
+          .saveProfile(
             name: _nameController.text.trim(),
             gender: _gender,
             birthDate: _birthDate!,
             heightCm: heightCm,
             activityLevel: _activityLevel,
           );
-      await ref.read(goalRepositoryProvider).setNewGoal(
+      await ref
+          .read(goalRepositoryProvider)
+          .setNewGoal(
             type: _goalType,
             startWeight: weightKg,
             targetWeight: targetKg,
@@ -257,61 +265,28 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
               child: _currentStep == 0
                   ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.sm + 4,
-                            vertical: 6,
+                            horizontal: AppSpacing.sm + 2,
+                            vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: scheme.onSurface,
+                            color: semantic.cardSurface,
                             borderRadius: BorderRadius.circular(
                               AppSpacing.pillRadius,
                             ),
+                            border: Border.all(color: scheme.outlineVariant),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.flash_on_rounded,
-                                size: 14,
-                                color: AppColors.amberPop,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                AppStrings.appName,
-                                style: textTheme.labelMedium?.copyWith(
-                                  color: scheme.surface,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                        Flexible(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.sm + 2,
-                              vertical: 5,
+                          child: Text(
+                            'Langkah 1 dari $_totalSteps',
+                            style: textTheme.labelSmall?.copyWith(
+                              color: semantic.textSecondary,
+                              fontWeight: FontWeight.w700,
                             ),
-                            decoration: BoxDecoration(
-                              color: semantic.cardSurface,
-                              borderRadius: BorderRadius.circular(
-                                AppSpacing.pillRadius,
-                              ),
-                              border: Border.all(color: scheme.outlineVariant),
-                            ),
-                            child: Text(
-                              'Langkah 1 dari $_totalSteps',
-                              style: textTheme.labelSmall?.copyWith(
-                                color: semantic.textSecondary,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -378,6 +353,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 duration: animDuration,
                 switchInCurve: Curves.easeOutCubic,
                 switchOutCurve: Curves.easeOutCubic,
+                layoutBuilder: (currentChild, previousChildren) => Stack(
+                  alignment: _currentStep == 0
+                      ? Alignment.center
+                      : Alignment.topCenter,
+                  children: [
+                    ...previousChildren,
+                    if (currentChild != null) currentChild,
+                  ],
+                ),
                 child: SingleChildScrollView(
                   key: ValueKey<int>(_currentStep),
                   padding: EdgeInsets.fromLTRB(
@@ -408,7 +392,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 label: buttonLabel,
                 isLoading: _isSubmitting,
                 onPressed: _handleNext,
-                icon: _currentStep == 3 ? Icons.check_circle_outline_rounded : null,
+                icon: _currentStep == 3
+                    ? Icons.check_circle_outline_rounded
+                    : null,
               ),
             ),
           ],
@@ -417,129 +403,56 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
-  /// Langkah 1: Layar Pembuka (Welcome Hero) dengan Stiker Foto Kucing Meme Interaktif
+  /// Langkah 1: Layar pembuka ringkas untuk memperkenalkan ScaleUp.
   Widget _buildWelcomeStep(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final semantic = context.semanticColors;
-    final scheme = context.colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const SizedBox(height: AppSpacing.xs),
-        // Stiker Foto Kucing Meme interaktif (ketuk untuk ganti foto meme!)
-        const Center(
-          child: MochiCompanion(
-            pose: MochiPose.welcome,
-            size: 196,
-            cyclePosesOnTap: true,
-            quotes: [
-              'Halo! Ketuk foto kucing ini buat ganti ekspresinya 😄',
-              'Siap pantau berat & kalori? Yuk mulai dari sini!',
-              'Nasi padang, bakso, atau salad — semua bisa tercatat.',
-              'Pelan tapi pasti, badan sehat bukan mimpi kok!',
-              'Konsisten setiap hari, hasilnya nggak bohong.',
-              'POP!! Semangat! Hari ini langkah pertama yang paling penting.',
-              'Hidup sehat nggak harus menyiksa, cukup tercatat dengan baik~',
+        const SizedBox(height: AppSpacing.xxs),
+        Text.rich(
+          TextSpan(
+            children: [
+              const TextSpan(text: 'Scale'),
+              TextSpan(
+                text: 'Up',
+                style: const TextStyle(color: AppColors.royalBlue),
+              ),
             ],
           ),
-        ),
-        const SizedBox(height: AppSpacing.md + 4),
-        Text(
-          'Pantau Berat & Kalori\nSecara Cerdas & Menyenangkan',
-          style: textTheme.displaySmall?.copyWith(
+          style: textTheme.headlineLarge?.copyWith(
+            fontSize: 30,
             fontWeight: FontWeight.w800,
-            height: 1.2,
+            letterSpacing: -0.8,
+            height: 1,
           ),
-          textAlign: TextAlign.center,
         ),
-        const SizedBox(height: AppSpacing.sm),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+        const SizedBox(height: AppSpacing.md),
+        const MochiCompanion(pose: MochiPose.welcome, size: 170),
+        const SizedBox(height: AppSpacing.md),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 350),
           child: Text(
-            'Catat berat badan & asupan kalori harian dengan mudah. Ditemani reaksi kucing meme yang bikin semangat tiap hari.',
-            style: textTheme.bodyMedium?.copyWith(
-              color: semantic.textSecondary,
-              height: 1.48,
+            'Pantau berat & kalori\nlebih mudah setiap hari',
+            style: textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              height: 1.12,
             ),
             textAlign: TextAlign.center,
           ),
         ),
-        const SizedBox(height: AppSpacing.lg - 4),
-
-        // 3 Kartu Kapsul Fitur Universal
-        const Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          alignment: WrapAlignment.center,
-          children: [
-            _StickerPillFeature(
-              icon: Icons.restaurant_menu_rounded,
-              accent: AppColors.royalBlue,
-              label: '92+ Menu Lokal',
+        const SizedBox(height: AppSpacing.sm + 2),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 340),
+          child: Text(
+            'Catat berat dan asupan harian, lalu pantau perubahanmu dari waktu ke waktu.',
+            style: textTheme.bodyMedium?.copyWith(
+              color: semantic.textSecondary,
+              height: 1.4,
             ),
-            _StickerPillFeature(
-              icon: Icons.insights_rounded,
-              accent: AppColors.emeraldSafe,
-              label: 'Tren 7 Hari',
-            ),
-            _StickerPillFeature(
-              icon: Icons.sentiment_very_satisfied_rounded,
-              accent: AppColors.amberPop,
-              label: 'Mochi Menemanimu',
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.lg),
-
-        // Catatan Kesehatan yang bersih & netral
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(
-            color: semantic.cardSurface,
-            borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-            border: Border.all(color: scheme.outlineVariant),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: scheme.primaryContainer,
-                ),
-                child: Icon(
-                  Icons.verified_user_outlined,
-                  color: semantic.heroAccent,
-                  size: 18,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm + 2),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppStrings.healthDisclaimerTitle,
-                      style: textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      AppStrings.healthDisclaimerBody,
-                      style: textTheme.bodySmall?.copyWith(
-                        color: semantic.textSecondary,
-                        height: 1.42,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            textAlign: TextAlign.center,
           ),
         ),
       ],
@@ -560,10 +473,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         const _MochiStepBanner(
           pose: MochiPose.welcome,
           title: 'Kenalan Dulu, Yuk!',
-          subtitle:
-              'Data ini dipakai menghitung kebutuhan energi harianmu secara akurat.',
+          subtitle: 'Data ini dipakai menghitung kebutuhan energi harianmu secara akurat.',
         ),
-        const SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.sm + 4),
 
         Text('Nama Panggilan', style: textTheme.labelLarge),
         const SizedBox(height: AppSpacing.sm),
@@ -598,10 +510,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   backgroundColor: isSelected
                       ? scheme.primaryContainer
                       : semantic.cardSurface,
-                  borderColor:
-                      isSelected ? scheme.onSurface : scheme.outlineVariant,
+                  borderColor: isSelected
+                      ? scheme.onSurface
+                      : scheme.outlineVariant,
                   padding: const EdgeInsets.symmetric(
-                    vertical: AppSpacing.md,
+                    vertical: AppSpacing.sm + 4,
                     horizontal: AppSpacing.sm,
                   ),
                   child: Row(
@@ -643,7 +556,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           onTap: _pickBirthDate,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
-            vertical: AppSpacing.md,
+            vertical: AppSpacing.sm + 4,
           ),
           semanticLabel: 'Pilih tanggal lahir',
           child: Row(
@@ -674,7 +587,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Tinggi (cm)', style: textTheme.labelLarge),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.height_rounded,
+                        size: AppSpacing.iconSm,
+                        color: semantic.heroAccent,
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Text('Tinggi (cm)', style: textTheme.labelLarge),
+                    ],
+                  ),
                   const SizedBox(height: AppSpacing.sm),
                   TextField(
                     key: const Key('onboarding_height_field'),
@@ -700,7 +623,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Berat Sekarang (kg)', style: textTheme.labelLarge),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.scale_outlined,
+                        size: AppSpacing.iconSm,
+                        color: semantic.heroAccent,
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Text('Berat Sekarang (kg)', style: textTheme.labelLarge),
+                    ],
+                  ),
                   const SizedBox(height: AppSpacing.sm),
                   TextField(
                     key: const Key('onboarding_weight_field'),
@@ -726,10 +659,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
         if (_step2Error != null) ...[
           const SizedBox(height: AppSpacing.md),
-          _ValidationBanner(
-            message: _step2Error!,
-            isError: true,
-          ),
+          _ValidationBanner(message: _step2Error!, isError: true),
         ],
       ],
     );
@@ -753,14 +683,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ...ActivityLevel.values.map((level) {
           final isSelected = _activityLevel == level;
           return Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm + AppSpacing.xs),
+            padding: const EdgeInsets.only(
+              bottom: AppSpacing.sm + AppSpacing.xs,
+            ),
             child: AppCard(
               onTap: () => setState(() => _activityLevel = level),
               backgroundColor: isSelected
                   ? scheme.primaryContainer
                   : semantic.cardSurface,
-              borderColor:
-                  isSelected ? scheme.onSurface : scheme.outlineVariant,
+              borderColor: isSelected
+                  ? scheme.onSurface
+                  : scheme.outlineVariant,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -813,8 +746,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final ageYears = _birthDate != null
         ? AppDateUtils.calculateAgeYears(_birthDate!)
         : 25;
-    final targetWeight =
-        _goalType == GoalType.maintain ? currentWeight : _parsedTargetWeight;
+    final targetWeight = _goalType == GoalType.maintain
+        ? currentWeight
+        : _parsedTargetWeight;
 
     final validation = HealthCalculator.validateGoal(
       goalType: _goalType,
@@ -865,7 +799,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           };
 
           return Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm + AppSpacing.xs),
+            padding: const EdgeInsets.only(
+              bottom: AppSpacing.sm + AppSpacing.xs,
+            ),
             child: AppCard(
               onTap: () {
                 setState(() {
@@ -873,21 +809,28 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   _step4Error = null;
                   if (type == GoalType.lose &&
                       _parsedTargetWeight >= currentWeight) {
-                    final minSafe =
-                        HealthCalculator.minHealthyWeightForHeight(heightCm);
-                    final suggested = (currentWeight - 4.0)
-                        .clamp(minSafe, currentWeight - 0.5);
-                    _targetWeightController.text =
-                        AppFormatters.decimal1(suggested);
+                    final minSafe = HealthCalculator.minHealthyWeightForHeight(
+                      heightCm,
+                    );
+                    final suggested = (currentWeight - 4.0).clamp(
+                      minSafe,
+                      currentWeight - 0.5,
+                    );
+                    _targetWeightController.text = AppFormatters.decimal1(
+                      suggested,
+                    );
                   } else if (type == GoalType.gain &&
                       _parsedTargetWeight <= currentWeight) {
-                    _targetWeightController.text =
-                        AppFormatters.decimal1(currentWeight + 4.0);
+                    _targetWeightController.text = AppFormatters.decimal1(
+                      currentWeight + 4.0,
+                    );
                   }
                 });
               },
               backgroundColor: isSelected ? accentBg : semantic.cardSurface,
-              borderColor: isSelected ? scheme.onSurface : scheme.outlineVariant,
+              borderColor: isSelected
+                  ? scheme.onSurface
+                  : scheme.outlineVariant,
               child: Row(
                 children: [
                   Container(
@@ -895,8 +838,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     height: AppSpacing.minTouchTarget,
                     decoration: BoxDecoration(
                       color: semantic.cardSurface,
-                      borderRadius:
-                          BorderRadius.circular(AppSpacing.buttonRadius),
+                      borderRadius: BorderRadius.circular(
+                        AppSpacing.buttonRadius,
+                      ),
                       border: Border.all(color: scheme.outlineVariant),
                     ),
                     child: Icon(icon, color: accent),
@@ -956,8 +900,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 backgroundColor: selected
                     ? scheme.primaryContainer
                     : semantic.cardSurface,
-                borderColor:
-                    selected ? scheme.onSurface : scheme.outlineVariant,
+                borderColor: selected
+                    ? scheme.onSurface
+                    : scheme.outlineVariant,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md,
                   vertical: AppSpacing.sm + AppSpacing.xs,
@@ -965,7 +910,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 child: Row(
                   children: [
                     Icon(
-                      selected ? Icons.check_circle_rounded : Icons.circle_outlined,
+                      selected
+                          ? Icons.check_circle_rounded
+                          : Icons.circle_outlined,
                       color: selected
                           ? AppColors.sakuraBlush
                           : semantic.textSecondary,
@@ -1023,11 +970,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       color: AppColors.sakuraBlush,
                     ),
                     const SizedBox(width: 6),
-                    const Expanded(
-                      child: Text(
-                        'Estimasi Rencana Harianmu',
-                      ),
-                    ),
+                    const Expanded(child: Text('Estimasi Rencana Harianmu')),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.sm),
@@ -1133,23 +1076,19 @@ class _MochiStepBanner extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        MochiCompanion(
-          pose: pose,
-          size: 76,
-          showFramedBadge: true,
-        ),
+        MochiCompanion(pose: pose, size: 60, showFramedBadge: true),
         const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: textTheme.headlineMedium),
+              Text(title, style: textTheme.headlineSmall),
               const SizedBox(height: AppSpacing.xxs),
               Text(
                 subtitle,
                 style: textTheme.bodySmall?.copyWith(
                   color: semantic.textSecondary,
-                  height: 1.4,
+                  height: 1.32,
                 ),
               ),
             ],
@@ -1160,66 +1099,8 @@ class _MochiStepBanner extends StatelessWidget {
   }
 }
 
-/// Kapsul stiker fitur ringkas untuk layar sambutan Mochi.
-class _StickerPillFeature extends StatelessWidget {
-  const _StickerPillFeature({
-    required this.icon,
-    required this.accent,
-    required this.label,
-  });
-
-  final IconData icon;
-  final Color accent;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final scheme = context.colorScheme;
-    final semantic = context.semanticColors;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm + 4,
-        vertical: AppSpacing.sm,
-      ),
-      decoration: BoxDecoration(
-        color: semantic.cardSurface,
-        borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
-        border: Border.all(color: scheme.outlineVariant),
-        boxShadow: [
-          BoxShadow(
-            color: scheme.shadow,
-            offset: const Offset(0, 3),
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: accent),
-          const SizedBox(width: 6),
-          Flexible(
-            child: Text(
-              label,
-              style: textTheme.labelMedium?.copyWith(
-                color: scheme.onSurface,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _ValidationBanner extends StatelessWidget {
-  const _ValidationBanner({
-    required this.message,
-    required this.isError,
-  });
+  const _ValidationBanner({required this.message, required this.isError});
 
   final String message;
   final bool isError;
@@ -1242,7 +1123,9 @@ class _ValidationBanner extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
-            isError ? Icons.info_outline_rounded : Icons.lightbulb_outline_rounded,
+            isError
+                ? Icons.info_outline_rounded
+                : Icons.lightbulb_outline_rounded,
             color: fg,
             size: AppSpacing.iconMd,
           ),

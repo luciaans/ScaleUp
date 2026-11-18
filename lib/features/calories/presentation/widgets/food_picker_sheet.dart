@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/constants/app_spacing.dart';
@@ -13,6 +15,7 @@ import '../../../../core/widgets/mochi_companion.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../data/database/app_database.dart';
 import '../../data/calories_repository.dart';
+import '../../data/food_photo_analyzer.dart';
 import '../../domain/calorie_models.dart';
 import 'custom_food_sheet.dart';
 
@@ -74,6 +77,7 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
   FoodItem? _selectedFood;
   double _quantity = 1.0;
   bool _isSaving = false;
+  bool _isAnalyzingPhoto = false;
 
   @override
   void initState() {
@@ -110,7 +114,9 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
 
     setState(() => _isSaving = true);
     try {
-      await ref.read(caloriesRepositoryProvider).addFoodLog(
+      await ref
+          .read(caloriesRepositoryProvider)
+          .addFoodLog(
             date: widget.targetDate,
             mealType: _selectedMeal,
             foodItemId: food.id,
@@ -124,6 +130,92 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
         setState(() => _isSaving = false);
       }
     }
+  }
+
+  Future<void> _scanFoodPhoto(ImageSource source) async {
+    if (_isAnalyzingPhoto) return;
+    try {
+      final photo = await ImagePicker().pickImage(
+        source: source,
+        imageQuality: 78,
+        maxWidth: 1600,
+      );
+      if (photo == null || !mounted) return;
+
+      setState(() => _isAnalyzingPhoto = true);
+      final mimeType = _mimeTypeFor(photo);
+      final estimate = await const FoodPhotoAnalyzer().estimate(
+        imageBytes: await photo.readAsBytes(),
+        mimeType: mimeType,
+      );
+      final repository = ref.read(caloriesRepositoryProvider);
+      final foodId = await repository.addCustomFood(
+        name: estimate.name,
+        servingDesc: '${estimate.servingDescription} (perkiraan AI)',
+        calories: estimate.calories,
+        protein: estimate.protein,
+        carbs: estimate.carbs,
+        fat: estimate.fat,
+      );
+      final logId = await repository.addFoodLog(
+        date: widget.targetDate,
+        mealType: _selectedMeal,
+        foodItemId: foodId,
+        quantity: 1,
+      );
+
+      if (!mounted) return;
+      final messenger = ScaffoldMessenger.of(context);
+      Navigator.of(context).pop(true);
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              '${estimate.name} dicatat • ±${estimate.calories.round()} kkal',
+            ),
+            action: SnackBarAction(
+              label: 'Urungkan',
+              onPressed: () => repository.deleteFoodLog(logId),
+            ),
+          ),
+        );
+    } on FoodPhotoSetupException catch (error) {
+      _showPhotoError(error.toString());
+    } on FirebaseException catch (error) {
+      _showPhotoError(
+        error.message ?? 'Analisis foto gagal. Coba lagi beberapa saat.',
+      );
+    } on FoodPhotoAnalysisException catch (error) {
+      _showPhotoError(error.message);
+    } catch (_) {
+      _showPhotoError('Foto belum bisa dianalisis. Coba pilih foto lain.');
+    } finally {
+      if (mounted) setState(() => _isAnalyzingPhoto = false);
+    }
+  }
+
+  String _mimeTypeFor(XFile photo) {
+    final detected = photo.mimeType?.toLowerCase();
+    if (detected == 'image/jpeg' ||
+        detected == 'image/png' ||
+        detected == 'image/webp') {
+      return detected!;
+    }
+    final name = photo.name;
+    final extension = name.split('.').last.toLowerCase();
+    return switch (extension) {
+      'png' => 'image/png',
+      'webp' => 'image/webp',
+      _ => 'image/jpeg',
+    };
+  }
+
+  void _showPhotoError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -154,9 +246,7 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
     }
 
     return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.viewInsetsOf(context).bottom,
-      ),
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -171,10 +261,7 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
                 ),
                 const SizedBox(width: AppSpacing.sm + 2),
                 Expanded(
-                  child: Text(
-                    'Tambah Makanan',
-                    style: textTheme.headlineSmall,
-                  ),
+                  child: Text('Tambah Makanan', style: textTheme.headlineSmall),
                 ),
                 TextButton.icon(
                   onPressed: _openCreateCustomFood,
@@ -185,27 +272,68 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
             ),
           ),
 
-          // Pilihan waktu makan
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
+          // Pilihan waktu makan membungkus ke baris berikutnya agar semua
+          // pilihan tetap terlihat pada layar sempit.
+          Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.md,
               vertical: AppSpacing.xs,
             ),
-            child: Row(
+            child: Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
               children: MealType.values.map((meal) {
                 final selected = meal == _selectedMeal;
-                return Padding(
-                  padding: const EdgeInsets.only(right: AppSpacing.sm),
-                  child: ChoiceChip(
-                    label: Text(meal.label),
-                    selected: selected,
-                    onSelected: (_) => setState(() => _selectedMeal = meal),
-                  ),
+                return ChoiceChip(
+                  label: Text(meal.label),
+                  selected: selected,
+                  onSelected: (_) => setState(() => _selectedMeal = meal),
                 );
               }).toList(),
             ),
           ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            child: Row(
+              children: [
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: _isAnalyzingPhoto
+                        ? null
+                        : () => _scanFoodPhoto(ImageSource.camera),
+                    icon: const Icon(Icons.photo_camera_rounded),
+                    label: const Text('Foto makanan'),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                OutlinedButton.icon(
+                  onPressed: _isAnalyzingPhoto
+                      ? null
+                      : () => _scanFoodPhoto(ImageSource.gallery),
+                  icon: const Icon(Icons.photo_library_outlined),
+                  label: const Text('Galeri'),
+                ),
+              ],
+            ),
+          ),
+          if (_isAnalyzingPhoto)
+            const Padding(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.xs,
+                AppSpacing.md,
+                0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  LinearProgressIndicator(),
+                  SizedBox(height: AppSpacing.xs),
+                  Text('Menghitung perkiraan kalori dan nutrisi...'),
+                ],
+              ),
+            ),
 
           // Pencarian instan
           Padding(
@@ -262,8 +390,9 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
                           color: selected
                               ? semantic.cardSurface
                               : semantic.surfaceMuted.withValues(alpha: 0),
-                          borderRadius:
-                              BorderRadius.circular(AppSpacing.radiusMd),
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.radiusMd,
+                          ),
                         ),
                         child: Text(
                           tab.label,
@@ -322,17 +451,19 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
                           horizontal: AppSpacing.md,
                           vertical: AppSpacing.sm + AppSpacing.xs,
                         ),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Row(
                                     children: [
                                       Flexible(
                                         child: Text(
                                           food.name,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                           style: textTheme.titleSmall,
                                         ),
                                       ),
@@ -361,42 +492,73 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
                                       ],
                                     ],
                                   ),
-                                  const SizedBox(height: AppSpacing.xxs),
-                                  Text(
-                                    '${food.servingDesc} • P ${AppFormatters.compactDecimal(food.protein)}g • K ${AppFormatters.compactDecimal(food.carbs)}g • L ${AppFormatters.compactDecimal(food.fat)}g',
-                                    style: textTheme.bodySmall?.copyWith(
-                                      color: semantic.textSecondary,
+                                ),
+                                const SizedBox(width: AppSpacing.xs),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppSpacing.sm,
+                                    vertical: AppSpacing.xs,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: scheme.tertiaryContainer,
+                                    borderRadius: BorderRadius.circular(
+                                      AppSpacing.radiusSm,
                                     ),
                                   ),
-                                ],
-                              ),
+                                  child: Text(
+                                    AppFormatters.calories(food.calories),
+                                    style: textTheme.labelLarge?.copyWith(
+                                      color: scheme.onTertiaryContainer,
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  tooltip: food.isFavorite
+                                      ? 'Hapus dari favorit'
+                                      : 'Jadikan favorit',
+                                  onPressed: () {
+                                    MotionUtils.selectionClick();
+                                    ref
+                                        .read(caloriesRepositoryProvider)
+                                        .toggleFavorite(
+                                          food.id,
+                                          !food.isFavorite,
+                                        );
+                                  },
+                                  icon: Icon(
+                                    food.isFavorite
+                                        ? Icons.favorite_rounded
+                                        : Icons.favorite_border_rounded,
+                                    color: food.isFavorite
+                                        ? scheme.error
+                                        : semantic.textSecondary,
+                                    size: AppSpacing.iconMd,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: AppSpacing.sm),
+                            const SizedBox(height: AppSpacing.xxs),
                             Text(
-                              AppFormatters.calories(food.calories),
-                              style: textTheme.labelLarge?.copyWith(
-                                color: scheme.tertiary,
+                              food.servingDesc,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: textTheme.bodySmall?.copyWith(
+                                color: semantic.textSecondary,
                               ),
                             ),
-                            IconButton(
-                              tooltip: food.isFavorite
-                                  ? 'Hapus dari favorit'
-                                  : 'Jadikan favorit',
-                              onPressed: () {
-                                MotionUtils.selectionClick();
-                                ref
-                                    .read(caloriesRepositoryProvider)
-                                    .toggleFavorite(food.id, !food.isFavorite);
-                              },
-                              icon: Icon(
-                                food.isFavorite
-                                    ? Icons.favorite_rounded
-                                    : Icons.favorite_border_rounded,
-                                color: food.isFavorite
-                                    ? scheme.error
-                                    : semantic.textSecondary,
-                                size: AppSpacing.iconMd,
-                              ),
+                            const SizedBox(height: AppSpacing.xs),
+                            Row(
+                              children: [
+                                _buildMacroChip(
+                                  context,
+                                  'Protein',
+                                  food.protein,
+                                ),
+                                const SizedBox(width: AppSpacing.xs),
+                                _buildMacroChip(context, 'Karbo', food.carbs),
+                                const SizedBox(width: AppSpacing.xs),
+                                _buildMacroChip(context, 'Lemak', food.fat),
+                              ],
                             ),
                           ],
                         ),
@@ -405,6 +567,31 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
                   ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMacroChip(BuildContext context, String label, double grams) {
+    final semantic = context.semanticColors;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: AppSpacing.xs,
+        ),
+        decoration: BoxDecoration(
+          color: semantic.surfaceMuted,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+        ),
+        child: Text(
+          '$label ${AppFormatters.compactDecimal(grams)}g',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: textTheme.labelSmall?.copyWith(color: semantic.textSecondary),
+        ),
       ),
     );
   }
@@ -466,7 +653,10 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
                 onPressed: _quantity > 0.25
                     ? () {
                         MotionUtils.selectionClick();
-                        setState(() => _quantity = (_quantity - 0.25).clamp(0.25, 20.0));
+                        setState(
+                          () =>
+                              _quantity = (_quantity - 0.25).clamp(0.25, 20.0),
+                        );
                       }
                     : null,
                 icon: const Icon(Icons.remove_rounded),
@@ -482,17 +672,16 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
                       color: scheme.tertiary,
                     ),
                   ),
-                  Text(
-                    'porsi',
-                    style: textTheme.labelMedium,
-                  ),
+                  Text('porsi', style: textTheme.labelMedium),
                 ],
               ),
               const SizedBox(width: AppSpacing.lg),
               IconButton.filledTonal(
                 onPressed: () {
                   MotionUtils.selectionClick();
-                  setState(() => _quantity = (_quantity + 0.25).clamp(0.25, 20.0));
+                  setState(
+                    () => _quantity = (_quantity + 0.25).clamp(0.25, 20.0),
+                  );
                 },
                 icon: const Icon(Icons.add_rounded),
               ),
@@ -584,10 +773,7 @@ class _NutrientColumn extends StatelessWidget {
       children: [
         Text(label, style: textTheme.labelSmall),
         const SizedBox(height: AppSpacing.xxs),
-        Text(
-          value,
-          style: textTheme.titleSmall?.copyWith(color: color),
-        ),
+        Text(value, style: textTheme.titleSmall?.copyWith(color: color)),
       ],
     );
   }

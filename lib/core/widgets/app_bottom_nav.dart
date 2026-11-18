@@ -43,10 +43,7 @@ class AppBottomNav extends StatelessWidget {
         decoration: BoxDecoration(
           color: semantic.dockBg,
           borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
-          border: Border.all(
-            color: semantic.dockBorder,
-            width: 1.2,
-          ),
+          border: Border.all(color: semantic.dockBorder, width: 1.2),
           boxShadow: [
             BoxShadow(
               color: scheme.shadow,
@@ -73,8 +70,8 @@ class AppBottomNav extends StatelessWidget {
                 tooltip: AppStrings.navHome,
               ),
               NavigationDestination(
-                icon: Icon(Icons.monitor_weight_outlined),
-                selectedIcon: Icon(Icons.monitor_weight_rounded),
+                icon: Icon(Icons.scale_outlined),
+                selectedIcon: Icon(Icons.scale_rounded),
                 label: AppStrings.navWeight,
                 tooltip: AppStrings.navWeight,
               ),
@@ -142,10 +139,7 @@ class _QuickAddFabState extends State<QuickAddFab> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: semantic.cardSurface,
-              border: Border.all(
-                color: semantic.dockBorder,
-                width: 1.2,
-              ),
+              border: Border.all(color: semantic.dockBorder, width: 1.2),
               boxShadow: [
                 BoxShadow(
                   color: scheme.shadow,
@@ -171,10 +165,7 @@ class _QuickAddFabState extends State<QuickAddFab> {
                   turns: widget.isSheetOpen && !reduceMotion ? 0.125 : 0.0,
                   duration: duration,
                   curve: Curves.easeOutCubic,
-                  child: const Icon(
-                    Icons.add_rounded,
-                    size: AppSpacing.iconLg,
-                  ),
+                  child: const Icon(Icons.add_rounded, size: AppSpacing.iconLg),
                 ),
               ),
             ),

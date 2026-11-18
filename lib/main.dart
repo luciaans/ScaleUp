@@ -1,4 +1,5 @@
-import 'package:cupertino_ui/cupertino_ui.dart' show GlobalCupertinoLocalizations;
+import 'package:cupertino_ui/cupertino_ui.dart'
+    show GlobalCupertinoLocalizations;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'
@@ -11,6 +12,7 @@ import 'core/constants/app_constants.dart';
 import 'core/constants/app_spacing.dart';
 import 'core/constants/app_strings.dart';
 import 'core/router/app_router.dart';
+import 'core/services/firebase_config.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
 import 'features/settings/data/settings_repository.dart';
@@ -18,6 +20,7 @@ import 'features/settings/data/settings_repository.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting(AppConstants.localeId);
+  await FirebaseConfig.initialize();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -41,9 +44,7 @@ class ScaleUpApp extends ConsumerWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
       locale: const Locale('id', 'ID'),
-      supportedLocales: const [
-        Locale('id', 'ID'),
-      ],
+      supportedLocales: const [Locale('id', 'ID')],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -56,16 +57,17 @@ class ScaleUpApp extends ConsumerWidget {
           maxScaleFactor: 1.35,
         );
         final isDark = Theme.of(context).brightness == Brightness.dark;
-        final overlayStyle = (isDark
-                ? SystemUiOverlayStyle.light
-                : SystemUiOverlayStyle.dark)
-            .copyWith(
-          statusBarColor: AppColors.milkPaper.withValues(alpha: 0),
-          systemNavigationBarColor:
-              isDark ? AppColors.darkSurface : AppColors.milkPaper,
-          systemNavigationBarIconBrightness:
-              isDark ? Brightness.light : Brightness.dark,
-        );
+        final overlayStyle =
+            (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+                .copyWith(
+                  statusBarColor: AppColors.milkPaper.withValues(alpha: 0),
+                  systemNavigationBarColor: isDark
+                      ? AppColors.darkSurface
+                      : AppColors.milkPaper,
+                  systemNavigationBarIconBrightness: isDark
+                      ? Brightness.light
+                      : Brightness.dark,
+                );
 
         Widget content = child ?? const SizedBox.shrink();
 
@@ -73,9 +75,12 @@ class ScaleUpApp extends ConsumerWidget {
         // tampilkan dalam bingkai proporsi ponsel portrait (412dp) agar realistis.
         if (kIsWeb && mq.size.width > 500) {
           const mobileWidth = 412.0;
-          final frameBg = isDark ? AppColors.darkBackground : AppColors.softGray;
-          final borderColor =
-              isDark ? AppColors.darkBorder : AppColors.borderStrong;
+          final frameBg = isDark
+              ? AppColors.darkBackground
+              : AppColors.softGray;
+          final borderColor = isDark
+              ? AppColors.darkBorder
+              : AppColors.borderStrong;
 
           content = ColoredBox(
             color: frameBg,
@@ -84,11 +89,10 @@ class ScaleUpApp extends ConsumerWidget {
                 width: mobileWidth,
                 margin: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(AppSpacing.sheetTopRadius),
-                  border: Border.all(
-                    color: borderColor,
-                    width: 1.5,
+                  borderRadius: BorderRadius.circular(
+                    AppSpacing.sheetTopRadius,
                   ),
+                  border: Border.all(color: borderColor, width: 1.5),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.carbonInk.withValues(alpha: 0.10),

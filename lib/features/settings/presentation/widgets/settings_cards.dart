@@ -161,7 +161,8 @@ class _SettingsCardsState extends ConsumerState<SettingsCards> {
   Widget build(BuildContext context) {
     final themeMode = ref.watch(appThemeModeProvider).value ?? ThemeMode.system;
     final unit = ref.watch(appWeightUnitProvider).value ?? WeightUnit.kg;
-    final reminders = ref.watch(reminderPreferencesProvider).value ??
+    final reminders =
+        ref.watch(reminderPreferencesProvider).value ??
         const ReminderPreferences(
           weightEnabled: false,
           weightTime: TimeOfDay(hour: 7, minute: 0),
@@ -219,24 +220,26 @@ class _SettingsCardsState extends ConsumerState<SettingsCards> {
           child: Column(
             children: [
               _ReminderRow(
-                icon: Icons.monitor_weight_outlined,
+                icon: Icons.scale_outlined,
                 title: 'Timbang Berat Badan',
                 timeLabel: ReminderPreferences.formatTime(reminders.weightTime),
                 enabled: reminders.weightEnabled,
                 onToggle: (val) async {
-                  await ref.read(settingsRepositoryProvider).setWeightReminder(
+                  await ref
+                      .read(settingsRepositoryProvider)
+                      .setWeightReminder(
                         enabled: val,
                         time: reminders.weightTime,
                       );
-                  await ref.read(notificationServiceProvider).syncWeightReminder(
+                  await ref
+                      .read(notificationServiceProvider)
+                      .syncWeightReminder(
                         enabled: val,
                         time: reminders.weightTime,
                       );
                 },
-                onTapTime: () => _pickReminderTime(
-                  isWeight: true,
-                  prefs: reminders,
-                ),
+                onTapTime: () =>
+                    _pickReminderTime(isWeight: true, prefs: reminders),
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
@@ -248,19 +251,15 @@ class _SettingsCardsState extends ConsumerState<SettingsCards> {
                 timeLabel: ReminderPreferences.formatTime(reminders.mealTime),
                 enabled: reminders.mealEnabled,
                 onToggle: (val) async {
-                  await ref.read(settingsRepositoryProvider).setMealReminder(
-                        enabled: val,
-                        time: reminders.mealTime,
-                      );
-                  await ref.read(notificationServiceProvider).syncMealReminder(
-                        enabled: val,
-                        time: reminders.mealTime,
-                      );
+                  await ref
+                      .read(settingsRepositoryProvider)
+                      .setMealReminder(enabled: val, time: reminders.mealTime);
+                  await ref
+                      .read(notificationServiceProvider)
+                      .syncMealReminder(enabled: val, time: reminders.mealTime);
                 },
-                onTapTime: () => _pickReminderTime(
-                  isWeight: false,
-                  prefs: reminders,
-                ),
+                onTapTime: () =>
+                    _pickReminderTime(isWeight: false, prefs: reminders),
               ),
             ],
           ),
@@ -279,13 +278,9 @@ class _SettingsCardsState extends ConsumerState<SettingsCards> {
                   height: 42,
                   decoration: BoxDecoration(
                     color: scheme.secondaryContainer,
-                    borderRadius:
-                        BorderRadius.circular(AppSpacing.radiusMd),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                   ),
-                  child: Icon(
-                    Icons.download_rounded,
-                    color: scheme.secondary,
-                  ),
+                  child: Icon(Icons.download_rounded, color: scheme.secondary),
                 ),
                 title: Text('Ekspor Data ke CSV', style: textTheme.titleSmall),
                 subtitle: Text(
@@ -312,8 +307,7 @@ class _SettingsCardsState extends ConsumerState<SettingsCards> {
                   height: 42,
                   decoration: BoxDecoration(
                     color: scheme.errorContainer,
-                    borderRadius:
-                        BorderRadius.circular(AppSpacing.radiusMd),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                   ),
                   child: Icon(
                     Icons.delete_forever_outlined,
@@ -456,10 +450,7 @@ class _ReminderRow extends StatelessWidget {
             ],
           ),
         ),
-        Switch(
-          value: enabled,
-          onChanged: onToggle,
-        ),
+        Switch(value: enabled, onChanged: onToggle),
       ],
     );
   }

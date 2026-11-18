@@ -152,14 +152,13 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
               ),
               children: [
                 EmptyState(
-                  icon: Icons.monitor_weight_rounded,
+                  icon: Icons.scale_rounded,
                   accentColor: scheme.secondary,
                   title: AppStrings.weightPlaceholderTitle,
                   subtitle: AppStrings.weightPlaceholderSubtitle,
                   actionLabel: AppStrings.quickAddWeightTitle,
-                  onAction: () => _openWeightSheet(
-                    fallbackKg: plan?.currentWeightKg,
-                  ),
+                  onAction: () =>
+                      _openWeightSheet(fallbackKg: plan?.currentWeightKg),
                 ),
               ],
             );
@@ -189,9 +188,8 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
               // HERO OBSIDIAN WEIGHT & BIOMARKER SPECTRUM CARD
               HeroBentoCard(
                 accentGlowColor: scheme.secondary,
-                onTap: () => _openWeightSheet(
-                  fallbackKg: summary.currentWeightKg,
-                ),
+                onTap: () =>
+                    _openWeightSheet(fallbackKg: summary.currentWeightKg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -283,7 +281,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                         color: scheme.primaryContainer,
                       ),
                       child: Icon(
-                        Icons.auto_awesome_rounded,
+                        Icons.format_quote_rounded,
                         color: scheme.primary,
                         size: 20,
                       ),
@@ -324,7 +322,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                     summary.startWeightKg,
                     unit: unit,
                   ),
-                  icon: Icons.flag_outlined,
+                  icon: Icons.history_outlined,
                   accentColor: scheme.primary,
                 ),
                 right: StatTile(
@@ -333,7 +331,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                     summary.currentWeightKg,
                     unit: unit,
                   ),
-                  icon: Icons.monitor_weight_outlined,
+                  icon: Icons.scale_outlined,
                   accentColor: scheme.secondary,
                 ),
               ),
@@ -367,7 +365,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                   ),
                   subtitle:
                       'Target ${AppFormatters.weight(summary.targetWeightKg, unit: unit)}',
-                  icon: Icons.track_changes_rounded,
+                  icon: Icons.adjust_rounded,
                   accentColor: scheme.tertiary,
                 ),
                 right: StatTile(
@@ -428,8 +426,9 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
                       ),
                       decoration: BoxDecoration(
                         color: scheme.errorContainer,
-                        borderRadius:
-                            BorderRadius.circular(AppSpacing.cardRadius),
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.cardRadius,
+                        ),
                       ),
                       child: Icon(
                         Icons.delete_outline_rounded,
@@ -527,10 +526,7 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
 }
 
 class _BmiSpectrumBar extends StatelessWidget {
-  const _BmiSpectrumBar({
-    required this.bmi,
-    required this.categoryLabel,
-  });
+  const _BmiSpectrumBar({required this.bmi, required this.categoryLabel});
 
   final double bmi;
   final String categoryLabel;
@@ -638,10 +634,7 @@ class _BmiSpectrumBar extends StatelessWidget {
 }
 
 class _TwoColumnStatsRow extends StatelessWidget {
-  const _TwoColumnStatsRow({
-    required this.left,
-    required this.right,
-  });
+  const _TwoColumnStatsRow({required this.left, required this.right});
 
   final Widget left;
   final Widget right;

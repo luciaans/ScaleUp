@@ -26,6 +26,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Kamera digunakan untuk memfoto makanan dan memperkirakan kandungan nutrisinya.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Foto makanan dari galeri digunakan untuk memperkirakan kandungan nutrisinya.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

@@ -32,9 +32,7 @@ class ProfileScreen extends ConsumerWidget {
     final scheme = context.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.navProfile),
-      ),
+      appBar: AppBar(title: const Text(AppStrings.navProfile)),
       body: planAsync.when(
         loading: () => ListView(
           padding: const EdgeInsets.fromLTRB(
@@ -163,8 +161,9 @@ class ProfileScreen extends ConsumerWidget {
                                 ..hideCurrentSnackBar()
                                 ..showSnackBar(
                                   const SnackBar(
-                                    content:
-                                        Text('Profil berhasil diperbarui.'),
+                                    content: Text(
+                                      'Profil berhasil diperbarui.',
+                                    ),
                                   ),
                                 );
                             }
@@ -194,8 +193,9 @@ class ProfileScreen extends ConsumerWidget {
                         Expanded(
                           child: _DarkProfilePod(
                             label: 'TDEE',
-                            value:
-                                AppFormatters.calories(plan.caloriePlan.tdee),
+                            value: AppFormatters.calories(
+                              plan.caloriePlan.tdee,
+                            ),
                           ),
                         ),
                       ],
@@ -220,8 +220,9 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                           decoration: BoxDecoration(
                             color: goalAccent.withValues(alpha: 0.14),
-                            borderRadius:
-                                BorderRadius.circular(AppSpacing.pillRadius),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.pillRadius,
+                            ),
                           ),
                           child: Text(
                             'Tujuan Aktif',
@@ -283,7 +284,7 @@ class ProfileScreen extends ConsumerWidget {
                       isOutlined: true,
                       backgroundColor: goalAccent,
                       foregroundColor: goalAccent,
-                      icon: Icons.flag_outlined,
+                      icon: Icons.track_changes_outlined,
                       onPressed: () async {
                         final changed = await EditGoalSheet.show(
                           context,
@@ -392,10 +393,7 @@ class ProfileScreen extends ConsumerWidget {
 }
 
 class _DarkProfilePod extends StatelessWidget {
-  const _DarkProfilePod({
-    required this.label,
-    required this.value,
-  });
+  const _DarkProfilePod({required this.label, required this.value});
 
   final String label;
   final String value;
