@@ -2,7 +2,7 @@
 abstract final class AppStrings {
   static const String appName = 'ScaleUp';
   static const String appTagline =
-      'Pantau berat badan dan kalori harian dengan tenang, terukur, dan sehat.';
+      'Pantau berat badan dan kalori harian dengan mudah, terukur, dan konsisten.';
 
   // Navigasi utama
   static const String navHome = 'Beranda';
@@ -12,15 +12,15 @@ abstract final class AppStrings {
   static const String quickAddTooltip = 'Catat cepat';
 
   // Bottom sheet Catat Cepat
-  static const String quickAddTitle = 'Catat Cepat';
+  static const String quickAddTitle = 'Catat Sekarang';
   static const String quickAddSubtitle =
-      'Pilih catatan yang ingin kamu tambahkan hari ini';
-  static const String quickAddWeightTitle = 'Catat Berat';
+      'Pilih jenis catatan yang ingin kamu tambahkan hari ini';
+  static const String quickAddWeightTitle = 'Catat Berat Badan';
   static const String quickAddWeightSubtitle =
-      'Perbarui berat badan harian beserta catatan singkat';
+      'Perbarui data berat harian dan tambahkan catatan singkat jika perlu';
   static const String quickAddFoodTitle = 'Tambah Makanan';
   static const String quickAddFoodSubtitle =
-      'Catat sarapan, makan siang, makan malam, atau camilan';
+      'Catat sarapan, makan siang, makan malam, atau camilan harianmu';
 
   // Umum
   static const String save = 'Simpan';
@@ -33,7 +33,7 @@ abstract final class AppStrings {
   static const String next = 'Lanjut';
   static const String back = 'Kembali';
   static const String startNow = 'Mulai Sekarang';
-  static const String finishSetup = 'Mulai Perjalanan Sehat';
+  static const String finishSetup = 'Selesai & Mulai Tracking';
 
   // Satuan
   static const String unitKg = 'kg';
@@ -48,26 +48,26 @@ abstract final class AppStrings {
   static const String goalMaintain = 'Jaga Berat Badan';
 
   // Disclaimer Kesehatan
-  static const String healthDisclaimerTitle = 'Catatan Kesehatan';
+  static const String healthDisclaimerTitle = 'Informasi Penting';
   static const String healthDisclaimerBody =
-      'ScaleUp dirancang sebagai alat bantu pemantauan mandiri dan bukan pengganti saran medis, diagnosis, atau konsultasi dokter maupun ahli gizi profesional.';
+      'ScaleUp adalah alat bantu pemantauan mandiri dan bukan pengganti saran medis, diagnosis, atau konsultasi dokter maupun ahli gizi profesional.';
 
   // Error umum
-  static const String genericErrorTitle = 'Terjadi Kendala';
+  static const String genericErrorTitle = 'Ups, Ada Kendala';
   static const String genericErrorSubtitle =
-      'Maaf, data belum berhasil dimuat. Silakan coba beberapa saat lagi.';
+      'Data belum berhasil dimuat. Periksa koneksi dan coba beberapa saat lagi.';
 
-  // Placeholder Fase 1
+  // Placeholder layar kosong
   static const String homePlaceholderTitle = 'Ringkasan Harianmu';
   static const String homePlaceholderSubtitle =
       'Pantau progres tujuan, berat badan hari ini, sisa kalori, dan streak harian di sini.';
   static const String weightPlaceholderTitle = 'Belum Ada Catatan Berat';
   static const String weightPlaceholderSubtitle =
-      'Mulai catat berat badan harianmu untuk melihat grafik tren 7 hari dan progres menuju target.';
-  static const String caloriesPlaceholderTitle = 'Belum Ada Catatan Makanan';
+      'Mulai catat berat badan harianmu dan lihat grafik tren 7 hari beserta progres menuju target.';
+  static const String caloriesPlaceholderTitle = 'Belum Ada Catatan Makan';
   static const String caloriesPlaceholderSubtitle =
       'Tambahkan menu makan harianmu untuk memantau asupan kalori dan keseimbangan nutrisi.';
   static const String profilePlaceholderTitle = 'Profil & Pengaturan';
   static const String profilePlaceholderSubtitle =
-      'Kelola data diri, target berat badan, tema tampilan, pengingat harian, serta ekspor CSV.';
+      'Kelola data diri, target berat, tema tampilan, pengingat harian, dan ekspor data CSV.';
 }

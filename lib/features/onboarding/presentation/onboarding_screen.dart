@@ -274,7 +274,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const Icon(
-                                Icons.pets_rounded,
+                                Icons.flash_on_rounded,
                                 size: 14,
                                 color: AppColors.amberPop,
                               ),
@@ -408,7 +408,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 label: buttonLabel,
                 isLoading: _isSubmitting,
                 onPressed: _handleNext,
-                icon: _currentStep == 3 ? Icons.pets_rounded : null,
+                icon: _currentStep == 3 ? Icons.check_circle_outline_rounded : null,
               ),
             ),
           ],
@@ -434,19 +434,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             size: 196,
             cyclePosesOnTap: true,
             quotes: [
-              'Siap hidup sehat bos! (Ketuk stiker kucing buat ganti meme)',
-              'Permisi~ Kenalan dulu yuk biar hitungan kalorinya pas!',
-              'Makan nasi padang atau salad? Semua bisa dicatat di sini!',
-              'Tahan godaan gorengan berlebih, pelan-pelan pasti bisa!',
-              'Semangat pantau progres harian... siap-siap POP!',
-              'POP!! Mantap banget udah mulai langkah sehat hari ini!',
-              'Segar bugar bareng kucing apel, tanpa diet ekstrem~',
+              'Halo! Ketuk foto kucing ini buat ganti ekspresinya 😄',
+              'Siap pantau berat & kalori? Yuk mulai dari sini!',
+              'Nasi padang, bakso, atau salad — semua bisa tercatat.',
+              'Pelan tapi pasti, badan sehat bukan mimpi kok!',
+              'Konsisten setiap hari, hasilnya nggak bohong.',
+              'POP!! Semangat! Hari ini langkah pertama yang paling penting.',
+              'Hidup sehat nggak harus menyiksa, cukup tercatat dengan baik~',
             ],
           ),
         ),
         const SizedBox(height: AppSpacing.md + 4),
         Text(
-          'Pantau Berat & Kalori\nBareng Kucing Meme',
+          'Pantau Berat & Kalori\nSecara Cerdas & Menyenangkan',
           style: textTheme.displaySmall?.copyWith(
             fontWeight: FontWeight.w800,
             height: 1.2,
@@ -457,7 +457,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           child: Text(
-            'Aplikasi pencatat berat badan & kalori harian yang bersih, santai, universal, dan ditemani reaksi kucing meme lucu setiap hari.',
+            'Catat berat badan & asupan kalori harian dengan mudah. Ditemani reaksi kucing meme yang bikin semangat tiap hari.',
             style: textTheme.bodyMedium?.copyWith(
               color: semantic.textSecondary,
               height: 1.48,
@@ -474,19 +474,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           alignment: WrapAlignment.center,
           children: [
             _StickerPillFeature(
-              icon: Icons.rice_bowl_rounded,
+              icon: Icons.restaurant_menu_rounded,
               accent: AppColors.royalBlue,
               label: '92+ Menu Lokal',
             ),
             _StickerPillFeature(
               icon: Icons.insights_rounded,
               accent: AppColors.emeraldSafe,
-              label: 'Tren 7 Hari Tenang',
+              label: 'Tren 7 Hari',
             ),
             _StickerPillFeature(
-              icon: Icons.pets_rounded,
+              icon: Icons.sentiment_very_satisfied_rounded,
               accent: AppColors.amberPop,
-              label: 'Reaksi Kucing Lucu',
+              label: 'Mochi Menemanimu',
             ),
           ],
         ),
@@ -766,7 +766,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 children: [
                   Icon(
                     isSelected
-                        ? Icons.pets_rounded
+                        ? Icons.check_circle_rounded
                         : Icons.radio_button_off_rounded,
                     color: isSelected
                         ? AppColors.sakuraBlush
@@ -965,7 +965,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 child: Row(
                   children: [
                     Icon(
-                      selected ? Icons.pets_rounded : Icons.circle_outlined,
+                      selected ? Icons.check_circle_rounded : Icons.circle_outlined,
                       color: selected
                           ? AppColors.sakuraBlush
                           : semantic.textSecondary,
@@ -1018,7 +1018,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 Row(
                   children: [
                     const Icon(
-                      Icons.pets_rounded,
+                      Icons.bar_chart_rounded,
                       size: 16,
                       color: AppColors.sakuraBlush,
                     ),
@@ -1242,7 +1242,7 @@ class _ValidationBanner extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
-            isError ? Icons.info_outline_rounded : Icons.pets_rounded,
+            isError ? Icons.info_outline_rounded : Icons.lightbulb_outline_rounded,
             color: fg,
             size: AppSpacing.iconMd,
           ),

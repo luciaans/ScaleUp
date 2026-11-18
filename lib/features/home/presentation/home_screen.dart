@@ -182,7 +182,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               if (plan == null) {
                 return const Center(
                   child: EmptyState(
-                    icon: Icons.pets_rounded,
+                    icon: Icons.home_outlined,
                     title: AppStrings.homePlaceholderTitle,
                     subtitle: AppStrings.homePlaceholderSubtitle,
                   ),
@@ -237,10 +237,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           : MochiPose.welcome));
 
               final mochiMessage = isOverCal
-                  ? 'Waduh agak lewat dikit! Santai bos, besok kita atur porsinya lagi~'
+                  ? 'Kalori hari ini sedikit melewati target. Besok kita atur porsinya lagi — tidak apa-apa!'
                   : (streak.loggedToday
-                      ? 'Mantap! Catatan hari ini aman terkendali, gas terus!'
-                      : 'Halo bos! Jangan lupa catat makan atau timbang hari ini ya~');
+                      ? 'Catatan hari ini sudah lengkap. Konsistensi seperti ini yang bikin progress nyata!'
+                      : 'Halo! Jangan lupa catat berat badan atau makanan hari ini ya.');
 
               return CustomScrollView(
                 slivers: [
@@ -416,14 +416,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       Row(
                                         children: [
                                           Icon(
-                                            Icons.pets_rounded,
+                                            Icons.mood_rounded,
                                             size: 14,
                                             color: semantic.heroAccent,
                                           ),
                                           const SizedBox(width: 5),
                                           Flexible(
                                             child: Text(
-                                              'Status Kucing Hari Ini',
+                                              'Mood Harian Mochi',
                                               style: textTheme.labelSmall
                                                   ?.copyWith(
                                                     color: semantic.heroAccent,
@@ -481,7 +481,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             const Icon(
-                                              Icons.rice_bowl_rounded,
+                                              Icons.local_dining_rounded,
                                               size: 15,
                                               color: AppColors.sakuraBlush,
                                             ),
@@ -905,7 +905,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           const Icon(
-                                            Icons.pets_rounded,
+                                            Icons.tips_and_updates_rounded,
                                             size: 14,
                                             color: AppColors.sakuraBlush,
                                           ),

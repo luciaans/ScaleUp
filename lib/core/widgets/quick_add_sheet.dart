@@ -160,12 +160,12 @@ class QuickAddSheet extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(
-                  Icons.pets_rounded,
-                  size: 18,
-                  color: AppColors.sakuraBlush,
+                Icon(
+                  Icons.add_circle_outline_rounded,
+                  size: 20,
+                  color: scheme.primary,
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     AppStrings.quickAddTitle,

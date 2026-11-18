@@ -9,9 +9,9 @@ import '../utils/reduce_motion.dart';
 /// Koleksi stiker kucing meme asli berformat PNG transparan (non-AI, cutout murni).
 enum MochiPose {
   welcome('assets/cats/cat_thumbsup.png', 'Mantap 👍'),
-  think('assets/cats/cat_polite.png', 'Sopan~'),
-  chef('assets/cats/cat_smudge.png', 'Cek Piring!'),
-  shock('assets/cats/cat_ganbatte.png', 'Tahan Bos!'),
+  think('assets/cats/cat_polite.png', 'Siap Pantau'),
+  chef('assets/cats/cat_smudge.png', 'Cek Menu!'),
+  shock('assets/cats/cat_ganbatte.png', 'Tetap Semangat!'),
   cheer('assets/cats/cat_pop_closed.png', 'POP!'),
   popOpen('assets/cats/cat_pop_open.png', 'POP!! 😮'),
   nap('assets/cats/cat_apple.png', 'Segar 🍎');

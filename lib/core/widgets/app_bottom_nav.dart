@@ -67,8 +67,8 @@ class AppBottomNav extends StatelessWidget {
             onDestinationSelected: _handleSelect,
             destinations: const [
               NavigationDestination(
-                icon: Icon(Icons.pets_outlined),
-                selectedIcon: Icon(Icons.pets_rounded),
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home_rounded),
                 label: AppStrings.navHome,
                 tooltip: AppStrings.navHome,
               ),
@@ -82,14 +82,14 @@ class AppBottomNav extends StatelessWidget {
                 child: SizedBox(width: AppSpacing.xxxl + AppSpacing.sm),
               ),
               NavigationDestination(
-                icon: Icon(Icons.rice_bowl_outlined),
-                selectedIcon: Icon(Icons.rice_bowl_rounded),
+                icon: Icon(Icons.restaurant_menu_outlined),
+                selectedIcon: Icon(Icons.restaurant_menu_rounded),
                 label: AppStrings.navCalories,
                 tooltip: AppStrings.navCalories,
               ),
               NavigationDestination(
-                icon: Icon(Icons.face_outlined),
-                selectedIcon: Icon(Icons.face_rounded),
+                icon: Icon(Icons.person_outline_rounded),
+                selectedIcon: Icon(Icons.person_rounded),
                 label: AppStrings.navProfile,
                 tooltip: AppStrings.navProfile,
               ),

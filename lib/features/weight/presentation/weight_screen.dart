@@ -107,8 +107,8 @@ class _WeightScreenState extends ConsumerState<WeightScreen> {
               onPressed: () => _openWeightSheet(
                 fallbackKg: planAsync.value?.currentWeightKg,
               ),
-              icon: const Icon(Icons.pets_rounded, size: 16),
-              label: const Text('Catat'),
+              icon: const Icon(Icons.add_rounded, size: 18),
+              label: const Text('Catat Berat'),
             ),
           ),
         ],
