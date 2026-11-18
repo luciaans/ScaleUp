@@ -73,9 +73,9 @@ class ScaleUpApp extends ConsumerWidget {
         // tampilkan dalam bingkai proporsi ponsel portrait (412dp) agar realistis.
         if (kIsWeb && mq.size.width > 500) {
           const mobileWidth = 412.0;
-          final frameBg = isDark ? AppColors.darkBackground : AppColors.oatWash;
+          final frameBg = isDark ? AppColors.darkBackground : AppColors.softGray;
           final borderColor =
-              isDark ? AppColors.darkBorder : AppColors.sumiInk;
+              isDark ? AppColors.darkBorder : AppColors.borderStrong;
 
           content = ColoredBox(
             color: frameBg,
@@ -87,13 +87,13 @@ class ScaleUpApp extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(AppSpacing.sheetTopRadius),
                   border: Border.all(
                     color: borderColor,
-                    width: 2.0,
+                    width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.sumiInk.withValues(alpha: 0.14),
-                      offset: const Offset(0, 6),
-                      blurRadius: 0,
+                      color: AppColors.carbonInk.withValues(alpha: 0.10),
+                      offset: const Offset(0, 12),
+                      blurRadius: 32,
                     ),
                   ],
                 ),

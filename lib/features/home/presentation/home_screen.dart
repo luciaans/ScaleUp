@@ -228,15 +228,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               final consumedKcal = cal?.consumedCalories ?? 0.0;
               final isOverCal = cal?.isOverTarget ?? false;
 
-              final mochiPose = streak.loggedToday
-                  ? MochiPose.cheer
-                  : (consumedKcal > 0 ? MochiPose.chef : MochiPose.welcome);
+              final mochiPose = isOverCal
+                  ? MochiPose.shock
+                  : (streak.loggedToday
+                      ? MochiPose.cheer
+                      : (consumedKcal > 0
+                          ? MochiPose.chef
+                          : MochiPose.welcome));
 
               final mochiMessage = isOverCal
-                  ? 'Meow, tidak apa-apa lebih sedikit~ Besok kita lanjut pelan-pelan ya!'
+                  ? 'Waduh agak lewat dikit! Santai bos, besok kita atur porsinya lagi~'
                   : (streak.loggedToday
-                      ? 'Meow, hebat banget! Catatan hari ini sudah rapi, Mochi bangga!'
-                      : 'Meow~ Jangan lupa catat makan atau beratmu hari ini ya!');
+                      ? 'Mantap! Catatan hari ini aman terkendali, gas terus!'
+                      : 'Halo bos! Jangan lupa catat makan atau timbang hari ini ya~');
 
               return CustomScrollView(
                 slivers: [
@@ -318,14 +322,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     AppSpacing.pillRadius,
                                   ),
                                   border: Border.all(
-                                    color: scheme.onSurface,
-                                    width: AppSpacing.borderMedium,
+                                    color: scheme.outlineVariant,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
                                       color: scheme.shadow,
-                                      offset: const Offset(0, 2),
-                                      blurRadius: 0,
+                                      offset: const Offset(0, 3),
+                                      blurRadius: 8,
                                     ),
                                   ],
                                 ),
@@ -333,9 +336,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Icon(
-                                      Icons.pets_rounded,
+                                      Icons.local_fire_department_rounded,
                                       size: 16,
-                                      color: AppColors.sakuraBlush,
+                                      color: AppColors.amberPop,
                                     ),
                                     const SizedBox(width: 5),
                                     Flexible(
@@ -385,15 +388,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                         const SizedBox(height: AppSpacing.md),
 
-                        // Banner Sapaan Interaktif Maskot Kucing Mochi
+                        // Banner Reaksi Kucing Meme Harian (ketuk stiker buat ganti ekspresi!)
                         _staggeredCard(
                           context,
                           index: 1,
                           child: AppCard(
-                            backgroundColor: scheme.primaryContainer.withValues(
-                              alpha: 0.55,
-                            ),
-                            borderColor: scheme.onSurface,
+                            backgroundColor: semantic.cardSurface,
+                            borderColor: scheme.outlineVariant,
                             padding: const EdgeInsets.symmetric(
                               horizontal: AppSpacing.md,
                               vertical: AppSpacing.sm + 4,
@@ -404,6 +405,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   pose: mochiPose,
                                   size: 68,
                                   showFramedBadge: true,
+                                  cyclePosesOnTap: true,
                                 ),
                                 const SizedBox(width: AppSpacing.sm + 4),
                                 Expanded(
@@ -413,18 +415,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          const Icon(
+                                          Icon(
                                             Icons.pets_rounded,
-                                            size: 13,
-                                            color: AppColors.sakuraBlush,
+                                            size: 14,
+                                            color: semantic.heroAccent,
                                           ),
-                                          const SizedBox(width: 4),
+                                          const SizedBox(width: 5),
                                           Flexible(
                                             child: Text(
-                                              'Sapaan Mochi',
+                                              'Status Kucing Hari Ini',
                                               style: textTheme.labelSmall
                                                   ?.copyWith(
-                                                    color: scheme.onSurface,
+                                                    color: semantic.heroAccent,
                                                     fontWeight: FontWeight.w800,
                                                   ),
                                               overflow: TextOverflow.ellipsis,
@@ -438,7 +440,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         style: textTheme.bodySmall?.copyWith(
                                           color: scheme.onSurface,
                                           fontWeight: FontWeight.w600,
-                                          height: 1.35,
+                                          height: 1.38,
                                         ),
                                       ),
                                     ],
@@ -909,7 +911,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                           ),
                                           const SizedBox(width: 5),
                                           Text(
-                                            'Tips dari Mochi',
+                                            'Tips Sehat Harian',
                                             style:
                                                 textTheme.labelSmall?.copyWith(
                                                   color:

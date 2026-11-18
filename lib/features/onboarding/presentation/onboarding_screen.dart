@@ -276,7 +276,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               const Icon(
                                 Icons.pets_rounded,
                                 size: 14,
-                                color: AppColors.sakuraBlush,
+                                color: AppColors.amberPop,
                               ),
                               const SizedBox(width: 6),
                               Text(
@@ -417,7 +417,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
-  /// Langkah 1: Layar Pembuka (Welcome Hero) dengan Maskot Kucing Mochi Interaktif
+  /// Langkah 1: Layar Pembuka (Welcome Hero) dengan Stiker Foto Kucing Meme Interaktif
   Widget _buildWelcomeStep(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final semantic = context.semanticColors;
@@ -427,24 +427,28 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const SizedBox(height: AppSpacing.xs),
-        // Ilustrasi Maskot Kucing Mochi menyatu langsung di atas kertas susu hangat
+        // Stiker Foto Kucing Meme interaktif (ketuk untuk ganti foto meme!)
         const Center(
           child: MochiCompanion(
             pose: MochiPose.welcome,
             size: 204,
+            cyclePosesOnTap: true,
             quotes: [
-              'Meow~ Aku Mochi, teman sehatmu!',
-              'Ketuk aku buat sapaan semangat ya!',
-              'Makan nasi uduk? Tetap bisa diatur kok!',
+              'Siap hidup sehat bos! (Ketuk fotoku buat ganti meme)',
+              'Hmm... tadi siang makan nasi padang berapa porsi ya?',
+              'Makan enak tetap jalan, yang penting porsinya dicatat!',
+              'Lupa timbang? Santai, di sini bebas menghakimi kok!',
+              'Otw capai berat ideal pelan-pelan, gas aman!',
+              'Bunga dulu buat kamu yang mulai jaga kesehatan hari ini~',
             ],
           ),
         ),
-        const SizedBox(height: AppSpacing.sm + 2),
+        const SizedBox(height: AppSpacing.md + 4),
         Text(
-          'Jaga Berat & Kalori\nBareng Mochi',
-          style: textTheme.displayMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-            height: 1.18,
+          'Pantau Berat & Kalori\nBareng Kucing Meme',
+          style: textTheme.displaySmall?.copyWith(
+            fontWeight: FontWeight.w800,
+            height: 1.2,
           ),
           textAlign: TextAlign.center,
         ),
@@ -452,17 +456,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           child: Text(
-            'Catatan harian yang lucu, santai, dan tanpa menghakimi untuk menemani perjalanan sehatmu setiap hari.',
+            'Aplikasi pencatat berat badan & kalori harian yang bersih, santai, universal, dan ditemani reaksi kucing meme lucu setiap hari.',
             style: textTheme.bodyMedium?.copyWith(
               color: semantic.textSecondary,
-              height: 1.45,
+              height: 1.48,
             ),
             textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(height: AppSpacing.lg - 4),
 
-        // 3 Kartu Stiker Ringkas (menggantikan daftar poin korporat yang kaku)
+        // 3 Kartu Kapsul Fitur Universal
         const Wrap(
           spacing: AppSpacing.sm,
           runSpacing: AppSpacing.sm,
@@ -470,29 +474,29 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           children: [
             _StickerPillFeature(
               icon: Icons.rice_bowl_rounded,
-              accent: AppColors.sakuraBlush,
+              accent: AppColors.royalBlue,
               label: '92+ Menu Lokal',
             ),
             _StickerPillFeature(
               icon: Icons.insights_rounded,
-              accent: AppColors.skyFish,
+              accent: AppColors.emeraldSafe,
               label: 'Tren 7 Hari Tenang',
             ),
             _StickerPillFeature(
-              icon: Icons.favorite_rounded,
-              accent: AppColors.butterBell,
-              label: 'Target Aman & Sehat',
+              icon: Icons.pets_rounded,
+              accent: AppColors.amberPop,
+              label: 'Reaksi Kucing Lucu',
             ),
           ],
         ),
         const SizedBox(height: AppSpacing.lg),
 
-        // Catatan Kesehatan yang lembut & ringkas di bagian bawah kertas
+        // Catatan Kesehatan yang bersih & netral
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(AppSpacing.md),
           decoration: BoxDecoration(
-            color: semantic.surfaceMuted,
+            color: semantic.cardSurface,
             borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
             border: Border.all(color: scheme.outlineVariant),
           ),
@@ -500,16 +504,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 32,
-                height: 32,
+                width: 34,
+                height: 34,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: semantic.cardSurface,
+                  color: scheme.primaryContainer,
                 ),
-                child: const Icon(
-                  Icons.pets_rounded,
-                  color: AppColors.sakuraBlush,
-                  size: 16,
+                child: Icon(
+                  Icons.verified_user_outlined,
+                  color: semantic.heroAccent,
+                  size: 18,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm + 2),
@@ -528,7 +532,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       AppStrings.healthDisclaimerBody,
                       style: textTheme.bodySmall?.copyWith(
                         color: semantic.textSecondary,
-                        height: 1.4,
+                        height: 1.42,
                       ),
                     ),
                   ],
@@ -556,7 +560,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           pose: MochiPose.welcome,
           title: 'Kenalan Dulu, Yuk!',
           subtitle:
-              'Biar Mochi bisa menghitung kebutuhan energi harianmu dengan pas.',
+              'Data ini dipakai menghitung kebutuhan energi harianmu secara akurat.',
         ),
         const SizedBox(height: AppSpacing.lg),
 
@@ -834,7 +838,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const _MochiStepBanner(
-          pose: MochiPose.chef,
+          pose: MochiPose.think,
           title: 'Pilih Tujuan Sehatmu',
           subtitle:
               'Tenang, tujuan ini bisa kamu ubah kapan saja lewat tab Profil.',
@@ -1018,12 +1022,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       color: AppColors.sakuraBlush,
                     ),
                     const SizedBox(width: 6),
-                    Expanded(
+                    const Expanded(
                       child: Text(
-                        'Rencana Harian dari Mochi',
-                        style: textTheme.titleMedium?.copyWith(
-                          color: semantic.heroCardFg,
-                        ),
+                        'Estimasi Rencana Harianmu',
                       ),
                     ),
                   ],
@@ -1184,15 +1185,12 @@ class _StickerPillFeature extends StatelessWidget {
       decoration: BoxDecoration(
         color: semantic.cardSurface,
         borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
-        border: Border.all(
-          color: scheme.onSurface,
-          width: AppSpacing.borderMedium,
-        ),
+        border: Border.all(color: scheme.outlineVariant),
         boxShadow: [
           BoxShadow(
             color: scheme.shadow,
-            offset: const Offset(0, 2),
-            blurRadius: 0,
+            offset: const Offset(0, 3),
+            blurRadius: 10,
           ),
         ],
       ),

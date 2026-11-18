@@ -296,17 +296,20 @@ class _CaloriesScreenState extends ConsumerState<CaloriesScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const MochiCompanion(
-                              pose: MochiPose.chef,
-                              size: 40,
+                            MochiCompanion(
+                              pose: summary.isOverTarget
+                                  ? MochiPose.shock
+                                  : MochiPose.chef,
+                              size: 42,
                               showFramedBadge: true,
+                              cyclePosesOnTap: true,
                             ),
-                            const SizedBox(width: AppSpacing.xs + 2),
+                            const SizedBox(width: AppSpacing.xs + 4),
                             Flexible(
                               child: Text(
                                 summary.isOverTarget
-                                    ? 'Meow~ Sedikit lewat target, tetap santai ya!'
-                                    : 'Dapur Mochi siap mencatat menumu~',
+                                    ? 'Waduh lewat dikit, santai lanjut besok~'
+                                    : 'Makan enak jalan terus, asal tercatat!',
                                 style: textTheme.labelMedium?.copyWith(
                                   color: semantic.heroCardFg,
                                   fontWeight: FontWeight.w700,

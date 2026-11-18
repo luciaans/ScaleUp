@@ -74,7 +74,7 @@ abstract final class AppTheme {
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final isSelected = states.contains(WidgetState.selected);
           return textTheme.labelSmall?.copyWith(
-            fontSize: 10.5,
+            fontSize: 12,
             fontWeight: FontWeight.w700,
             color: isSelected
                 ? semanticColors.dockActivePill
@@ -189,7 +189,7 @@ abstract final class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.buttonRadius),
           borderSide: BorderSide(
-            color: colorScheme.primary,
+            color: semanticColors.heroAccent,
             width: AppSpacing.borderThick,
           ),
         ),

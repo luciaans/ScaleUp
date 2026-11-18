@@ -4,7 +4,7 @@ import '../constants/app_spacing.dart';
 import '../theme/app_colors.dart';
 import '../utils/reduce_motion.dart';
 
-/// Kartu lembut bergaya buku sketsa Mochi (kertas putih bersih + tepi biskuit hangat).
+/// Kartu Bento modern universal: permukaan putih bersih (#FFFFFF) + tepi halus + bayangan lembut.
 class AppCard extends StatelessWidget {
   const AppCard({
     super.key,
@@ -40,13 +40,13 @@ class AppCard extends StatelessWidget {
         borderRadius: radius,
         border: Border.all(
           color: borderColor ?? scheme.outlineVariant,
-          width: AppSpacing.borderMedium,
+          width: 1.0,
         ),
         boxShadow: [
           BoxShadow(
             color: scheme.shadow,
-            offset: const Offset(0, 3),
-            blurRadius: 0,
+            offset: const Offset(0, 4),
+            blurRadius: 14,
           ),
         ],
       ),
@@ -78,8 +78,7 @@ class AppCard extends StatelessWidget {
   }
 }
 
-/// Kartu Panggung Utama (Hero Sticker Card):
-/// Garis tinta arang tegas 1.8px + bayangan stiker buku gambar Jepang yang cerah & menggemaskan.
+/// Kartu Hero Bento Utama: permukaan putih bersih dengan elevasi halus modern & aksen lembut.
 class HeroBentoCard extends StatelessWidget {
   const HeroBentoCard({
     super.key,
@@ -105,14 +104,14 @@ class HeroBentoCard extends StatelessWidget {
         borderRadius: radius,
         color: semantic.heroCardBg,
         border: Border.all(
-          color: scheme.onSurface,
-          width: 1.8,
+          color: scheme.outlineVariant,
+          width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: scheme.onSurface.withValues(alpha: 0.12),
-            offset: const Offset(0, 5),
-            blurRadius: 0,
+            color: scheme.shadow,
+            offset: const Offset(0, 8),
+            blurRadius: 24,
           ),
         ],
       ),

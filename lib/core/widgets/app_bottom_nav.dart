@@ -44,14 +44,14 @@ class AppBottomNav extends StatelessWidget {
           color: semantic.dockBg,
           borderRadius: BorderRadius.circular(AppSpacing.pillRadius),
           border: Border.all(
-            color: scheme.onSurface,
-            width: 1.8,
+            color: semantic.dockBorder,
+            width: 1.2,
           ),
           boxShadow: [
             BoxShadow(
-              color: scheme.onSurface.withValues(alpha: 0.10),
-              offset: const Offset(0, 4),
-              blurRadius: 0,
+              color: scheme.shadow,
+              offset: const Offset(0, 8),
+              blurRadius: 24,
             ),
           ],
         ),
@@ -143,9 +143,16 @@ class _QuickAddFabState extends State<QuickAddFab> {
               shape: BoxShape.circle,
               color: semantic.cardSurface,
               border: Border.all(
-                color: scheme.onSurface,
-                width: 1.8,
+                color: semantic.dockBorder,
+                width: 1.2,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: scheme.shadow,
+                  offset: const Offset(0, 6),
+                  blurRadius: 16,
+                ),
+              ],
             ),
             child: SizedBox(
               width: 52,

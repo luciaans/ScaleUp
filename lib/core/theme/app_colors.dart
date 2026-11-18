@@ -1,107 +1,122 @@
 import 'package:material_ui/material_ui.dart';
 
-/// Palet warna "Mochi Neko — Cozy Sumi-Ink & Milk Paper":
-/// Monokrom hangat (Kertas Susu #FCF9F4 & Tinta Arang #24211F)
-/// dipadukan dengan aksen lembut Sakura Blush, Butter Bell, dan Sky Fish.
+/// Palet warna Universal Modern "Clean Slate & Meme Sticker Pop":
+/// Netral bersih universal (#F5F7FA & #FFFFFF) + Carbon Ink (#111827)
+/// dipadukan aksen Royal Blue, Emerald, dan Amber yang segar untuk semua pengguna.
 abstract final class AppColors {
-  // ================= COZY LIGHT PALETTE (DEFAULT) =================
-  static const Color sumiInk = Color(0xFF24211F);
-  static const Color milkPaper = Color(0xFFF9F4E8);
-  static const Color snowCream = Color(0xFFFFFFFF);
-  static const Color oatWash = Color(0xFFF1EAE0);
-  static const Color biscuitBorder = Color(0xFFDDD4C6);
-  static const Color warmGreyText = Color(0xFF6B635B);
+  // ================= UNIVERSAL CLEAN LIGHT PALETTE (DEFAULT) =================
+  static const Color carbonInk = Color(0xFF111827);
+  static const Color slateCanvas = Color(0xFFF5F7FA);
+  static const Color pureWhite = Color(0xFFFFFFFF);
+  static const Color softGray = Color(0xFFEEF2F6);
+  static const Color borderLight = Color(0xFFE2E8F0);
+  static const Color borderStrong = Color(0xFFCBD5E1);
+  static const Color slateMuted = Color(0xFF64748B);
 
-  static const Color sakuraBlush = Color(0xFFFF9B8E);
-  static const Color sakuraSoft = Color(0xFFFFE8E4);
-  static const Color sakuraDeep = Color(0xFF6E241C);
+  // Universal Accents
+  static const Color royalBlue = Color(0xFF2563EB);
+  static const Color royalBlueSoft = Color(0xFFEFF6FF);
+  static const Color royalBlueDeep = Color(0xFF1E3A8A);
 
-  static const Color skyFish = Color(0xFF5BA8E6);
-  static const Color skySoft = Color(0xFFE3F2FD);
-  static const Color skyDeep = Color(0xFF10375C);
+  static const Color skyCyan = Color(0xFF0284C7);
+  static const Color skyCyanSoft = Color(0xFFE0F2FE);
+  static const Color skyCyanDeep = Color(0xFF0C4A6E);
 
-  static const Color butterBell = Color(0xFFF4B942);
-  static const Color butterSoft = Color(0xFFFFF3D1);
-  static const Color butterDeep = Color(0xFF593B04);
+  static const Color amberPop = Color(0xFFF59E0B);
+  static const Color amberSoft = Color(0xFFFEF3C7);
+  static const Color amberDeep = Color(0xFF78350F);
 
-  static const Color matchaSafe = Color(0xFF4F9D69);
-  static const Color matchaSoft = Color(0xFFE3F4E8);
+  static const Color emeraldSafe = Color(0xFF10B981);
+  static const Color emeraldSoft = Color(0xFFD1FAE5);
 
-  static const Color lavenderSnack = Color(0xFF9A7CE8);
+  static const Color coralWarm = Color(0xFFF97316);
+  static const Color coralSoft = Color(0xFFFFEDD5);
 
-  static const Color berryError = Color(0xFFD9534F);
-  static const Color berryErrorSoft = Color(0xFFFDE8E8);
+  static const Color lavenderSnack = Color(0xFF8B5CF6);
 
-  // ================= COZY DARK PALETTE ("MIDNIGHT FUR") =================
-  static const Color darkBackground = Color(0xFF1B1918);
-  static const Color darkSurface = Color(0xFF262321);
-  static const Color darkSurfaceVariant = Color(0xFF332E2B);
-  static const Color darkInkCream = Color(0xFFF7F3EC);
-  static const Color darkMutedText = Color(0xFFA89F96);
-  static const Color darkBorder = Color(0xFF3D3734);
+  static const Color crimsonError = Color(0xFFEF4444);
+  static const Color crimsonSoft = Color(0xFFFEE2E2);
+  static const Color crimsonDeep = Color(0xFF7F1D1D);
 
-  static const Color shadowStickerLight = Color(0xFFE6DFD4);
-  static const Color shadowStickerDark = Color(0xFF110F0E);
-  static const Color scrim = Color(0x6624211F);
+  // ================= UNIVERSAL DARK PALETTE ("CARBON SLATE") =================
+  static const Color darkBackground = Color(0xFF0F172A);
+  static const Color darkSurface = Color(0xFF1E293B);
+  static const Color darkSurfaceVariant = Color(0xFF334155);
+  static const Color darkInkLight = Color(0xFFF8FAFC);
+  static const Color darkMutedText = Color(0xFF94A3B8);
+  static const Color darkBorder = Color(0xFF334155);
+
+  static const Color shadowSoftLight = Color(0x120F172A);
+  static const Color shadowSoftDark = Color(0x40000000);
+  static const Color scrim = Color(0x660F172A);
+
+  // Alias kompatibilitas komponen internal
+  static const Color sumiInk = carbonInk;
+  static const Color milkPaper = slateCanvas;
+  static const Color snowCream = pureWhite;
+  static const Color oatWash = softGray;
+  static const Color sakuraBlush = royalBlue;
+  static const Color skyFish = skyCyan;
+  static const Color butterBell = amberPop;
 
   static ColorScheme get lightColorScheme => const ColorScheme(
         brightness: Brightness.light,
-        primary: sumiInk,
-        onPrimary: milkPaper,
-        primaryContainer: sakuraSoft,
-        onPrimaryContainer: sumiInk,
-        secondary: skyFish,
-        onSecondary: snowCream,
-        secondaryContainer: skySoft,
-        onSecondaryContainer: skyDeep,
-        tertiary: butterBell,
-        onTertiary: sumiInk,
-        tertiaryContainer: butterSoft,
-        onTertiaryContainer: butterDeep,
-        error: berryError,
-        onError: snowCream,
-        errorContainer: berryErrorSoft,
-        onErrorContainer: sakuraDeep,
-        surface: snowCream,
-        onSurface: sumiInk,
-        surfaceContainerHighest: oatWash,
-        onSurfaceVariant: warmGreyText,
-        outline: sumiInk,
-        outlineVariant: biscuitBorder,
-        shadow: shadowStickerLight,
+        primary: carbonInk,
+        onPrimary: pureWhite,
+        primaryContainer: royalBlueSoft,
+        onPrimaryContainer: royalBlueDeep,
+        secondary: skyCyan,
+        onSecondary: pureWhite,
+        secondaryContainer: skyCyanSoft,
+        onSecondaryContainer: skyCyanDeep,
+        tertiary: amberPop,
+        onTertiary: carbonInk,
+        tertiaryContainer: amberSoft,
+        onTertiaryContainer: amberDeep,
+        error: crimsonError,
+        onError: pureWhite,
+        errorContainer: crimsonSoft,
+        onErrorContainer: crimsonDeep,
+        surface: pureWhite,
+        onSurface: carbonInk,
+        surfaceContainerHighest: softGray,
+        onSurfaceVariant: slateMuted,
+        outline: borderStrong,
+        outlineVariant: borderLight,
+        shadow: shadowSoftLight,
         scrim: scrim,
       );
 
   static ColorScheme get darkColorScheme => const ColorScheme(
         brightness: Brightness.dark,
-        primary: darkInkCream,
+        primary: darkInkLight,
         onPrimary: darkBackground,
-        primaryContainer: darkSurfaceVariant,
-        onPrimaryContainer: darkInkCream,
-        secondary: Color(0xFF7CC2F8),
+        primaryContainer: Color(0xFF1E3A5F),
+        onPrimaryContainer: royalBlueSoft,
+        secondary: Color(0xFF38BDF8),
         onSecondary: darkBackground,
-        secondaryContainer: Color(0xFF1E3446),
-        onSecondaryContainer: skySoft,
-        tertiary: Color(0xFFF7CA65),
+        secondaryContainer: Color(0xFF0C4A6E),
+        onSecondaryContainer: skyCyanSoft,
+        tertiary: Color(0xFFFBBF24),
         onTertiary: darkBackground,
-        tertiaryContainer: Color(0xFF423416),
-        onTertiaryContainer: butterSoft,
-        error: Color(0xFFF28B82),
+        tertiaryContainer: Color(0xFF452709),
+        onTertiaryContainer: amberSoft,
+        error: Color(0xFFF87171),
         onError: darkBackground,
-        errorContainer: Color(0xFF4A201E),
-        onErrorContainer: berryErrorSoft,
+        errorContainer: Color(0xFF451A1A),
+        onErrorContainer: crimsonSoft,
         surface: darkSurface,
-        onSurface: darkInkCream,
+        onSurface: darkInkLight,
         surfaceContainerHighest: darkSurfaceVariant,
         onSurfaceVariant: darkMutedText,
-        outline: darkInkCream,
+        outline: darkBorder,
         outlineVariant: darkBorder,
-        shadow: shadowStickerDark,
+        shadow: shadowSoftDark,
         scrim: scrim,
       );
 }
 
-/// Warna semantik terpusat untuk gaya buku sketsa kucing monokrom-pastel.
+/// Warna semantik terpusat untuk UI modern universal + stiker kucing meme.
 @immutable
 class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   const AppSemanticColors({
@@ -155,14 +170,12 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   final Color shimmerBase;
   final Color shimmerHighlight;
 
-  /// Kartu Panggung Utama Mochi (Krem Hangat & Sumi Ink)
   final Color heroCardBg;
   final Color heroCardSurface;
   final Color heroCardFg;
   final Color heroCardMuted;
   final Color heroAccent;
 
-  /// Kapsul Navigasi Bawah (Monokrom Kertas Susu & Tinta)
   final Color dockBg;
   final Color dockBorder;
   final Color dockActivePill;
@@ -170,33 +183,33 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   final Color dockInactiveFg;
 
   static const AppSemanticColors light = AppSemanticColors(
-    background: AppColors.milkPaper,
-    cardSurface: AppColors.snowCream,
-    surfaceMuted: AppColors.oatWash,
-    textSecondary: AppColors.warmGreyText,
-    success: AppColors.matchaSafe,
-    successContainer: AppColors.matchaSoft,
-    goalLose: AppColors.skyFish,
-    goalLoseContainer: AppColors.skySoft,
-    goalGain: AppColors.sakuraBlush,
-    goalGainContainer: AppColors.sakuraSoft,
-    goalMaintain: AppColors.matchaSafe,
-    goalMaintainContainer: AppColors.matchaSoft,
-    proteinColor: AppColors.skyFish,
-    carbsColor: AppColors.butterBell,
-    fatColor: AppColors.sakuraBlush,
-    shimmerBase: AppColors.oatWash,
-    shimmerHighlight: AppColors.snowCream,
-    heroCardBg: AppColors.snowCream,
-    heroCardSurface: AppColors.oatWash,
-    heroCardFg: AppColors.sumiInk,
-    heroCardMuted: AppColors.warmGreyText,
-    heroAccent: AppColors.sakuraBlush,
-    dockBg: Color(0xF5FFFFFF),
-    dockBorder: AppColors.sumiInk,
-    dockActivePill: AppColors.sumiInk,
-    dockActiveFg: AppColors.milkPaper,
-    dockInactiveFg: AppColors.warmGreyText,
+    background: AppColors.slateCanvas,
+    cardSurface: AppColors.pureWhite,
+    surfaceMuted: AppColors.softGray,
+    textSecondary: AppColors.slateMuted,
+    success: AppColors.emeraldSafe,
+    successContainer: AppColors.emeraldSoft,
+    goalLose: AppColors.skyCyan,
+    goalLoseContainer: AppColors.skyCyanSoft,
+    goalGain: AppColors.coralWarm,
+    goalGainContainer: AppColors.coralSoft,
+    goalMaintain: AppColors.emeraldSafe,
+    goalMaintainContainer: AppColors.emeraldSoft,
+    proteinColor: AppColors.royalBlue,
+    carbsColor: AppColors.amberPop,
+    fatColor: AppColors.coralWarm,
+    shimmerBase: AppColors.softGray,
+    shimmerHighlight: AppColors.pureWhite,
+    heroCardBg: AppColors.pureWhite,
+    heroCardSurface: AppColors.softGray,
+    heroCardFg: AppColors.carbonInk,
+    heroCardMuted: AppColors.slateMuted,
+    heroAccent: AppColors.royalBlue,
+    dockBg: Color(0xF8FFFFFF),
+    dockBorder: AppColors.borderLight,
+    dockActivePill: AppColors.carbonInk,
+    dockActiveFg: AppColors.pureWhite,
+    dockInactiveFg: AppColors.slateMuted,
   );
 
   static const AppSemanticColors dark = AppSemanticColors(
@@ -204,27 +217,27 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     cardSurface: AppColors.darkSurface,
     surfaceMuted: AppColors.darkSurfaceVariant,
     textSecondary: AppColors.darkMutedText,
-    success: Color(0xFF74C69D),
-    successContainer: Color(0xFF1F382B),
-    goalLose: Color(0xFF7CC2F8),
-    goalLoseContainer: Color(0xFF1E3446),
-    goalGain: AppColors.sakuraBlush,
-    goalGainContainer: Color(0xFF472622),
-    goalMaintain: Color(0xFF74C69D),
-    goalMaintainContainer: Color(0xFF1F382B),
-    proteinColor: Color(0xFF7CC2F8),
-    carbsColor: Color(0xFFF7CA65),
-    fatColor: AppColors.sakuraBlush,
+    success: Color(0xFF34D399),
+    successContainer: Color(0xFF064E3B),
+    goalLose: Color(0xFF38BDF8),
+    goalLoseContainer: Color(0xFF0C4A6E),
+    goalGain: Color(0xFFFB923C),
+    goalGainContainer: Color(0xFF431407),
+    goalMaintain: Color(0xFF34D399),
+    goalMaintainContainer: Color(0xFF064E3B),
+    proteinColor: Color(0xFF60A5FA),
+    carbsColor: Color(0xFFFBBF24),
+    fatColor: Color(0xFFFB923C),
     shimmerBase: AppColors.darkSurfaceVariant,
     shimmerHighlight: AppColors.darkBorder,
     heroCardBg: AppColors.darkSurface,
     heroCardSurface: AppColors.darkSurfaceVariant,
-    heroCardFg: AppColors.darkInkCream,
+    heroCardFg: AppColors.darkInkLight,
     heroCardMuted: AppColors.darkMutedText,
-    heroAccent: AppColors.sakuraBlush,
-    dockBg: Color(0xF5262321),
+    heroAccent: Color(0xFF60A5FA),
+    dockBg: Color(0xF51E293B),
     dockBorder: AppColors.darkBorder,
-    dockActivePill: AppColors.darkInkCream,
+    dockActivePill: AppColors.darkInkLight,
     dockActiveFg: AppColors.darkBackground,
     dockInactiveFg: AppColors.darkMutedText,
   );
