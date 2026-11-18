@@ -431,15 +431,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         const Center(
           child: MochiCompanion(
             pose: MochiPose.welcome,
-            size: 204,
+            size: 196,
             cyclePosesOnTap: true,
             quotes: [
-              'Siap hidup sehat bos! (Ketuk fotoku buat ganti meme)',
-              'Hmm... tadi siang makan nasi padang berapa porsi ya?',
-              'Makan enak tetap jalan, yang penting porsinya dicatat!',
-              'Lupa timbang? Santai, di sini bebas menghakimi kok!',
-              'Otw capai berat ideal pelan-pelan, gas aman!',
-              'Bunga dulu buat kamu yang mulai jaga kesehatan hari ini~',
+              'Siap hidup sehat bos! (Ketuk stiker kucing buat ganti meme)',
+              'Permisi~ Kenalan dulu yuk biar hitungan kalorinya pas!',
+              'Makan nasi padang atau salad? Semua bisa dicatat di sini!',
+              'Tahan godaan gorengan berlebih, pelan-pelan pasti bisa!',
+              'Semangat pantau progres harian... siap-siap POP!',
+              'POP!! Mantap banget udah mulai langkah sehat hari ini!',
+              'Segar bugar bareng kucing apel, tanpa diet ekstrem~',
             ],
           ),
         ),

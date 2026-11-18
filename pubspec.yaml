@@ -82,12 +82,13 @@ flutter:
   uses-material-design: true
   assets:
     - assets/branding/scaleup_logo.png
-    - assets/cats/meme_welcome.jpg
-    - assets/cats/meme_think.jpg
-    - assets/cats/meme_eat.jpg
-    - assets/cats/meme_shock.jpg
-    - assets/cats/meme_active.jpg
-    - assets/cats/meme_chill.jpg
+    - assets/cats/cat_thumbsup.png
+    - assets/cats/cat_polite.png
+    - assets/cats/cat_pop_closed.png
+    - assets/cats/cat_pop_open.png
+    - assets/cats/cat_smudge.png
+    - assets/cats/cat_apple.png
+    - assets/cats/cat_ganbatte.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
