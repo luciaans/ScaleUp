@@ -31,6 +31,7 @@ class AppShellScaffold extends StatefulWidget {
 class _AppShellScaffoldState extends State<AppShellScaffold>
     with SingleTickerProviderStateMixin {
   bool _isSheetOpen = false;
+  int _slideDirection = 1;
   late final AnimationController _tabController;
   late final Animation<double> _fadeAnimation;
   late final Animation<double> _scaleAnimation;
@@ -40,7 +41,7 @@ class _AppShellScaffoldState extends State<AppShellScaffold>
     super.initState();
     _tabController = AnimationController(
       vsync: this,
-      duration: AppSpacing.animFast,
+      duration: AppSpacing.animNormal,
       value: 1.0,
     );
     _fadeAnimation = CurvedAnimation(
@@ -57,6 +58,11 @@ class _AppShellScaffoldState extends State<AppShellScaffold>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.navigationShell.currentIndex !=
         widget.navigationShell.currentIndex) {
+      _slideDirection =
+          widget.navigationShell.currentIndex >
+              oldWidget.navigationShell.currentIndex
+          ? 1
+          : -1;
       if (!MotionUtils.shouldReduceMotion(context)) {
         _tabController.forward(from: 0.0);
       } else {
@@ -122,19 +128,22 @@ class _AppShellScaffoldState extends State<AppShellScaffold>
           final isActive = index == currentIndex;
           final branchChild = TickerMode(
             enabled: isActive,
-            child: Offstage(
-              offstage: !isActive,
-              child: widget.children[index],
-            ),
+            child: Offstage(offstage: !isActive, child: widget.children[index]),
           );
 
           if (!isActive) return branchChild;
 
-          return FadeTransition(
-            opacity: _fadeAnimation,
-            child: ScaleTransition(
-              scale: _scaleAnimation,
-              child: branchChild,
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: Offset(_slideDirection * 0.025, 0),
+              end: Offset.zero,
+            ).animate(_fadeAnimation),
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: branchChild,
+              ),
             ),
           );
         }),

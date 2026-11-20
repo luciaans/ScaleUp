@@ -8,24 +8,24 @@ import 'app_text_styles.dart';
 /// Konfigurasi ThemeData "Mochi Neko — Cozy Sumi-Ink & Milk Paper".
 abstract final class AppTheme {
   static ThemeData get lightTheme => _buildTheme(
-        colorScheme: AppColors.lightColorScheme,
-        semanticColors: AppSemanticColors.light,
-        overlayStyle: SystemUiOverlayStyle.dark.copyWith(
-          statusBarColor: AppColors.milkPaper.withValues(alpha: 0),
-          systemNavigationBarColor: AppColors.milkPaper,
-          systemNavigationBarIconBrightness: Brightness.dark,
-        ),
-      );
+    colorScheme: AppColors.lightColorScheme,
+    semanticColors: AppSemanticColors.light,
+    overlayStyle: SystemUiOverlayStyle.dark.copyWith(
+      statusBarColor: AppColors.milkPaper.withValues(alpha: 0),
+      systemNavigationBarColor: AppColors.milkPaper,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
 
   static ThemeData get darkTheme => _buildTheme(
-        colorScheme: AppColors.darkColorScheme,
-        semanticColors: AppSemanticColors.dark,
-        overlayStyle: SystemUiOverlayStyle.light.copyWith(
-          statusBarColor: AppColors.darkBackground.withValues(alpha: 0),
-          systemNavigationBarColor: AppColors.darkBackground,
-          systemNavigationBarIconBrightness: Brightness.light,
-        ),
-      );
+    colorScheme: AppColors.darkColorScheme,
+    semanticColors: AppSemanticColors.dark,
+    overlayStyle: SystemUiOverlayStyle.light.copyWith(
+      statusBarColor: AppColors.darkBackground.withValues(alpha: 0),
+      systemNavigationBarColor: AppColors.darkBackground,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
+  );
 
   static ThemeData _buildTheme({
     required ColorScheme colorScheme,
@@ -39,6 +39,7 @@ abstract final class AppTheme {
 
     return ThemeData(
       useMaterial3: true,
+      fontFamily: AppTextStyles.bodyFontFamily,
       brightness: colorScheme.brightness,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: semanticColors.background,

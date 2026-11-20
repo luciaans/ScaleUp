@@ -21,6 +21,7 @@ import '../../../core/widgets/animated_count.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/date_strip_selector.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/gender_cat_face.dart';
 import '../../../core/widgets/mochi_companion.dart';
 import '../../../core/widgets/progress_ring.dart';
 import '../../../core/widgets/skeleton_box.dart';
@@ -289,114 +290,120 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           AppSpacing.md,
                           AppSpacing.sm,
                         ),
-                        child: Row(
-                          children: [
-                            Semantics(
-                              button: true,
-                              label: 'Buka profil pengguna',
-                              child: GestureDetector(
-                                onTap: () => context.go(AppRoutes.profile),
-                                child: Container(
-                                  width: AppSpacing.minTouchTarget,
-                                  height: AppSpacing.minTouchTarget,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: scheme.primaryContainer,
-                                    border: Border.all(
-                                      color: scheme.outlineVariant,
-                                      width: AppSpacing.borderThin,
+                        child: AppCard(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm + 4,
+                            vertical: AppSpacing.sm + 2,
+                          ),
+                          child: Row(
+                            children: [
+                              Semantics(
+                                button: true,
+                                label: 'Buka profil pengguna',
+                                child: GestureDetector(
+                                  onTap: () => context.go(AppRoutes.profile),
+                                  child: Container(
+                                    width: AppSpacing.minTouchTarget,
+                                    height: AppSpacing.minTouchTarget,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: scheme.primaryContainer,
+                                      border: Border.all(
+                                        color: scheme.outlineVariant,
+                                        width: AppSpacing.borderThin,
+                                      ),
                                     ),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    plan.profile.name.characters.first
-                                        .toUpperCase(),
-                                    style: textTheme.titleMedium?.copyWith(
+                                    alignment: Alignment.center,
+                                    clipBehavior: Clip.antiAlias,
+                                    child: GenderCatFace(
+                                      gender: plan.gender,
                                       color: scheme.onSurface,
-                                      fontWeight: FontWeight.w800,
+                                      size: 36,
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: AppSpacing.sm + 4),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    greeting,
-                                    style: textTheme.labelMedium?.copyWith(
-                                      color: semantic.textSecondary,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    plan.profile.name,
-                                    style: textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            Semantics(
-                              label:
-                                  '${streak.currentStreakDays} hari beruntun',
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.sm + 2,
-                                  vertical: AppSpacing.xs + 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: scheme.tertiaryContainer,
-                                  borderRadius: BorderRadius.circular(
-                                    AppSpacing.radiusMd,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
+                              const SizedBox(width: AppSpacing.sm + 4),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Icon(
-                                      Icons.local_fire_department_rounded,
-                                      size: 18,
-                                      color: AppColors.amberPop,
+                                    Text(
+                                      greeting,
+                                      style: textTheme.labelMedium?.copyWith(
+                                        color: semantic.textSecondary,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    const SizedBox(width: AppSpacing.xs),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          '${streak.currentStreakDays} hari',
-                                          style: textTheme.labelMedium
-                                              ?.copyWith(
-                                                color:
-                                                    scheme.onTertiaryContainer,
-                                                fontWeight: FontWeight.w800,
-                                                height: 1.1,
-                                              ),
-                                        ),
-                                        Text(
-                                          'beruntun',
-                                          style: textTheme.labelSmall?.copyWith(
-                                            color: scheme.onTertiaryContainer
-                                                .withValues(alpha: 0.75),
-                                            height: 1.1,
-                                          ),
-                                        ),
-                                      ],
+                                    Text(
+                                      plan.profile.name,
+                                      style: textTheme.titleLarge?.copyWith(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: AppSpacing.sm),
+                              Semantics(
+                                label:
+                                    '${streak.currentStreakDays} hari beruntun',
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppSpacing.sm + 2,
+                                    vertical: AppSpacing.xs + 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: scheme.tertiaryContainer,
+                                    borderRadius: BorderRadius.circular(
+                                      AppSpacing.radiusMd,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.local_fire_department_rounded,
+                                        size: 18,
+                                        color: AppColors.amberPop,
+                                      ),
+                                      const SizedBox(width: AppSpacing.xs),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            '${streak.currentStreakDays} hari',
+                                            style: textTheme.labelMedium
+                                                ?.copyWith(
+                                                  color: scheme
+                                                      .onTertiaryContainer,
+                                                  fontWeight: FontWeight.w800,
+                                                  height: 1.1,
+                                                ),
+                                          ),
+                                          Text(
+                                            'beruntun',
+                                            style: textTheme.labelSmall
+                                                ?.copyWith(
+                                                  color: scheme
+                                                      .onTertiaryContainer
+                                                      .withValues(alpha: 0.75),
+                                                  height: 1.1,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -684,7 +691,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                     scheme.secondaryContainer,
                                               ),
                                               child: Icon(
-                                                Icons.scale_rounded,
+                                                Icons.monitor_weight_outlined,
                                                 size: 18,
                                                 color: scheme.secondary,
                                               ),
@@ -805,7 +812,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                 ),
                                               ),
                                               child: Icon(
-                                                Icons.track_changes_rounded,
+                                                switch (plan.goalType) {
+                                                  GoalType.lose =>
+                                                    Icons.trending_down_rounded,
+                                                  GoalType.gain =>
+                                                    Icons.trending_up_rounded,
+                                                  GoalType.maintain =>
+                                                    Icons.trending_flat_rounded,
+                                                },
                                                 size: 18,
                                                 color: goalAccent,
                                               ),

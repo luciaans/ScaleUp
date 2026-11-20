@@ -3,14 +3,16 @@ import 'package:material_ui/material_ui.dart';
 
 import '../constants/app_spacing.dart';
 
-/// Sistem tipografi "Mochi Neko":
-/// - Heading: Quicksand (membulat lembut, hangat, & ekspresif)
-/// - Body & Angka: Plus Jakarta Sans (bersih, mudah dibaca, tabular figures)
+/// Sistem tipografi ScaleUp:
+/// - Heading & angka: Manrope, tegas dengan bentuk yang tetap ramah.
+/// - Teks isi & label: DM Sans, ringkas dan nyaman dibaca di layar kecil.
 abstract final class AppTextStyles {
+  static const bodyFontFamily = 'DM Sans';
+
   static TextTheme buildTextTheme(Color primaryText, Color secondaryText) {
-    final baseBody = GoogleFonts.plusJakartaSansTextTheme();
-    final headingFont = GoogleFonts.quicksand;
-    final bodyFont = GoogleFonts.plusJakartaSans;
+    final baseBody = GoogleFonts.dmSansTextTheme();
+    final headingFont = GoogleFonts.manrope;
+    final bodyFont = GoogleFonts.dmSans;
 
     return baseBody.copyWith(
       displayLarge: headingFont(
@@ -115,7 +117,7 @@ abstract final class AppTextStyles {
     Color? color,
   }) {
     final effectiveColor = color ?? Theme.of(context).colorScheme.onSurface;
-    return GoogleFonts.quicksand(
+    return GoogleFonts.manrope(
       fontSize: fontSize,
       fontWeight: FontWeight.w700,
       height: 1.06,
@@ -132,7 +134,7 @@ abstract final class AppTextStyles {
     Color? color,
   }) {
     final effectiveColor = color ?? Theme.of(context).colorScheme.onSurface;
-    return GoogleFonts.quicksand(
+    return GoogleFonts.manrope(
       fontSize: fontSize,
       fontWeight: fontWeight,
       height: 1.18,

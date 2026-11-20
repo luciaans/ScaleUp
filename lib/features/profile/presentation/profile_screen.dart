@@ -8,6 +8,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/gender_cat_face.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/widgets/skeleton_box.dart';
 import '../../onboarding/domain/user_enums.dart';
@@ -110,13 +111,12 @@ class ProfileScreen extends ConsumerWidget {
                               width: AppSpacing.borderMedium,
                             ),
                           ),
+                          clipBehavior: Clip.antiAlias,
                           alignment: Alignment.center,
-                          child: Text(
-                            plan.profile.name.characters.first.toUpperCase(),
-                            style: textTheme.headlineSmall?.copyWith(
-                              color: scheme.onSurface,
-                              fontWeight: FontWeight.w800,
-                            ),
+                          child: GenderCatFace(
+                            gender: plan.gender,
+                            color: scheme.onSurface,
+                            size: 42,
                           ),
                         ),
                         const SizedBox(width: AppSpacing.md),
@@ -351,39 +351,6 @@ class ProfileScreen extends ConsumerWidget {
                   );
                 }),
               ],
-
-              const SizedBox(height: AppSpacing.lg),
-              AppCard(
-                backgroundColor: semantic.surfaceMuted,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.health_and_safety_outlined,
-                      color: scheme.secondary,
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppStrings.healthDisclaimerTitle,
-                            style: textTheme.titleSmall,
-                          ),
-                          const SizedBox(height: AppSpacing.xxs),
-                          Text(
-                            AppStrings.healthDisclaimerBody,
-                            style: textTheme.bodySmall?.copyWith(
-                              color: semantic.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           );
         },

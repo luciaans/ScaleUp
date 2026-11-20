@@ -13,6 +13,7 @@ import '../../../core/utils/formatters.dart';
 import '../../../core/utils/number_parser.dart';
 import '../../../core/utils/reduce_motion.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/gender_cat_face.dart';
 import '../../../core/widgets/mochi_companion.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../profile/data/goal_repository.dart';
@@ -430,7 +431,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        const MochiCompanion(pose: MochiPose.welcome, size: 170),
+        const MochiCompanion(
+          pose: MochiPose.welcome,
+          size: 170,
+          cyclePosesOnTap: true,
+        ),
         const SizedBox(height: AppSpacing.md),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 350),
@@ -520,13 +525,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        g == Gender.male
-                            ? Icons.male_rounded
-                            : Icons.female_rounded,
+                      GenderCatFace(
+                        gender: g,
                         color: isSelected
                             ? scheme.onSurface
                             : semantic.textSecondary,
+                        size: 24,
                       ),
                       const SizedBox(width: AppSpacing.xs),
                       Flexible(
@@ -561,7 +565,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           semanticLabel: 'Pilih tanggal lahir',
           child: Row(
             children: [
-              const Icon(Icons.cake_outlined, color: AppColors.sakuraBlush),
+              Icon(Icons.event_outlined, color: semantic.textSecondary),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Text(
@@ -590,9 +594,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   Row(
                     children: [
                       Icon(
-                        Icons.height_rounded,
+                        Icons.straighten_outlined,
                         size: AppSpacing.iconSm,
-                        color: semantic.heroAccent,
+                        color: semantic.textSecondary,
                       ),
                       const SizedBox(width: AppSpacing.xs),
                       Text('Tinggi (cm)', style: textTheme.labelLarge),
@@ -626,9 +630,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   Row(
                     children: [
                       Icon(
-                        Icons.scale_outlined,
+                        Icons.monitor_weight_outlined,
                         size: AppSpacing.iconSm,
-                        color: semantic.heroAccent,
+                        color: semantic.textSecondary,
                       ),
                       const SizedBox(width: AppSpacing.xs),
                       Text('Berat Sekarang (kg)', style: textTheme.labelLarge),
