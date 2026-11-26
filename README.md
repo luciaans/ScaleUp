@@ -136,6 +136,17 @@ flutter analyze
 flutter test
 ```
 
+## Android Releases
+
+Push a version tag such as `v1.0.1` to build a release APK and publish it on the repository's GitHub Releases page:
+
+```bash
+git tag v1.0.1
+git push origin v1.0.1
+```
+
+The workflow builds `app-release.apk` and attaches it to the matching release. The APK currently uses the Android debug signing key configured by the project, so it is suitable for direct testing and installation but should be signed with a private release key before Play Store distribution.
+
 ## Disclaimer
 
 ScaleUp is designed as a daily self-tracking tool and is **not a substitute for professional medical advice, diagnosis, or clinical nutrition counseling**.
