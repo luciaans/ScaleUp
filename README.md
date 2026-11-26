@@ -1,7 +1,7 @@
 <div align="center">
 
 <h1>
-  <img src="assets/branding/scaleup_logo.png" width="56" alt="ScaleUp Cat Logo" align="absmiddle" />
+  <img src="assets/cats/cat_thumbsup.png" width="112" alt="Meme cat giving a thumbs-up" align="absmiddle" />
   ScaleUp
 </h1>
 
