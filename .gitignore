@@ -48,3 +48,5 @@ app.*.map.json
 .widget_preview/
 .agents/
 skills-lock.json
+# Local-only AI backend credential
+backend/gemini_api_key.txt

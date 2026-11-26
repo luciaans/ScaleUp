@@ -9,8 +9,8 @@ import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/settings/data/settings_repository.dart';
 import '../../features/weight/presentation/weight_screen.dart';
 import '../constants/app_spacing.dart';
+import '../theme/app_colors.dart';
 import '../utils/reduce_motion.dart';
-import '../widgets/skeleton_box.dart';
 import 'app_shell_scaffold.dart';
 
 part 'app_router.g.dart';
@@ -66,20 +66,14 @@ class _BootLoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              SizedBox(height: AppSpacing.lg),
-              SkeletonBox(width: 180, height: 28),
-              SizedBox(height: AppSpacing.lg),
-              SkeletonBox(height: 160),
-              SizedBox(height: AppSpacing.md),
-              SkeletonBox(height: 130),
-            ],
-          ),
+      backgroundColor: AppColors.pureWhite,
+      body: Center(
+        child: Image.asset(
+          'assets/branding/scaleup_logo.png',
+          width: 132,
+          height: 132,
+          fit: BoxFit.contain,
+          errorBuilder: (_, _, _) => const SizedBox.shrink(),
         ),
       ),
     );

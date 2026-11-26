@@ -144,10 +144,36 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
 
       setState(() => _isAnalyzingPhoto = true);
       final mimeType = _mimeTypeFor(photo);
-      final estimate = await const FoodPhotoAnalyzer().estimate(
-        imageBytes: await photo.readAsBytes(),
-        mimeType: mimeType,
+       final estimate = await const FoodPhotoAnalyzer().estimate(
+         imageBytes: await photo.readAsBytes(),
+         mimeType: mimeType,
+       );
+      if (!mounted) return;
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Periksa hasil foto'),
+          content: Text(
+            '${estimate.name}\n${estimate.servingDescription}\n\n'
+            '±${estimate.calories.round()} kkal\n'
+            'Protein ${estimate.protein.toStringAsFixed(1)} g • '
+            'Karbohidrat ${estimate.carbs.toStringAsFixed(1)} g • '
+            'Lemak ${estimate.fat.toStringAsFixed(1)} g\n\n'
+            'Angka ini perkiraan AI, bukan hasil timbangan.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Batal'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Catat 1 porsi'),
+            ),
+          ],
+        ),
       );
+      if (confirmed != true || !mounted) return;
       final repository = ref.read(caloriesRepositoryProvider);
       final foodId = await repository.addCustomFood(
         name: estimate.name,
@@ -188,8 +214,10 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
       );
     } on FoodPhotoAnalysisException catch (error) {
       _showPhotoError(error.message);
-    } catch (_) {
-      _showPhotoError('Foto belum bisa dianalisis. Coba pilih foto lain.');
+    } catch (error) {
+      _showPhotoError(
+        'Analisis foto gagal (${error.runtimeType}).\n$error',
+      );
     } finally {
       if (mounted) setState(() => _isAnalyzingPhoto = false);
     }
@@ -211,11 +239,21 @@ class _FoodPickerSheetState extends ConsumerState<FoodPickerSheet> {
     };
   }
 
-  void _showPhotoError(String message) {
+  Future<void> _showPhotoError(String message) async {
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Foto belum dianalisis'),
+        content: Text(message),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Mengerti'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

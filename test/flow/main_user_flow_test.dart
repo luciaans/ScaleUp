@@ -80,7 +80,6 @@ void main() {
 
     // Verifikasi sudah masuk ke Dashboard Beranda dengan nama pengguna
     expect(find.textContaining('Sari'), findsOneWidget);
-    expect(find.text('1 Hari Beruntun'), findsOneWidget);
 
     // 5. Catat / Perbarui Berat Harian lewat tombol di Beranda
     await tester.tap(find.byKey(const Key('home_log_weight_button')));

@@ -360,7 +360,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       : Alignment.topCenter,
                   children: [
                     ...previousChildren,
-                    if (currentChild != null) currentChild,
+                    ?currentChild,
                   ],
                 ),
                 child: SingleChildScrollView(
@@ -451,13 +451,33 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         const SizedBox(height: AppSpacing.sm + 2),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 340),
-          child: Text(
+         child: Text(
             'Catat berat dan asupan harian, lalu pantau perubahanmu dari waktu ke waktu.',
             style: textTheme.bodyMedium?.copyWith(
               color: semantic.textSecondary,
               height: 1.4,
             ),
             textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        AppCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppStrings.healthDisclaimerTitle,
+                style: textTheme.titleSmall,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                AppStrings.healthDisclaimerBody,
+                style: textTheme.bodySmall?.copyWith(
+                  color: semantic.textSecondary,
+                  height: 1.35,
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -599,7 +619,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         color: semantic.textSecondary,
                       ),
                       const SizedBox(width: AppSpacing.xs),
-                      Text('Tinggi (cm)', style: textTheme.labelLarge),
+                       Flexible(
+                         child: Text(
+                           'Tinggi (cm)',
+                           style: textTheme.labelLarge,
+                           maxLines: 2,
+                           overflow: TextOverflow.ellipsis,
+                         ),
+                       ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -635,7 +662,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         color: semantic.textSecondary,
                       ),
                       const SizedBox(width: AppSpacing.xs),
-                      Text('Berat Sekarang (kg)', style: textTheme.labelLarge),
+                       Flexible(
+                         child: Text(
+                           'Berat Sekarang (kg)',
+                           style: textTheme.labelLarge,
+                           maxLines: 2,
+                           overflow: TextOverflow.ellipsis,
+                         ),
+                       ),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -981,26 +1015,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Text(
-                        AppFormatters.integer(plan.targetCalories),
-                        style: AppTextStyles.heroNumber(
-                          context,
-                          fontSize: AppSpacing.heroNumberMd,
-                          color: semantic.heroCardFg,
-                        ),
+                  child: Text.rich(
+                    TextSpan(
+                      text: AppFormatters.integer(plan.targetCalories),
+                      style: AppTextStyles.heroNumber(
+                        context,
+                        fontSize: AppSpacing.heroNumberMd,
+                        color: semantic.heroCardFg,
                       ),
-                      const SizedBox(width: AppSpacing.xs),
-                      Text(
-                        '${AppStrings.unitKcal} / hari',
-                        style: textTheme.titleSmall?.copyWith(
-                          color: semantic.heroCardMuted,
+                      children: [
+                        TextSpan(
+                          text: ' ${AppStrings.unitKcal} / hari',
+                          style: textTheme.titleSmall?.copyWith(
+                            color: semantic.heroCardMuted,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),

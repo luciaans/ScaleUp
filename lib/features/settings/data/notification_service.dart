@@ -46,7 +46,7 @@ class NotificationService {
       }
       _initialized = true;
     } catch (_) {
-      // Aman di lingkungan unit/widget test tanpa native channel
+      throw const NotificationSetupException();
     }
   }
 
@@ -108,7 +108,7 @@ class NotificationService {
         matchDateTimeComponents: DateTimeComponents.time,
       );
     } catch (_) {
-      // Abaikan jika dijalankan di lingkungan tanpa native alarm plugin
+      throw const NotificationSetupException();
     }
   }
 
@@ -116,14 +116,18 @@ class NotificationService {
     await ensureInitialized();
     try {
       await _plugin.cancel(id: id);
-    } catch (_) {}
+    } catch (_) {
+      throw const NotificationSetupException();
+    }
   }
 
   Future<void> cancelAll() async {
     await ensureInitialized();
     try {
       await _plugin.cancelAll();
-    } catch (_) {}
+    } catch (_) {
+      throw const NotificationSetupException();
+    }
   }
 
   Future<void> syncWeightReminder({
@@ -157,6 +161,13 @@ class NotificationService {
       time: time,
     );
   }
+}
+
+class NotificationSetupException implements Exception {
+  const NotificationSetupException();
+
+  @override
+  String toString() => 'Notifikasi belum tersedia di perangkat ini.';
 }
 
 @Riverpod(keepAlive: true)

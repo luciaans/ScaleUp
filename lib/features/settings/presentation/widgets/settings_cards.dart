@@ -43,13 +43,24 @@ class _SettingsCardsState extends ConsumerState<SettingsCards> {
     final settingsRepo = ref.read(settingsRepositoryProvider);
     final notif = ref.read(notificationServiceProvider);
 
-    if (isWeight) {
-      await settingsRepo.setWeightReminder(enabled: true, time: picked);
-      await notif.syncWeightReminder(enabled: true, time: picked);
-    } else {
-      await settingsRepo.setMealReminder(enabled: true, time: picked);
-      await notif.syncMealReminder(enabled: true, time: picked);
+    try {
+      if (isWeight) {
+        await notif.syncWeightReminder(enabled: true, time: picked);
+        await settingsRepo.setWeightReminder(enabled: true, time: picked);
+      } else {
+        await notif.syncMealReminder(enabled: true, time: picked);
+        await settingsRepo.setMealReminder(enabled: true, time: picked);
+      }
+    } on NotificationSetupException catch (error) {
+      _showReminderError(error.toString());
     }
+  }
+
+  void _showReminderError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _handleExportCsv() async {
@@ -153,7 +164,11 @@ class _SettingsCardsState extends ConsumerState<SettingsCards> {
     );
 
     if (confirmed != true || !mounted) return;
-    await ref.read(notificationServiceProvider).cancelAll();
+    try {
+      await ref.read(notificationServiceProvider).cancelAll();
+    } on NotificationSetupException {
+      // Data reset tetap harus berhasil walau platform notifikasi tidak tersedia.
+    }
     await ref.read(appDatabaseProvider).clearAllUserData();
   }
 
@@ -224,19 +239,23 @@ class _SettingsCardsState extends ConsumerState<SettingsCards> {
                 title: 'Timbang Berat Badan',
                 timeLabel: ReminderPreferences.formatTime(reminders.weightTime),
                 enabled: reminders.weightEnabled,
-                onToggle: (val) async {
-                  await ref
-                      .read(settingsRepositoryProvider)
-                      .setWeightReminder(
-                        enabled: val,
-                        time: reminders.weightTime,
-                      );
-                  await ref
-                      .read(notificationServiceProvider)
-                      .syncWeightReminder(
-                        enabled: val,
-                        time: reminders.weightTime,
-                      );
+                 onToggle: (val) async {
+                  try {
+                    await ref
+                        .read(notificationServiceProvider)
+                        .syncWeightReminder(
+                          enabled: val,
+                          time: reminders.weightTime,
+                        );
+                    await ref
+                        .read(settingsRepositoryProvider)
+                        .setWeightReminder(
+                          enabled: val,
+                          time: reminders.weightTime,
+                        );
+                  } on NotificationSetupException catch (error) {
+                    _showReminderError(error.toString());
+                  }
                 },
                 onTapTime: () =>
                     _pickReminderTime(isWeight: true, prefs: reminders),
@@ -250,13 +269,23 @@ class _SettingsCardsState extends ConsumerState<SettingsCards> {
                 title: 'Catat Asupan Makanan',
                 timeLabel: ReminderPreferences.formatTime(reminders.mealTime),
                 enabled: reminders.mealEnabled,
-                onToggle: (val) async {
-                  await ref
-                      .read(settingsRepositoryProvider)
-                      .setMealReminder(enabled: val, time: reminders.mealTime);
-                  await ref
-                      .read(notificationServiceProvider)
-                      .syncMealReminder(enabled: val, time: reminders.mealTime);
+                 onToggle: (val) async {
+                  try {
+                    await ref
+                        .read(notificationServiceProvider)
+                        .syncMealReminder(
+                          enabled: val,
+                          time: reminders.mealTime,
+                        );
+                    await ref
+                        .read(settingsRepositoryProvider)
+                        .setMealReminder(
+                          enabled: val,
+                          time: reminders.mealTime,
+                        );
+                  } on NotificationSetupException catch (error) {
+                    _showReminderError(error.toString());
+                  }
                 },
                 onTapTime: () =>
                     _pickReminderTime(isWeight: false, prefs: reminders),
