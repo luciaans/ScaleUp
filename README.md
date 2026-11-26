@@ -1,141 +1,145 @@
 <div align="center">
 
 <h1>
-  <img src="assets/branding/scaleup_logo.png" width="56" alt="Logo Kucing ScaleUp" align="absmiddle" />
+  <img src="assets/branding/scaleup_logo.png" width="56" alt="ScaleUp Cat Logo" align="absmiddle" />
   ScaleUp
 </h1>
 
-**Pelacak berat badan & kalori harian dengan teman kucing meme.**
+**A daily weight & calorie tracker with a meme cat companion.**
 
-![Version](https://img.shields.io/badge/version-1.0.0-2563EB)
-![Platform](https://img.shields.io/badge/platform-Android%20%C2%B7%20iOS%20%C2%B7%20Web-16A34A)
+![Version](https://img.shields.io/badge/version-v1.0.0-2563EB)
+![License](https://img.shields.io/badge/license-MIT-16A34A)
+![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20Web-111827)
 ![Flutter](https://img.shields.io/badge/Flutter-3.50%2B-02569B)
-![Dart](https://img.shields.io/badge/Dart-%5E3.14.0-F59E0B)
 
-[Instalasi](#instalasi) · [Fitur](#fitur) · [Foto Makanan AI](#foto-makanan-ai) · [Rumus Kesehatan](#rumus-kesehatan) · [Arsitektur](#arsitektur) · [Pengembangan](#pengembangan)
+[Install](#install) · [Features](#features) · [AI Food Photo](#ai-food-photo) · [Health Formulas](#health-formulas) · [Architecture](#architecture) · [Development](#development) · [License](#license)
 
 </div>
 
 ---
 
-ScaleUp adalah aplikasi pemantau berat badan dan asupan kalori harian **offline-first** berbasis **Flutter (Material 3)**. Catat berat badan satu tangan, pantau tren grafik 7 hari, hitung target kalori otomatis dengan pagar kesehatan aman, dan log makanan dari database lokal berisi **92 makanan & minuman khas Indonesia**.
+ScaleUp is an **offline-first** mobile & web health tracker built with **Flutter (Material 3)**. Log daily weight in one hand, track 7-day moving averages, calculate safe calorie targets automatically, and log meals from a built-in database of **92 Indonesian everyday foods & drinks**.
 
-- **Offline-first & privat.** Seluruh catatan berat, log makanan, profil, dan riwayat tujuan tersimpan lokal di SQLite ([Drift](https://drift.simonbinder.eu/)). Ekspor seluruh data kapan saja ke format CSV.
-- **Target sehat otomatis.** Menghitung BMR/TDEE dengan batas laju mingguan maksimal `1%` berat badan, batas kalori minimum (`1.200 kkal` wanita / `1.500 kkal` pria), dan kalibrasi ulang otomatis setiap berat berubah `>= 2,0 kg`.
-- **Didampingi Mochi Neko.** Stiker kucing meme PNG transparan interaktif menemani alur onboarding, dashboard harian, hingga selebrasi milestone *streak*.
+- **Offline-first & private.** All weight logs, meal entries, profiles, and goal history stay locally in SQLite ([Drift](https://drift.simonbinder.eu/)) with no login required. Export everything to CSV anytime.
+- **Built-in health guardrails.** Computes BMR/TDEE via Mifflin-St Jeor, caps weekly weight loss at `1%` of body weight, enforces minimum daily calories (`1,200 kcal` women / `1,500 kcal` men), and auto-recalibrates whenever weight shifts `>= 2.0 kg`.
+- **Meme cat companion.** Transparent die-cut Mochi Neko PNG stickers react across onboarding, daily check-ins, and streak celebrations.
 
-## Instalasi
+## Install
 
-1. Pastikan **Flutter SDK** (`>= 3.47.0`, diuji pada Flutter `3.50.0` / Dart `3.14.0`) sudah terpasang.
-2. Clone repositori dan unduh dependensi:
+1. Make sure **Flutter SDK** (`>= 3.47.0`, tested on Flutter `3.50.0` / Dart `3.14.0`) is installed.
+2. Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/luciaans/scale-up.git
-cd scale-up
+git clone https://github.com/luciaans/ScaleUp.git
+cd ScaleUp
 flutter pub get
 ```
 
-3. Jalankan di emulator/perangkat Android atau iOS, atau via browser:
+3. Run on an Android/iOS device or emulator, or preview in your browser:
 
 ```bash
 # Android / iOS
 flutter run
 
-# Web preview lokal
+# Local Web preview
 flutter run -d web-server --web-hostname 127.0.0.1 --web-port 8080
 ```
 
-## Fitur
+## Features
 
-### Onboarding & Profil Pengguna
-- Alur 4 langkah interaktif: sambutan & disclaimer kesehatan, data diri, tingkat aktivitas, serta pilih tujuan dengan pratinjau target kalori dan estimasi tanggal tercapai.
-- Validasi suportif untuk tinggi (`100–250 cm`), berat (`25–300 kg`), tanggal lahir, dan usia minimal `18 tahun`.
-- Riwayat tujuan sebelumnya tersimpan lokal (`isActive = false`) dengan tepat satu tujuan aktif.
+### Onboarding & User Profile
+- 4-step interactive flow: welcome & health disclaimer, personal details, activity level descriptions, and goal selection with calorie preview & estimated target date.
+- Supportive validation: height (`100–250 cm`), weight (`25–300 kg`), non-future birth date, and minimum age of `18 years`.
+- Previous goals are preserved in local history (`isActive = false`) with exactly one active goal at a time.
 
-### Pencatatan Berat & Grafik Tren
-- Input cepat lewat *bottom sheet* satu tangan: tombol `-/+ 0,1`, *slider* presisi, pemilih tanggal, dan catatan opsional.
-- Satu entri unik per hari kalender (*upsert* otomatis di tanggal sama) serta *swipe-to-delete* dengan tombol **Urungkan (Undo)**.
-- Grafik `fl_chart` interaktif dengan filter **7H / 30H / 90H / Semua**, garis target putus-putus, dan garis tren **Moving Average 7 Hari**.
+### Daily Weight Logging & Trend Charts
+- One-handed bottom sheet input: `-/+ 0.1` steppers, precision slider, date picker, and optional notes.
+- One unique entry per calendar day (automatic upsert on the same date) plus swipe-to-delete with **Undo**.
+- Interactive `fl_chart` graph with **7D / 30D / 90D / All** filters, dashed target line, and a **7-Day Moving Average** trend line.
 
-### Cek Kalori & Database Makanan Indonesia
-- **92 makanan & minuman Indonesia** bawaan (*seed* otomatis: nasi putih, nasi goreng, bubur ayam, tempe/tahu, ayam bakar, rendang, bakso, soto, gado-gado, kopi susu, es teh manis, dll.).
-- Pencarian instan, filter **Semua / Favorit / Terakhir**, tambah **Makanan Custom**, dan porsi pecahan (`0,25–20` porsi).
-- Log per waktu makan (**Sarapan, Makan Siang, Makan Malam, Camilan**), fitur satu ketuk **Salin dari Kemarin**, bar makro, dan grafik kalori 7 hari.
+### Calorie Tracker & 92 Indonesian Foods
+- Seeded with **92 common Indonesian foods & beverages** (nasi putih, nasi goreng, bubur ayam, tempe/tahu, ayam bakar, rendang, bakso, soto, gado-gado, kopi susu, es teh manis, etc.).
+- Instant search, **All / Favorites / Recent** filters, custom food creation, and fractional servings (`0.25–20` portions).
+- Collapsible meal sections (**Breakfast, Lunch, Dinner, Snacks**), one-tap **Copy from Yesterday**, macro progress bars, and a 7-day calorie bar chart.
 
-### Dashboard, Pengingat & Aksesibilitas
-- Dashboard `CustomScrollView` + `SliverAppBar` dengan ring progres tujuan, kartu berat, sisa kalori, *streak* harian, tips harian, dan *confetti* milestone (`streak` 7/30 hari atau target tercapai).
-- Pengingat notifikasi lokal harian yang dapat diatur jamnya, tema (**Ikut Sistem / Terang / Gelap**), satuan berat (`kg` / `lb`), ekspor CSV, dan reset data aman.
-- Ukuran sentuh minimum `48x48dp`, *semantic labels*, aman skala teks hingga `1,35x`, dan mendukung preferensi **Reduce Motion**.
+### Dashboard, Reminders & Accessibility
+- `CustomScrollView` + `SliverAppBar` dashboard with circular goal ring, today's weight card, remaining calories, daily streak, contextual tips, and milestone confetti (`7-day` / `30-day` streaks or target weight reached).
+- Configurable daily local notification reminders, **System / Light / Dark** theme switcher, `kg` / `lb` unit toggle, CSV export, and safe data reset.
+- Minimum `48x48dp` touch targets, semantic labels, overflow-free text scaling up to `1.35x`, and **Reduce Motion** support.
 
-## Foto Makanan AI
+## AI Food Photo
 
-ScaleUp menyediakan fitur estimasi nutrisi dari foto makanan melalui `backend/analyze_server.py` menggunakan model `gemini-2.5-flash` (atau baca konfigurasi alternatif Firebase AI Logic di [docs/food-photo-setup.md](docs/food-photo-setup.md)).
+ScaleUp includes optional meal-photo nutrition estimation via `backend/analyze_server.py` powered by `gemini-2.5-flash` (see [docs/food-photo-setup.md](docs/food-photo-setup.md) for Firebase AI Logic notes).
 
 ```powershell
-# Jalankan server lokal untuk analisis foto makanan
+# Start the local food-photo analysis proxy
 $env:GEMINI_API_KEY="YOUR_API_KEY"
 python backend/analyze_server.py
 ```
 
-Server berjalan di `http://127.0.0.1:8000/analyze`. Jika tidak digunakan, pencatatan makanan manual tetap berjalan normal sepenuhnya secara offline. Nilai nutrisi dari foto bersifat perkiraan dan dapat langsung disesuaikan sebelum disimpan.
+The server listens on `http://127.0.0.1:8000/analyze`. Without it, manual food logging still works completely offline. Photo-based nutrition values are estimates and can be edited before saving.
 
-## Rumus Kesehatan
+## Health Formulas
 
 1. **BMR (Mifflin-St Jeor):**
-   - **Pria:** $(10 \times \text{berat}_{\text{kg}}) + (6{,}25 \times \text{tinggi}_{\text{cm}}) - (5 \times \text{usia}) + 5$
-   - **Wanita:** $(10 \times \text{berat}_{\text{kg}}) + (6{,}25 \times \text{tinggi}_{\text{cm}}) - (5 \times \text{usia}) - 161$
-2. **TDEE:** $\text{BMR} \times \text{Faktor Aktivitas}$ (`1,2` Sedentari · `1,375` Ringan · `1,55` Sedang · `1,725` Berat · `1,9` Sangat Berat).
-3. **Target Kalori Harian:**
-   - Laju aman dibatasi $\min(\text{laju}_{\text{pilihan}},\ 0{,}01 \times \text{berat}_{\text{kg}})$ dengan $\Delta E = \frac{\text{laju}_{\text{aman}} \times 7.700}{7}$.
-   - **Turun:** $\max(\text{Batas Minimum},\ \text{round}(\text{TDEE} - \Delta E))$ · **Naik:** $\text{round}(\text{TDEE} + \Delta E)$ · **Jaga:** $\text{round}(\text{TDEE})$.
-   - Batas minimum harian: **1.200 kkal** (wanita) dan **1.500 kkal** (pria); menolak target dengan **BMI < 18,5** pada mode turun.
-4. **Target Makro Default:** Protein $1{,}6\text{ g/kg}$ ($4\text{ kkal/g}$), Lemak $25\%$ kalori target ($9\text{ kkal/g}$), Karbohidrat dari sisa kalori ($4\text{ kkal/g}$).
-5. **Moving Average 7 Hari:** Rata-rata aritmetika seluruh catatan berat dalam rentang kalender $[t - 6\text{ hari},\ t]$.
+   - **Male:** $(10 \times \text{weight}_{\text{kg}}) + (6.25 \times \text{height}_{\text{cm}}) - (5 \times \text{age}) + 5$
+   - **Female:** $(10 \times \text{weight}_{\text{kg}}) + (6.25 \times \text{height}_{\text{cm}}) - (5 \times \text{age}) - 161$
+2. **TDEE:** $\text{BMR} \times \text{Activity Factor}$ (`1.2` Sedentary · `1.375` Light · `1.55` Moderate · `1.725` Heavy · `1.9` Very Heavy).
+3. **Daily Calorie Target:**
+   - Safe weekly rate capped at $\min(\text{selected rate},\ 0.01 \times \text{weight}_{\text{kg}})$ with $\Delta E = \frac{\text{safe rate} \times 7700}{7}$.
+   - **Lose:** $\max(\text{Floor},\ \text{round}(\text{TDEE} - \Delta E))$ · **Gain:** $\text{round}(\text{TDEE} + \Delta E)$ · **Maintain:** $\text{round}(\text{TDEE})$.
+   - Daily calorie floor: **1,200 kcal** (female) and **1,500 kcal** (male); rejects lose targets below **BMI 18.5**.
+4. **Default Macro Targets:** Protein $1.6\text{ g/kg}$ ($4\text{ kcal/g}$), Fat $25\%$ of target calories ($9\text{ kcal/g}$), Carbs from remaining calories ($4\text{ kcal/g}$).
+5. **7-Day Moving Average:** Arithmetic mean of all logged weights inside the $[t - 6\text{ days},\ t]$ calendar window.
 
-## Arsitektur
+## Architecture
 
-Menggunakan pola **Feature-First + Repository Pattern** dengan pemisahan logika murni pada lapisan `domain`:
+Built with a **Feature-First + Repository Pattern** and pure calculation logic in `domain`:
 
 ```text
 scale-up/
 ├── assets/
-│   ├── branding/                      # Logo kucing ScaleUp (PNG & SVG)
-│   └── cats/                          # Koleksi stiker PNG kucing meme Mochi
+│   ├── branding/                      # ScaleUp cat logo (PNG & SVG)
+│   └── cats/                          # Transparent meme cat PNG stickers
 ├── backend/
-│   └── analyze_server.py              # Proxy lokal opsional untuk analisis foto makanan AI
+│   └── analyze_server.py              # Optional local proxy for AI meal photo analysis
 └── lib/
-    ├── main.dart                      # Entry point, lokalisasi id_ID, ThemeMode & MediaQuery clamp
+    ├── main.dart                      # App entry point, id_ID localization, ThemeMode & MediaQuery clamp
     ├── core/
-    │   ├── constants/                 # Konstanta bisnis, spacing 8dp, & string Bahasa Indonesia
-    │   ├── router/                    # GoRouter (boot putih logo kucing, onboarding, 4 tab + FAB)
-    │   ├── theme/                     # Palet Clean Slate & tipografi
-    │   ├── utils/                     # Formatter id_ID, konversi kg/lb, tanggal, reduce motion
-    │   └── widgets/                   # AppCard, MochiCompanion, PrimaryButton, ProgressRing, dll.
+    │   ├── constants/                 # Business constants, 8dp spacing, & UI strings
+    │   ├── router/                    # GoRouter (white cat boot screen, onboarding, 4 tabs + FAB)
+    │   ├── theme/                     # Clean Slate palette & typography
+    │   ├── utils/                     # Formatters, kg/lb conversion, calendar dates, reduce motion
+    │   └── widgets/                   # AppCard, MochiCompanion, PrimaryButton, ProgressRing, etc.
     ├── data/
-    │   ├── database/                  # Skema 6 tabel Drift (SQLite), indeks tanggal, & migrasi
-    │   └── seed/                      # Seed 92 makanan & minuman umum Indonesia
+    │   ├── database/                  # 6-table Drift (SQLite) schema, date indexes, & migrations
+    │   └── seed/                      # 92 seeded Indonesian foods & drinks
     └── features/
-        ├── onboarding/                # Domain HealthCalculator & alur onboarding 4 langkah
-        ├── home/                      # Agregasi tanggal aktif, kalkulator streak & dashboard beranda
-        ├── weight/                    # WeightRepository, WeightAnalytics & grafik tren
-        ├── calories/                  # CaloriesRepository, analisis foto makanan & log harian
+        ├── onboarding/                # HealthCalculator domain & 4-step onboarding flow
+        ├── home/                      # Active-date aggregation, streak calculator & Home dashboard
+        ├── weight/                    # WeightRepository, WeightAnalytics & trend charts
+        ├── calories/                  # CaloriesRepository, AI food photo analyzer & daily meal logs
         ├── profile/                   # ProfileRepository, GoalRepository & ActiveNutritionPlan
-        └── settings/                  # Pengaturan tema, satuan, notifikasi, ekspor CSV & reset data
+        └── settings/                  # Theme, units, notifications, CSV export & data reset
 ```
 
-## Pengembangan
+## Development
 
 ```bash
-# Generate ulang kode Drift & Riverpod setelah mengubah skema atau provider
+# Regenerate Drift & Riverpod code after modifying schemas or providers
 dart run build_runner build --delete-conflicting-outputs
 
-# Analisis statis kode
+# Run static analysis
 flutter analyze
 
-# Jalankan seluruh unit test & widget test
+# Run unit & widget tests
 flutter test
 ```
 
-## Catatan Kesehatan
+## Disclaimer
 
-ScaleUp dibuat sebagai alat bantu pemantauan mandiri harian dan **bukan pengganti saran medis, diagnosis, atau konsultasi dokter maupun ahli gizi profesional**.
+ScaleUp is designed as a daily self-tracking tool and is **not a substitute for professional medical advice, diagnosis, or clinical nutrition counseling**.
+
+## License
+
+[MIT](LICENSE) © [luciaans](https://github.com/luciaans)
